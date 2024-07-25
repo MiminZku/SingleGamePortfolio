@@ -1,0 +1,26 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "MyGameInstance.h"
+
+UMyGameInstance::UMyGameInstance()
+{
+	static ConstructorHelpers::FObjectFinder<UDataTable>
+		DT(TEXT("/Script/Engine.DataTable'/Game/_Programming/Character/DT_PlayerAnim.DT_PlayerAnim'"));
+	if (DT.Succeeded())
+	{
+		mPlayerAnims = DT.Object;
+	}
+}
+
+void UMyGameInstance::Init()
+{
+	Super::Init();
+
+
+}
+
+FPlayerAnimData* UMyGameInstance::GetPlayerAnimData(const FName& CharacterName) const
+{
+	return mPlayerAnims->FindRow<FPlayerAnimData>(CharacterName, TEXT(""));
+}
