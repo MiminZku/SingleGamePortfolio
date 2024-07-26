@@ -15,41 +15,34 @@ UPlayerDefaultAnimTemplate::UPlayerDefaultAnimTemplate()
 void UPlayerDefaultAnimTemplate::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
+
+	mOwningCharacter = Cast<ABasicCharacter>(TryGetPawnOwner());
 }
 
 void UPlayerDefaultAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-	ABasicCharacter* Player = Cast<ABasicCharacter>(TryGetPawnOwner());
-	if (Player)
+
+	if (mOwningCharacter)
 	{
-		mVelocity = Player->GetVelocity();
+		UCharacterMovementComponent* Movement = mOwningCharacter->GetCharacterMovement();
+
+		mVelocity = mOwningCharacter->GetVelocity();
 		mMoveSpeed = mVelocity.Length();
+		bShouldMove = mMoveSpeed > 5.f;
 		
-		UCharacterMovementComponent* Movement = Player->GetCharacterMovement();
 		bIsFalling = Movement->IsFalling();
-		bShouldMove = Movement->GetCurrentAcceleration().Length() > 0.f;
+		
+		FVector MoveDir = mOwningCharacter->GetVelocity();
+		FVector LookDir = mOwningCharacter->GetActorRotation().Vector();
+		MoveDir.Normalize();
+		LookDir.Normalize();
+		float Degree = FMath::Acos(FVector::DotProduct(MoveDir, LookDir));
+		mWalkForward = mVelocity.X * FMath::Cos(Degree);
+		mWalkRight = mVelocity.Y * FMath::Sin(Degree);
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 0.05, FColor::Black,
+		//	FString::Printf(TEXT("%f\t\t%f"), mWalkForward, mWalkRight));
 	}
-}
-
-void UPlayerDefaultAnimTemplate::NativeThreadSafeUpdateAnimation(float DeltaSeconds)
-{
-	Super::NativeThreadSafeUpdateAnimation(DeltaSeconds);
-}
-
-void UPlayerDefaultAnimTemplate::NativePostEvaluateAnimation()
-{
-	Super::NativePostEvaluateAnimation();
-}
-
-void UPlayerDefaultAnimTemplate::NativeUninitializeAnimation()
-{
-	Super::NativeUninitializeAnimation();
-}
-
-void UPlayerDefaultAnimTemplate::NativeBeginPlay()
-{
-	Super::NativeBeginPlay();
 }
 
 void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
@@ -67,11 +60,12 @@ void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
 	}
 }
 
-void UPlayerDefaultAnimTemplate::PlayMontage(const FString& Name)
+void UPlayerDefaultAnimTemplate::PlayMontage(const FString& Name, const FName& SectionName)
 {
 	UAnimMontage** Montage = mMontageMap.Find(Name);
 	if (Montage)
 	{
 		Montage_Play(*Montage);
+		Montage_JumpToSection(SectionName);
 	}
 }

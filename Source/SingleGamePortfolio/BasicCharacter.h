@@ -55,7 +55,7 @@ protected:
 
 	TObjectPtr<UPlayerDefaultAnimTemplate> mAnimInstance;
 
-	EPlayerState mState;
+	EPlayerState mState = EPlayerState::UnArmed;
 
-	float mWalkSpeed = 400.f;
+	float mWalkSpeed = 300.f;
 };

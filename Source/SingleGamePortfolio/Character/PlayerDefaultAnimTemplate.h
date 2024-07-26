@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "PlayerDefaultAnimTemplate.generated.h"
 
+class ABasicCharacter;
+
 UENUM(BlueprintType)
 enum class EPlayerState: uint8
 {
@@ -24,12 +26,12 @@ public:
 
 
 public:
-	virtual void NativeInitializeAnimation();
-	virtual void NativeUpdateAnimation(float DeltaSeconds);
-	virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);
-	virtual void NativePostEvaluateAnimation();
-	virtual void NativeUninitializeAnimation();
-	virtual void NativeBeginPlay();
+	virtual void NativeInitializeAnimation() override;
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+	//virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);
+	//virtual void NativePostEvaluateAnimation();
+	//virtual void NativeUninitializeAnimation();
+	//virtual void NativeBeginPlay();
 
 public:
 	void ChangeState(EPlayerState State)
@@ -37,11 +39,13 @@ public:
 		mCurrentState = State;
 	}
 	void SetAnimData(const FName& Name);
-	void PlayMontage(const FString& Name);
+	void PlayMontage(const FString& Name, const FName& SectionName);
 
 	void SetState(EPlayerState State) { mCurrentState = State; }
 	
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	ABasicCharacter* mOwningCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FString, UAnimSequence*> mSequenceMap;
@@ -67,5 +71,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsFalling = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float mWalkForward = 0.f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	float mWalkRight = 0.f;
 };

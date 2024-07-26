@@ -166,16 +166,30 @@ void ABasicCharacter::Jump(const FInputActionValue& Value)
 
 void ABasicCharacter::WeakAttack(const FInputActionValue& Value)
 {
+	if (EPlayerState::UnArmed == mState)
+	{
+		Arm();
+		return;
+	}
+	if (EPlayerState::Armed != mState)	return;
+
+
 }
 
 void ABasicCharacter::StrongAttack(const FInputActionValue& Value)
 {
+	if (EPlayerState::UnArmed == mState)
+	{
+		Arm();
+		return;
+	}
+	if (EPlayerState::Armed != mState)	return;
+
+
 }
 
 void ABasicCharacter::Dash(const FInputActionValue& Value)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue,
-		TEXT("Dash"));
 	if (EPlayerState::Armed == mState)
 	{
 
@@ -189,8 +203,6 @@ void ABasicCharacter::Dash(const FInputActionValue& Value)
 
 void ABasicCharacter::StopDash(const FInputActionValue& Value)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Blue,
-		TEXT("StopDash"));
 	GetCharacterMovement()->MaxWalkSpeed = mWalkSpeed;
 
 }
@@ -199,24 +211,27 @@ void ABasicCharacter::ArmUnarm(const FInputActionValue& Value)
 {
 	if (EPlayerState::Armed == mState)
 	{
-		Arm();
+		Unarm();
 	}
 	else if (EPlayerState::UnArmed == mState)
 	{
-		Unarm();
+		Arm();
 	}
 }
 
 void ABasicCharacter::Arm()
 {
-	SetState(EPlayerState::UnArmed);
-	bUseControllerRotationYaw = false;
+	SetState(EPlayerState::Armed);
+	bUseControllerRotationYaw = true;
+	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
+	GetCharacterMovement()->MaxWalkSpeed = mWalkSpeed;
 }
 
 void ABasicCharacter::Unarm()
 {
-	SetState(EPlayerState::Armed);
-	bUseControllerRotationYaw = true;
+	SetState(EPlayerState::UnArmed);
+	bUseControllerRotationYaw = false;
+	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
 }
 
 void ABasicCharacter::SetState(EPlayerState State)
