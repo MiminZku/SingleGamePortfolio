@@ -19,7 +19,6 @@ struct FPlayerAnimData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FString, UAnimMontage*> mMontageMap;
-
 };
 
 UCLASS()

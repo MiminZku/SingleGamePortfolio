@@ -31,6 +31,12 @@ public:
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
+protected:
+	virtual void Arm() override;
+	virtual void Unarm() override;
+	virtual void AttackWeak() override;
+	virtual void AttackStrong() override;
+
 private:
 
 };

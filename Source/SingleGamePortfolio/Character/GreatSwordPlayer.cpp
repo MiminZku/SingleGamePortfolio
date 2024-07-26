@@ -3,6 +3,7 @@
 
 #include "GreatSwordPlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerDefaultAnimTemplate.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
@@ -62,6 +63,28 @@ float AGreatSwordPlayer::TakeDamage(float DamageAmount,
 		DamageCauser);
 
 	return DamageAmount;
+}
+
+void AGreatSwordPlayer::Arm()
+{
+	Super::Arm();
+	GetCharacterMovement()->MaxWalkSpeed = 200.f;
+}
+
+void AGreatSwordPlayer::Unarm()
+{
+	Super::Unarm();
+}
+
+void AGreatSwordPlayer::AttackWeak()
+{
+	Super::AttackWeak();
+	mAnimInstance->PlayMontage(TEXT("Attack"), GetNextAttackSection());
+}
+
+void AGreatSwordPlayer::AttackStrong()
+{
+	Super::AttackStrong();
 }
 
 

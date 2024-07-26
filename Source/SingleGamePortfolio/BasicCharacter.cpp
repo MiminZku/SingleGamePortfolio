@@ -161,31 +161,18 @@ void ABasicCharacter::Look(const FInputActionValue& Value)
 
 void ABasicCharacter::Jump(const FInputActionValue& Value)
 {
+	if (!bCanJump) false;
 	ACharacter::Jump();
 }
 
 void ABasicCharacter::WeakAttack(const FInputActionValue& Value)
 {
-	if (EPlayerState::UnArmed == mState)
-	{
-		Arm();
-		return;
-	}
-	if (EPlayerState::Armed != mState)	return;
-
-
+	AttackWeak();
 }
 
 void ABasicCharacter::StrongAttack(const FInputActionValue& Value)
 {
-	if (EPlayerState::UnArmed == mState)
-	{
-		Arm();
-		return;
-	}
-	if (EPlayerState::Armed != mState)	return;
-
-
+	AttackStrong();
 }
 
 void ABasicCharacter::Dash(const FInputActionValue& Value)
@@ -250,7 +237,6 @@ void ABasicCharacter::Arm()
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
 	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
-	GetCharacterMovement()->MaxWalkSpeed = mWalkSpeed;
 }
 
 void ABasicCharacter::Unarm()
@@ -258,6 +244,35 @@ void ABasicCharacter::Unarm()
 	SetState(EPlayerState::UnArmed);
 	bUseControllerRotationYaw = false;
 	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
+}
+
+void ABasicCharacter::AttackWeak()
+{
+	if (EPlayerState::UnArmed == mState)
+	{
+		Arm();
+		return;
+	}
+	if (EPlayerState::Armed != mState)	return;
+	if (!bCanAttack)	return;
+	bCanAttack = false;
+}
+
+void ABasicCharacter::AttackStrong()
+{
+	if (EPlayerState::UnArmed == mState)
+	{
+		Arm();
+		return;
+	}
+	if (EPlayerState::Armed != mState)	return;
+	if (!bCanAttack)	return;
+	bCanAttack = false;
+}
+
+FName ABasicCharacter::GetNextAttackSectionName(int32 Index)
+{
+	return FName();
 }
 
 void ABasicCharacter::SetState(EPlayerState State)

@@ -43,6 +43,9 @@ protected:
 	void ArmUnarm(const FInputActionValue& Value);
 	virtual void Arm();
 	virtual void Unarm();
+	virtual void AttackWeak();
+	virtual void AttackStrong();
+	virtual FName GetNextAttackSectionName(int32 Index);
 
 	void SetState(EPlayerState State);
 
@@ -67,5 +70,9 @@ protected:
 
 	bool bIsDodging = false;
 
-	bool bIsAttacking = false;
+	bool bCanAttack = true;
+
+	bool bCanJump = true;
+
+	int32 mCurrentCombo = 0;
 };
