@@ -41,10 +41,14 @@ protected:
 	void Dash(const FInputActionValue& Value);
 	void StopDash(const FInputActionValue& Value);
 	void ArmUnarm(const FInputActionValue& Value);
-	void Arm();
-	void Unarm();
+	virtual void Arm();
+	virtual void Unarm();
 
 	void SetState(EPlayerState State);
+
+public:
+	void SetIsDodging(bool b) { bIsDodging = b; }
+	FVector GetMoveVector() { return mMoveVector; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -57,5 +61,11 @@ protected:
 
 	EPlayerState mState = EPlayerState::UnArmed;
 
+	FVector mMoveVector = FVector::ZeroVector;
+
 	float mWalkSpeed = 300.f;
+
+	bool bIsDodging = false;
+
+	bool bIsAttacking = false;
 };

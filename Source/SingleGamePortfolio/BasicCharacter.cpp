@@ -24,7 +24,7 @@ ABasicCharacter::ABasicCharacter()
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f); // ...at this rotation rate
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
@@ -126,7 +126,7 @@ void ABasicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 void ABasicCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	mMoveVector = Value.Get<FVector>();
 
 	if (Controller != nullptr)
 	{
@@ -141,8 +141,8 @@ void ABasicCharacter::Move(const FInputActionValue& Value)
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		// add movement 
-		AddMovementInput(ForwardDirection, MovementVector.X);
-		AddMovementInput(RightDirection, MovementVector.Y);
+		AddMovementInput(ForwardDirection, mMoveVector.X);
+		AddMovementInput(RightDirection, mMoveVector.Y);
 	}
 }
 
@@ -192,12 +192,38 @@ void ABasicCharacter::Dash(const FInputActionValue& Value)
 {
 	if (EPlayerState::Armed == mState)
 	{
+		if (bIsDodging)	return;
+		if (GetVelocity().IsNearlyZero(0.0001))		return;
+		if (GetCharacterMovement()->IsFalling())	return;
+		bIsDodging = true;
 
+		float Direction = mAnimInstance->CalculateDirection(GetVelocity(), GetActorRotation());
+		int32 Option = FMath::Floor(int(Direction + 495) % 360 / 90);
+		switch (Option)
+		{
+		case 0:
+			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("L"));
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash L"));
+			break;
+		case 1:
+			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("F"));
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash F"));
+			break;
+		case 2:
+			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("R"));
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash R"));
+			break;
+		case 3:
+			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("B"));
+			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash B"));
+			break;
+		default:
+			break;
+		}
 	}
 	else if (EPlayerState::UnArmed == mState)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 2 * mWalkSpeed;
-
 	}
 }
 

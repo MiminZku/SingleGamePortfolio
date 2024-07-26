@@ -33,16 +33,16 @@ void UPlayerDefaultAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 		
 		bIsFalling = Movement->IsFalling();
 		
-		FVector MoveDir = mOwningCharacter->GetVelocity();
-		FVector LookDir = mOwningCharacter->GetActorRotation().Vector();
-		MoveDir.Normalize();
-		LookDir.Normalize();
-		float Degree = FMath::Acos(FVector::DotProduct(MoveDir, LookDir));
-		mWalkForward = mVelocity.X * FMath::Cos(Degree);
-		mWalkRight = mVelocity.Y * FMath::Sin(Degree);
-		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 0.05, FColor::Black,
-		//	FString::Printf(TEXT("%f\t\t%f"), mWalkForward, mWalkRight));
+		mWalkForward = mOwningCharacter->GetMoveVector().X;
+		mWalkRight = mOwningCharacter->GetMoveVector().Y;
 	}
+}
+
+void UPlayerDefaultAnimTemplate::NativeBeginPlay()
+{
+	Super::NativeBeginPlay();
+
+	OnMontageEnded.AddDynamic(this, &UPlayerDefaultAnimTemplate::MontageEnd);
 }
 
 void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
@@ -67,5 +67,17 @@ void UPlayerDefaultAnimTemplate::PlayMontage(const FString& Name, const FName& S
 	{
 		Montage_Play(*Montage);
 		Montage_JumpToSection(SectionName);
+
+	}
+}
+
+void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (*mMontageMap.Find(TEXT("Dash")) == Montage)
+	{
+		if (IsValid(mOwningCharacter))
+		{
+			mOwningCharacter->SetIsDodging(false);
+		}
 	}
 }

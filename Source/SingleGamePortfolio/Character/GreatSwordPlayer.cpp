@@ -16,6 +16,7 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -97.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetRelativeScale3D(FVector(1.25f, 1.25f, 1.25f));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->bReceivesDecals = false;
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(97.f);
@@ -30,13 +31,12 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 
 void AGreatSwordPlayer::PostInitializeComponents()
 {
-	Super::PostInitializeComponents();
-
 	mAnimInstance = Cast<UPlayerDefaultAnimTemplate>(GetMesh()->GetAnimInstance());
 	if (mAnimInstance)
 	{
 		mAnimInstance->SetAnimData(TEXT("Hercules"));
 	}
+	Super::PostInitializeComponents();
 }
 
 void AGreatSwordPlayer::BeginPlay()

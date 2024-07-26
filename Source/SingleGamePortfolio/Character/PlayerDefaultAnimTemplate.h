@@ -31,7 +31,7 @@ public:
 	//virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);
 	//virtual void NativePostEvaluateAnimation();
 	//virtual void NativeUninitializeAnimation();
-	//virtual void NativeBeginPlay();
+	virtual void NativeBeginPlay() override;
 
 public:
 	void ChangeState(EPlayerState State)
@@ -42,6 +42,9 @@ public:
 	void PlayMontage(const FString& Name, const FName& SectionName);
 
 	void SetState(EPlayerState State) { mCurrentState = State; }
+
+	UFUNCTION()
+	void MontageEnd(UAnimMontage* Montage, bool bInterrupted);
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
