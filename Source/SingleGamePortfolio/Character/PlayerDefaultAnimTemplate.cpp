@@ -63,8 +63,8 @@ void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
 void UPlayerDefaultAnimTemplate::PlayMontage(const FString& Name, const FName& SectionName)
 {
 	UAnimMontage** Montage = mMontageMap.Find(Name);
-	if (Montage_IsPlaying(*Montage) && 
-		!SectionName.Compare(Montage_GetCurrentSection()))	return;
+	//if (Montage_IsPlaying(*Montage) && 
+	//	!SectionName.Compare(Montage_GetCurrentSection()))	return;
 	if (Montage)
 	{
 		Montage_Play(*Montage);
@@ -88,18 +88,31 @@ void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterru
 	if (!IsValid(mOwningCharacter))	return;
 	if (*mMontageMap.Find(TEXT("Dash")) == Montage)
 	{
-		mOwningCharacter->SetIsDodging(false);
+		mOwningCharacter->SetDodgeEnable(true);
 		mOwningCharacter->SetAttackEnable(true);
 		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 		mOwningCharacter->SetJumpEnable(true);
 		return;
 	}
-	if (*mMontageMap.Find(TEXT("Attack")) == Montage && !bInterrupted)
+	if (*mMontageMap.Find(TEXT("Attack")) == Montage)
 	{
-		mOwningCharacter->SetAttackEnable(true);
-		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
+		if (bInterrupted)
+		{
+			//mOwningCharacter->SetDodgeEnable(true);
+		}
+		else
+		{
+			mOwningCharacter->SetAttackEnable(true);
+			mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
+		}
 		return;
 	}
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_AttackEnable()
+{
+	if (!mOwningCharacter)	return;
+	mOwningCharacter->SetAttackEnable(true);
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_AttackStart()
@@ -109,7 +122,6 @@ void UPlayerDefaultAnimTemplate::AnimNotify_AttackStart()
 
 void UPlayerDefaultAnimTemplate::AnimNotify_AttackEnd()
 {
-	if (!IsValid(mOwningCharacter))	return;
 
 }
 
@@ -117,6 +129,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->SetAttackEnable(true);
+	mOwningCharacter->SetDodgeEnable(true);
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_ComboDisable()
@@ -132,6 +145,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnd()
 	mOwningCharacter->SetAttackEnable(true);
 	mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 	mOwningCharacter->SetJumpEnable(true);
+	mOwningCharacter->SetDodgeEnable(true);
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_Jump()
@@ -144,4 +158,5 @@ void UPlayerDefaultAnimTemplate::AnimNotify_Walk()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	mOwningCharacter->SetDodgeEnable(true);
 }

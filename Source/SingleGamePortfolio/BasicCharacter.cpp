@@ -180,12 +180,14 @@ void ABasicCharacter::Dash(const FInputActionValue& Value)
 {
 	if (EPlayerState::Armed == mState)
 	{
-		if (bIsDodging)	return;
+		if (!bCanDodge)	return;
 		FVector Vec = mMoveActionBinding->GetValue().Get<FVector>();
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, Vec.ToString());
 		if (Vec.IsNearlyZero(0.0001))		return;
 		if (GetCharacterMovement()->IsFalling())	return;
+		bCanDodge = false;
 		bIsDodging = true;
+		bCanJump = false;
 
 		FVector DirWannaGo = GetActorForwardVector() * Vec.X + GetActorRightVector() * Vec.Y;
 		float Direction = mAnimInstance->CalculateDirection(DirWannaGo, GetActorRotation());
@@ -237,6 +239,7 @@ void ABasicCharacter::Arm()
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
 	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
+	SetAttackEnable(false);
 }
 
 void ABasicCharacter::Unarm()
@@ -244,6 +247,7 @@ void ABasicCharacter::Unarm()
 	SetState(EPlayerState::UnArmed);
 	bUseControllerRotationYaw = false;
 	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
+	mCurrentAttack = TEXT("Idle");
 }
 
 void ABasicCharacter::Attack(bool IsWeak)
@@ -254,13 +258,18 @@ void ABasicCharacter::Attack(bool IsWeak)
 		return;
 	}
 	if (EPlayerState::Armed != mState)	return;
-	if (!bCanAttack)	return;
-
+	if (!bCanAttack || bIsDodging)	return;
 	if (GetCharacterMovement()->IsFalling())
 	{
-		mAnimInstance->PlayMontage(TEXT("Attack"), IsWeak ? TEXT("WA") : TEXT("SA"));
+		mAnimInstance->PlayMontage(TEXT("Attack"), TEXT("Air"));
+		bCanAttack = false;
+		bCanJump = false;
 		return;
 	}
+	if (GetCharacterMovement()->IsFalling())	return;
+
+	bCanAttack = false;
+	bCanJump = false;
 
 	FString NextAttack = mAnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
 	if (!NextAttack.Compare(TEXT(""))) return;
@@ -270,8 +279,6 @@ void ABasicCharacter::Attack(bool IsWeak)
 	//UE_LOG(LogTemp, Warning, TEXT("%s"), *NextAttack);
 	mAnimInstance->PlayMontage(TEXT("Attack"), *NextAttack);
 	mCurrentAttack = NextAttack;
-	bCanJump = false;
-	bCanAttack = false;
 }
 
 void ABasicCharacter::SetState(EPlayerState State)

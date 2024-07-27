@@ -50,6 +50,9 @@ public:
 
 private:
 	UFUNCTION()
+	void AnimNotify_AttackEnable();
+
+	UFUNCTION()
 	void AnimNotify_AttackStart();
 
 	UFUNCTION()

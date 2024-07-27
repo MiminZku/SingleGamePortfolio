@@ -47,7 +47,7 @@ protected:
 
 public:
 	void SetState(EPlayerState State);
-	void SetIsDodging(bool b) { bIsDodging = b; }
+	void SetDodgeEnable(bool b) { bCanDodge = b; bIsDodging = !b; }
 	void SetAttackEnable(bool Enable) { bCanAttack = Enable; }
 	void SetJumpEnable(bool Enable) { bCanJump = Enable; }
 	void SetCurrnetAttack(const FString& String) { mCurrentAttack = String; }
@@ -70,6 +70,8 @@ protected:
 	float mWalkSpeed = 300.f;
 
 	bool bIsDodging = false;
+
+	bool bCanDodge = true;
 
 	bool bCanAttack = true;
 
