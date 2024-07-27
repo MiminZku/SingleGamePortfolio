@@ -109,10 +109,17 @@ void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterru
 	}
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_AttackEnable()
+void UPlayerDefaultAnimTemplate::AnimNotify_GrabWeapon()
 {
 	if (!mOwningCharacter)	return;
 	mOwningCharacter->SetAttackEnable(true);
+	mOwningCharacter->GrabWeapon();
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_Holster()
+{
+	if (!mOwningCharacter)	return;
+	mOwningCharacter->HolsterWeapon();
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_AttackStart()

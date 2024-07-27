@@ -10,6 +10,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Item/PlayerWeapon.h"
 
 // Sets default values
 ABasicCharacter::ABasicCharacter()
@@ -279,6 +280,25 @@ void ABasicCharacter::Attack(bool IsWeak)
 	//UE_LOG(LogTemp, Warning, TEXT("%s"), *NextAttack);
 	mAnimInstance->PlayMontage(TEXT("Attack"), *NextAttack);
 	mCurrentAttack = NextAttack;
+}
+
+void ABasicCharacter::GrabWeapon()
+{
+
+}
+
+void ABasicCharacter::HolsterWeapon()
+{
+
+}
+
+void ABasicCharacter::PickWeaponUp(APlayerWeapon* Weapon)
+{
+	SetHasWeapon(true);
+	mWeapon = Weapon;
+	mWeapon->AttachToComponent(GetMesh(),
+		FAttachmentTransformRules::SnapToTargetIncludingScale,
+		TEXT("unequiped_weapon"));
 }
 
 void ABasicCharacter::SetState(EPlayerState State)

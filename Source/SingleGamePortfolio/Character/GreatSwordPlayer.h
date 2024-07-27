@@ -34,7 +34,11 @@ public:
 protected:
 	virtual void Arm() override;
 	virtual void Unarm() override;
-	virtual void Attack(bool IsWeak);
+	virtual void Attack(bool IsWeak) override;
+
+public:
+	virtual void GrabWeapon() override;
+	virtual void HolsterWeapon() override;
 
 private:
 

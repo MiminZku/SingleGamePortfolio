@@ -11,6 +11,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UPlayerDefaultAnimTemplate;
 struct FInputActionValue;
+class APlayerWeapon;
 
 UCLASS()
 class SINGLEGAMEPORTFOLIO_API ABasicCharacter : public ACharacter
@@ -46,13 +47,20 @@ protected:
 	virtual void Attack(bool IsWeak);
 
 public:
+	virtual void GrabWeapon();
+	virtual void HolsterWeapon();
+
+	void PickWeaponUp(APlayerWeapon* Weapon);
+
 	void SetState(EPlayerState State);
 	void SetDodgeEnable(bool b) { bCanDodge = b; bIsDodging = !b; }
 	void SetAttackEnable(bool Enable) { bCanAttack = Enable; }
 	void SetJumpEnable(bool Enable) { bCanJump = Enable; }
 	void SetCurrnetAttack(const FString& String) { mCurrentAttack = String; }
+	void SetHasWeapon(bool b) { bHasWeapon = b; }
 
-	FVector GetMoveVector() { return mMoveVector; }
+	FVector GetMoveVector() const { return mMoveVector; }
+	bool HasWeapon() const { return bHasWeapon; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -77,7 +85,12 @@ protected:
 
 	bool bCanJump = true;
 
+	bool bHasWeapon = false;
+
 	FString mCurrentAttack = TEXT("Idle");
+
+	UPROPERTY()
+	APlayerWeapon* mWeapon = nullptr;
 
 private:
 	struct FEnhancedInputActionValueBinding* mMoveActionBinding;

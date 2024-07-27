@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerDefaultAnimTemplate.h"
+#include "../Item/PlayerWeapon.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
 {
@@ -21,6 +22,7 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 	GetMesh()->bReceivesDecals = false;
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance>
 		AnimClass(TEXT("/Script/Engine.AnimBlueprint'/Game/_Programming/Character/Hercules/ABP_Hercules.ABP_Hercules_C'"));
@@ -67,6 +69,12 @@ float AGreatSwordPlayer::TakeDamage(float DamageAmount,
 
 void AGreatSwordPlayer::Arm()
 {
+	if (!bHasWeapon)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red,
+			TEXT("Pick up your weapon!"));
+		return;
+	}
 	Super::Arm();
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 }
@@ -80,4 +88,21 @@ void AGreatSwordPlayer::Attack(bool IsWeak)
 {
 	Super::Attack(IsWeak);
 }
+
+void AGreatSwordPlayer::GrabWeapon()
+{
+	Super::GrabWeapon();
+	mWeapon->AttachToComponent(GetMesh(),
+		FAttachmentTransformRules::SnapToTargetIncludingScale,
+		TEXT("hand_r_weapon"));
+}
+
+void AGreatSwordPlayer::HolsterWeapon()
+{
+	Super::HolsterWeapon();
+	mWeapon->AttachToComponent(GetMesh(),
+		FAttachmentTransformRules::SnapToTargetIncludingScale,
+		TEXT("unequiped_weapon"));
+}
+
 

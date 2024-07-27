@@ -50,7 +50,10 @@ public:
 
 private:
 	UFUNCTION()
-	void AnimNotify_AttackEnable();
+	void AnimNotify_GrabWeapon();
+
+	UFUNCTION()
+	void AnimNotify_Holster();
 
 	UFUNCTION()
 	void AnimNotify_AttackStart();
