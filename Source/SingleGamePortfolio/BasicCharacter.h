@@ -43,14 +43,15 @@ protected:
 	void ArmUnarm(const FInputActionValue& Value);
 	virtual void Arm();
 	virtual void Unarm();
-	virtual void AttackWeak();
-	virtual void AttackStrong();
-	virtual FName GetNextAttackSectionName(int32 Index);
-
-	void SetState(EPlayerState State);
+	virtual void Attack(bool IsWeak);
 
 public:
+	void SetState(EPlayerState State);
 	void SetIsDodging(bool b) { bIsDodging = b; }
+	void SetAttackEnable(bool Enable) { bCanAttack = Enable; }
+	void SetJumpEnable(bool Enable) { bCanJump = Enable; }
+	void SetCurrnetAttack(const FString& String) { mCurrentAttack = String; }
+
 	FVector GetMoveVector() { return mMoveVector; }
 
 protected:
@@ -74,5 +75,8 @@ protected:
 
 	bool bCanJump = true;
 
-	int32 mCurrentCombo = 0;
+	FString mCurrentAttack = TEXT("Idle");
+
+private:
+	struct FEnhancedInputActionValueBinding* mMoveActionBinding;
 };

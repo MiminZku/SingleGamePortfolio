@@ -6,6 +6,18 @@
 #include "Engine/GameInstance.h"
 #include "MyGameInstance.generated.h"
 
+USTRUCT(BlueprintType)
+struct FNextAttack
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString WeakAttack;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString StrongAttack;
+};
+
 USTRUCT()
 struct FPlayerAnimData : public FTableRowBase
 {
@@ -19,6 +31,9 @@ struct FPlayerAnimData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FString, UAnimMontage*> mMontageMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FString, FNextAttack> mComboMap;
 };
 
 UCLASS()

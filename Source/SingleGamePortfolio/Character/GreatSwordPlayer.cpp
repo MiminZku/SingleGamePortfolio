@@ -14,13 +14,13 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 	{
 		GetMesh()->SetSkeletalMeshAsset(MeshAsset.Object);
 	}
-	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -97.f));
+	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -95.f));
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetRelativeScale3D(FVector(1.25f, 1.25f, 1.25f));
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->bReceivesDecals = false;
 
-	GetCapsuleComponent()->SetCapsuleHalfHeight(97.f);
+	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance>
 		AnimClass(TEXT("/Script/Engine.AnimBlueprint'/Game/_Programming/Character/Hercules/ABP_Hercules.ABP_Hercules_C'"));
@@ -76,15 +76,8 @@ void AGreatSwordPlayer::Unarm()
 	Super::Unarm();
 }
 
-void AGreatSwordPlayer::AttackWeak()
+void AGreatSwordPlayer::Attack(bool IsWeak)
 {
-	Super::AttackWeak();
-	mAnimInstance->PlayMontage(TEXT("Attack"), GetNextAttackSection());
+	Super::Attack(IsWeak);
 }
-
-void AGreatSwordPlayer::AttackStrong()
-{
-	Super::AttackStrong();
-}
-
 

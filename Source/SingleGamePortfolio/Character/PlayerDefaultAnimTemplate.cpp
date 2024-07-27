@@ -3,7 +3,6 @@
 
 #include "PlayerDefaultAnimTemplate.h"
 #include "Kismet/GameplayStatics.h"
-#include "../MyGameInstance.h"
 #include "../BasicCharacter.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -56,6 +55,7 @@ void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
 			mSequenceMap = AnimData->mSequenceMap;
 			mBlendSpaceMap = AnimData->mBlendSpaceMap;
 			mMontageMap = AnimData->mMontageMap;
+			mComboMap = AnimData->mComboMap;
 		}
 	}
 }
@@ -63,21 +63,85 @@ void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
 void UPlayerDefaultAnimTemplate::PlayMontage(const FString& Name, const FName& SectionName)
 {
 	UAnimMontage** Montage = mMontageMap.Find(Name);
+	if (Montage_IsPlaying(*Montage) && 
+		!SectionName.Compare(Montage_GetCurrentSection()))	return;
 	if (Montage)
 	{
 		Montage_Play(*Montage);
 		Montage_JumpToSection(SectionName);
-
 	}
+}
+
+FString UPlayerDefaultAnimTemplate::GetNextAttackSection(const FString& CurrnetAttackName, bool IsWeak)
+{
+	FNextAttack* NextAttack = mComboMap.Find(CurrnetAttackName);
+	if (NextAttack)
+	{
+		if (IsWeak)	return NextAttack->WeakAttack;
+		else		return NextAttack->StrongAttack;
+	}
+	return TEXT("");
 }
 
 void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 {
+	if (!IsValid(mOwningCharacter))	return;
 	if (*mMontageMap.Find(TEXT("Dash")) == Montage)
 	{
-		if (IsValid(mOwningCharacter))
-		{
-			mOwningCharacter->SetIsDodging(false);
-		}
+		mOwningCharacter->SetIsDodging(false);
+		mOwningCharacter->SetAttackEnable(true);
+		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
+		mOwningCharacter->SetJumpEnable(true);
+		return;
 	}
+	if (*mMontageMap.Find(TEXT("Attack")) == Montage && !bInterrupted)
+	{
+		mOwningCharacter->SetAttackEnable(true);
+		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
+		return;
+	}
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_AttackStart()
+{
+
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_AttackEnd()
+{
+	if (!IsValid(mOwningCharacter))	return;
+
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()
+{
+	if (!IsValid(mOwningCharacter))	return;
+	mOwningCharacter->SetAttackEnable(true);
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_ComboDisable()
+{
+	if (!IsValid(mOwningCharacter))	return;
+	mOwningCharacter->SetAttackEnable(false);
+	mOwningCharacter->SetJumpEnable(true);
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnd()
+{
+	if (!IsValid(mOwningCharacter))	return;
+	mOwningCharacter->SetAttackEnable(true);
+	mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
+	mOwningCharacter->SetJumpEnable(true);
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_Jump()
+{
+	if (!IsValid(mOwningCharacter))	return;
+	mOwningCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+}
+
+void UPlayerDefaultAnimTemplate::AnimNotify_Walk()
+{
+	if (!IsValid(mOwningCharacter))	return;
+	mOwningCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 }

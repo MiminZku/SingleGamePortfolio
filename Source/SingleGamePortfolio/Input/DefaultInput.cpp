@@ -49,7 +49,7 @@ UDefaultInput::UDefaultInput()
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UInputAction>
-			Asset(TEXT("/Script/EnhancedInput.InputAction'/Game/_Programming/Input/DefaultInput/IA_WeakAttack.IA_WeakAttack'"));
+			Asset(TEXT("/Script/EnhancedInput.InputAction'/Game/_Programming/Input/DefaultInput/IA_StrongAttack.IA_StrongAttack'"));
 		if (Asset.Succeeded())
 		{
 			mStrongAttackAction = Asset.Object;

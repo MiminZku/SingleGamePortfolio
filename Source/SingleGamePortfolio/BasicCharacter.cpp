@@ -14,7 +14,7 @@
 // Sets default values
 ABasicCharacter::ABasicCharacter()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
@@ -52,7 +52,7 @@ ABasicCharacter::ABasicCharacter()
 void ABasicCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -90,11 +90,12 @@ void ABasicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		// Moving
 		EnhancedInputComponent->BindAction(InputData->GetMoveInputAction(),
 			ETriggerEvent::Triggered, this, &ABasicCharacter::Move);
+		mMoveActionBinding = &EnhancedInputComponent->BindActionValue(InputData->GetMoveInputAction());
 
 		// Looking
 		EnhancedInputComponent->BindAction(InputData->GetLookInputAction(),
 			ETriggerEvent::Triggered, this, &ABasicCharacter::Look);
-		
+
 		// Jumping
 		EnhancedInputComponent->BindAction(InputData->GetJumpInputAction(),
 			ETriggerEvent::Started, this, &ABasicCharacter::Jump);
@@ -161,18 +162,18 @@ void ABasicCharacter::Look(const FInputActionValue& Value)
 
 void ABasicCharacter::Jump(const FInputActionValue& Value)
 {
-	if (!bCanJump) false;
+	if (!bCanJump) return;
 	ACharacter::Jump();
 }
 
 void ABasicCharacter::WeakAttack(const FInputActionValue& Value)
 {
-	AttackWeak();
+	Attack(true);
 }
 
 void ABasicCharacter::StrongAttack(const FInputActionValue& Value)
 {
-	AttackStrong();
+	Attack(false);
 }
 
 void ABasicCharacter::Dash(const FInputActionValue& Value)
@@ -180,29 +181,28 @@ void ABasicCharacter::Dash(const FInputActionValue& Value)
 	if (EPlayerState::Armed == mState)
 	{
 		if (bIsDodging)	return;
-		if (GetVelocity().IsNearlyZero(0.0001))		return;
+		FVector Vec = mMoveActionBinding->GetValue().Get<FVector>();
+		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, Vec.ToString());
+		if (Vec.IsNearlyZero(0.0001))		return;
 		if (GetCharacterMovement()->IsFalling())	return;
 		bIsDodging = true;
 
-		float Direction = mAnimInstance->CalculateDirection(GetVelocity(), GetActorRotation());
+		FVector DirWannaGo = GetActorForwardVector() * Vec.X + GetActorRightVector() * Vec.Y;
+		float Direction = mAnimInstance->CalculateDirection(DirWannaGo, GetActorRotation());
 		int32 Option = FMath::Floor(int(Direction + 495) % 360 / 90);
 		switch (Option)
 		{
 		case 0:
 			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("L"));
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash L"));
 			break;
 		case 1:
 			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("F"));
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash F"));
 			break;
 		case 2:
 			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("R"));
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash R"));
 			break;
 		case 3:
 			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("B"));
-			if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, TEXT("Dash B"));
 			break;
 		default:
 			break;
@@ -246,7 +246,7 @@ void ABasicCharacter::Unarm()
 	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
 }
 
-void ABasicCharacter::AttackWeak()
+void ABasicCharacter::Attack(bool IsWeak)
 {
 	if (EPlayerState::UnArmed == mState)
 	{
@@ -255,24 +255,23 @@ void ABasicCharacter::AttackWeak()
 	}
 	if (EPlayerState::Armed != mState)	return;
 	if (!bCanAttack)	return;
-	bCanAttack = false;
-}
 
-void ABasicCharacter::AttackStrong()
-{
-	if (EPlayerState::UnArmed == mState)
+	if (GetCharacterMovement()->IsFalling())
 	{
-		Arm();
+		mAnimInstance->PlayMontage(TEXT("Attack"), IsWeak ? TEXT("WA") : TEXT("SA"));
 		return;
 	}
-	if (EPlayerState::Armed != mState)	return;
-	if (!bCanAttack)	return;
-	bCanAttack = false;
-}
 
-FName ABasicCharacter::GetNextAttackSectionName(int32 Index)
-{
-	return FName();
+	FString NextAttack = mAnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
+	if (!NextAttack.Compare(TEXT(""))) return;
+
+	//if (GEngine)	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue,
+	//	*NextAttack);
+	//UE_LOG(LogTemp, Warning, TEXT("%s"), *NextAttack);
+	mAnimInstance->PlayMontage(TEXT("Attack"), *NextAttack);
+	mCurrentAttack = NextAttack;
+	bCanJump = false;
+	bCanAttack = false;
 }
 
 void ABasicCharacter::SetState(EPlayerState State)

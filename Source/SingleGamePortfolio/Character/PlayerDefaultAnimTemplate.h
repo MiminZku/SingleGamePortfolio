@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "../MyGameInstance.h"
 #include "PlayerDefaultAnimTemplate.generated.h"
 
 class ABasicCharacter;
@@ -40,24 +41,50 @@ public:
 	}
 	void SetAnimData(const FName& Name);
 	void PlayMontage(const FString& Name, const FName& SectionName);
+	FString GetNextAttackSection(const FString& CurrnetAttackName, bool IsWeak);
 
 	void SetState(EPlayerState State) { mCurrentState = State; }
 
 	UFUNCTION()
 	void MontageEnd(UAnimMontage* Montage, bool bInterrupted);
+
+private:
+	UFUNCTION()
+	void AnimNotify_AttackStart();
+
+	UFUNCTION()
+	void AnimNotify_AttackEnd();
+
+	UFUNCTION()
+	void AnimNotify_ComboEnable();
+
+	UFUNCTION()
+	void AnimNotify_ComboDisable();
+
+	UFUNCTION()
+	void AnimNotify_ComboEnd();
+
+	UFUNCTION()
+	void AnimNotify_Jump();
+
+	UFUNCTION()
+	void AnimNotify_Walk();
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	ABasicCharacter* mOwningCharacter;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TMap<FString, UAnimSequence*> mSequenceMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TMap<FString, UBlendSpace*> mBlendSpaceMap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TMap<FString, UAnimMontage*> mMontageMap;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	TMap<FString, FNextAttack> mComboMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EPlayerState mCurrentState = EPlayerState::UnArmed;
