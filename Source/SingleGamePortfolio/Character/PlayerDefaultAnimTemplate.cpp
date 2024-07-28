@@ -122,16 +122,6 @@ void UPlayerDefaultAnimTemplate::AnimNotify_Holster()
 	mOwningCharacter->HolsterWeapon();
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_AttackStart()
-{
-
-}
-
-void UPlayerDefaultAnimTemplate::AnimNotify_AttackEnd()
-{
-
-}
-
 void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()
 {
 	if (!IsValid(mOwningCharacter))	return;
@@ -149,8 +139,6 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboDisable()
 void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnd()
 {
 	if (!IsValid(mOwningCharacter))	return;
-	mOwningCharacter->SetAttackEnable(true);
-	mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 	mOwningCharacter->SetJumpEnable(true);
 	mOwningCharacter->SetDodgeEnable(true);
 }

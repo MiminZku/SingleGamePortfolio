@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Character/PlayerDefaultAnimTemplate.h"
+#include "Interface/NormalAttackInterface.h"
 #include "BasicCharacter.generated.h"
 
 class USpringArmComponent;
@@ -14,7 +15,7 @@ struct FInputActionValue;
 class APlayerWeapon;
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API ABasicCharacter : public ACharacter
+class SINGLEGAMEPORTFOLIO_API ABasicCharacter : public ACharacter, public INormalAttackInterface
 {
 	GENERATED_BODY()
 
@@ -49,8 +50,11 @@ protected:
 public:
 	virtual void GrabWeapon();
 	virtual void HolsterWeapon();
+	virtual void AttackCollisionCheck() override;
 
 	void PickWeaponUp(APlayerWeapon* Weapon);
+	void ResetAttackedCharacters();
+
 
 	void SetState(EPlayerState State);
 	void SetDodgeEnable(bool b) { bCanDodge = b; bIsDodging = !b; }
@@ -58,9 +62,11 @@ public:
 	void SetJumpEnable(bool Enable) { bCanJump = Enable; }
 	void SetCurrnetAttack(const FString& String) { mCurrentAttack = String; }
 	void SetHasWeapon(bool b) { bHasWeapon = b; }
+	void SetDamaged(bool Enable) { bDamaged = Enable; }
 
-	FVector GetMoveVector() const { return mMoveVector; }
 	bool HasWeapon() const { return bHasWeapon; }
+	FVector GetMoveVector() const { return mMoveVector; }
+	APlayerWeapon* GetWeapon() { return mWeapon; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -87,10 +93,14 @@ protected:
 
 	bool bHasWeapon = false;
 
+	bool bDamaged = false;
+
 	FString mCurrentAttack = TEXT("Idle");
 
 	UPROPERTY()
 	APlayerWeapon* mWeapon = nullptr;
+
+	TArray<INormalAttackInterface*> mAttackedCharacters;
 
 private:
 	struct FEnhancedInputActionValueBinding* mMoveActionBinding;

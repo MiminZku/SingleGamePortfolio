@@ -56,12 +56,6 @@ private:
 	void AnimNotify_Holster();
 
 	UFUNCTION()
-	void AnimNotify_AttackStart();
-
-	UFUNCTION()
-	void AnimNotify_AttackEnd();
-
-	UFUNCTION()
 	void AnimNotify_ComboEnable();
 
 	UFUNCTION()

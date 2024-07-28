@@ -32,10 +32,28 @@ protected:
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 		const FHitResult& SweepResult);
 
+public:
+	FVector GetCollisionStartPos() { return mCollisionStartPos->GetComponentLocation(); }
+	FVector GetCollisonEndPos() { return mCollisionEndPos->GetComponentLocation();}
+	float GetCollisionRadius() 
+	{ 
+		return (mCollisionRadius->GetComponentLocation() -
+			mCollisionStartPos->GetComponentLocation()).Length();
+	}
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* mMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USphereComponent* mTrigger;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* mCollisionStartPos = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* mCollisionEndPos = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* mCollisionRadius = nullptr;
 };

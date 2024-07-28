@@ -16,6 +16,15 @@ APlayerWeapon::APlayerWeapon()
 	mMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 	mMesh->SetupAttachment(mTrigger);
 	mMesh->SetCollisionProfileName(TEXT("NoCollision"));
+
+	mCollisionStartPos = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionStartPos"));
+	mCollisionStartPos->SetupAttachment(mMesh);
+
+	mCollisionEndPos = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionEndPos"));
+	mCollisionEndPos->SetupAttachment(mMesh);
+
+	mCollisionRadius = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionRadius"));
+	mCollisionRadius->SetupAttachment(mMesh);
 }
 
 void APlayerWeapon::PostInitializeComponents()

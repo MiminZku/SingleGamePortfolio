@@ -10,6 +10,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Item/PlayerWeapon.h"
 
 // Sets default values
@@ -41,12 +42,15 @@ ABasicCharacter::ABasicCharacter()
 	mCameraArm->SetupAttachment(RootComponent);
 	mCameraArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	mCameraArm->bUsePawnControlRotation = true; // Rotate the arm based on the controller
+	mCameraArm->bEnableCameraLag = true;
+	mCameraArm->CameraLagSpeed = 1.f;
 
 	// Create a follow camera
 	mCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	mCamera->SetupAttachment(mCameraArm); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	mCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
 }
 
 // Called when the game starts or when spawned
@@ -282,14 +286,18 @@ void ABasicCharacter::Attack(bool IsWeak)
 	mCurrentAttack = NextAttack;
 }
 
+void ABasicCharacter::AttackCollisionCheck()
+{
+	APlayerWeapon* Weapon = GetWeapon();
+	if (!Weapon)	return;
+}
+
 void ABasicCharacter::GrabWeapon()
 {
-
 }
 
 void ABasicCharacter::HolsterWeapon()
 {
-
 }
 
 void ABasicCharacter::PickWeaponUp(APlayerWeapon* Weapon)
@@ -299,6 +307,15 @@ void ABasicCharacter::PickWeaponUp(APlayerWeapon* Weapon)
 	mWeapon->AttachToComponent(GetMesh(),
 		FAttachmentTransformRules::SnapToTargetIncludingScale,
 		TEXT("unequiped_weapon"));
+}
+
+void ABasicCharacter::ResetAttackedCharacters()
+{
+	for (INormalAttackInterface* AttackedCharacter : mAttackedCharacters)
+	{
+		AttackedCharacter->SetDamaged(false);
+	}
+	mAttackedCharacters.Empty();
 }
 
 void ABasicCharacter::SetState(EPlayerState State)

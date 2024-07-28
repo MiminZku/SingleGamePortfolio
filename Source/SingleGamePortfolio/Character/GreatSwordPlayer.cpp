@@ -22,7 +22,6 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 	GetMesh()->bReceivesDecals = false;
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
 
 	static ConstructorHelpers::FClassFinder<UAnimInstance>
 		AnimClass(TEXT("/Script/Engine.AnimBlueprint'/Game/_Programming/Character/Hercules/ABP_Hercules.ABP_Hercules_C'"));
@@ -103,6 +102,47 @@ void AGreatSwordPlayer::HolsterWeapon()
 	mWeapon->AttachToComponent(GetMesh(),
 		FAttachmentTransformRules::SnapToTargetIncludingScale,
 		TEXT("unequiped_weapon"));
+}
+
+void AGreatSwordPlayer::AttackCollisionCheck()
+{
+	Super::AttackCollisionCheck();
+
+	FVector Start = mWeapon->GetCollisionStartPos();
+	FVector End = mWeapon->GetCollisonEndPos();
+	float Radius = mWeapon->GetCollisionRadius();
+
+	FCollisionQueryParams Params;
+	TArray<FHitResult> HitResults;
+	bool Collision = GetWorld()->SweepMultiByChannel(HitResults,
+		Start, End, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(Radius), Params);
+
+	if (Collision)
+	{
+		for (const FHitResult& HitResult : HitResults)
+		{
+			INormalAttackInterface* AttackedCharacter = Cast<INormalAttackInterface>(HitResult.GetActor());
+			if (AttackedCharacter)
+			{
+				if (AttackedCharacter->IsDamaged())	continue;
+				AttackedCharacter->SetDamaged(true);
+				mAttackedCharacters.Add(AttackedCharacter);
+				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
+					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
+			}
+		}
+	}
+
+#if ENABLE_DRAW_DEBUG
+	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
+	const float CapsuleHalfHeight = (End - Start).Length() * 0.5f;
+	FColor DrawColor = Collision ? FColor::Green : FColor::Red;
+
+	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight,
+		Radius, FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
+		DrawColor, false, 1.f);
+#endif
 }
 
 
