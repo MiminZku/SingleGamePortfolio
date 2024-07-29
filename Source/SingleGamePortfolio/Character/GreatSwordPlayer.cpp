@@ -49,6 +49,7 @@ void AGreatSwordPlayer::BeginPlay()
 void AGreatSwordPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//AttackCollisionCheck();
 }
 
 void AGreatSwordPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -108,15 +109,26 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 {
 	Super::AttackCollisionCheck();
 
+	APlayerWeapon* Weapon = GetWeapon();
+	if (!Weapon)	return;
+
 	FVector Start = mWeapon->GetCollisionStartPos();
 	FVector End = mWeapon->GetCollisonEndPos();
-	float Radius = mWeapon->GetCollisionRadius();
+	FVector RadiusPos = mWeapon->GetCollisionRadiusPos();
+	float Radius = (Start - RadiusPos).Length();
+	FVector SwordVec = End - Start;
+	SwordVec.Normalize();
+	Start += SwordVec * Radius;
+	End -= SwordVec * Radius;
 
-	FCollisionQueryParams Params;
+	FCollisionQueryParams Params(TEXT("Player Attack"), false, this);
 	TArray<FHitResult> HitResults;
 	bool Collision = GetWorld()->SweepMultiByChannel(HitResults,
 		Start, End, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel3,
-		FCollisionShape::MakeSphere(Radius), Params);
+		 //FCollisionShape::MakeSphere(Radius),
+		FCollisionShape::MakeBox(
+		FVector()),
+		Params);
 
 	if (Collision)
 	{
@@ -135,13 +147,18 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 	}
 
 #if ENABLE_DRAW_DEBUG
-	FVector CapsuleOrigin = Start + (End - Start) * 0.5f;
-	const float CapsuleHalfHeight = (End - Start).Length() * 0.5f;
 	FColor DrawColor = Collision ? FColor::Green : FColor::Red;
-
-	DrawDebugCapsule(GetWorld(), CapsuleOrigin, CapsuleHalfHeight,
+	FVector Origin = Start + (End - Start) * 0.5f;
+	const float CapsuleHalfHeight = (End - Start).Length() * 0.5f + Radius;
+	
+	DrawDebugCapsule(GetWorld(), Origin, CapsuleHalfHeight,
 		Radius, FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
-		DrawColor, false, 1.f);
+		DrawColor, false, 0.1f);
+
+	//DrawDebugBox(GetWorld(), Origin, 
+	//	FVector(Radius, Radius, (Origin - Start).Length()),
+	//	FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
+	//	DrawColor, false, 1.f);
 #endif
 }
 

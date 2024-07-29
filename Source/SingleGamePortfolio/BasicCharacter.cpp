@@ -43,7 +43,7 @@ ABasicCharacter::ABasicCharacter()
 	mCameraArm->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
 	mCameraArm->bUsePawnControlRotation = true; // Rotate the arm based on the controller
 	mCameraArm->bEnableCameraLag = true;
-	mCameraArm->CameraLagSpeed = 1.f;
+	mCameraArm->CameraLagSpeed = 10.f;
 
 	// Create a follow camera
 	mCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -288,8 +288,6 @@ void ABasicCharacter::Attack(bool IsWeak)
 
 void ABasicCharacter::AttackCollisionCheck()
 {
-	APlayerWeapon* Weapon = GetWeapon();
-	if (!Weapon)	return;
 }
 
 void ABasicCharacter::GrabWeapon()

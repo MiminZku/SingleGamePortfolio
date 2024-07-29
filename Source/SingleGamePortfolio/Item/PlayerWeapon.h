@@ -35,11 +35,7 @@ protected:
 public:
 	FVector GetCollisionStartPos() { return mCollisionStartPos->GetComponentLocation(); }
 	FVector GetCollisonEndPos() { return mCollisionEndPos->GetComponentLocation();}
-	float GetCollisionRadius() 
-	{ 
-		return (mCollisionRadius->GetComponentLocation() -
-			mCollisionStartPos->GetComponentLocation()).Length();
-	}
+	FVector GetCollisionRadiusPos()	{ return mCollisionRadius->GetComponentLocation();}
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

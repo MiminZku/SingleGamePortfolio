@@ -4,6 +4,7 @@
 #include "PlayerWeapon.h"
 #include "../BasicCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 
 APlayerWeapon::APlayerWeapon()
 {
