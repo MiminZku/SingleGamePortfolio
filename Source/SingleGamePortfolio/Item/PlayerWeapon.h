@@ -37,6 +37,10 @@ public:
 	FVector GetCollisonEndPos() { return mCollisionEndPos->GetComponentLocation();}
 	FVector GetCollisionRadiusPos()	{ return mCollisionRadius->GetComponentLocation();}
 
+	FVector GetPrevCollisionPos() { return mPrevCollisionPos; }
+
+	void SetPrevCollisionPos(const FVector& Vec) {	mPrevCollisionPos = Vec; }
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMeshComponent* mMesh;
@@ -52,4 +56,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* mCollisionRadius = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector mPrevCollisionPos = FVector::ZeroVector;
 };

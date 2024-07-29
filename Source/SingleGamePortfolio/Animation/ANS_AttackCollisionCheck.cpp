@@ -15,6 +15,9 @@ void UANS_AttackCollisionCheck::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	if (Player)
 	{
 		mOwningCharacter = Player;
+		APlayerWeapon* PlayerWeapon = mOwningCharacter->GetWeapon();
+		PlayerWeapon->SetPrevCollisionPos
+		((PlayerWeapon->GetCollisonEndPos() + PlayerWeapon->GetCollisionStartPos()) * 0.5f);
 	}
 }
 
@@ -26,7 +29,7 @@ void UANS_AttackCollisionCheck::NotifyTick(USkeletalMeshComponent* MeshComp,
 
 	if (mOwningCharacter)
 	{
-		mOwningCharacter->AttackCollisionCheck();
+		//mOwningCharacter->AttackCollisionCheck();
 	}
 }
 
