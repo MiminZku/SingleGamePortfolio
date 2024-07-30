@@ -13,6 +13,16 @@ class UNormalAttackInterface : public UInterface
 	GENERATED_BODY()
 };
 
+UENUM(BlueprintType)
+enum class EAttackType : uint8
+{
+	Default,
+	Airborn,
+	Knockback,
+	KnockDown,
+	Slow,
+	Stun
+};
 /**
  * 
  */
@@ -27,6 +37,10 @@ public:
 	void SetDamaged(bool b) { bDamaged = b; }
 
 	bool IsDamaged() { return bDamaged; }
+
+	//virtual void Attacked(float DamageAmount,struct FDamageEvent const& DamageEvent,
+	//	class AController* EventInstigator, AActor* DamageCauser,
+	//	FVector AttackedPos, EAttackType AttackType) abstract;
 
 private:
 	bool bDamaged = false;

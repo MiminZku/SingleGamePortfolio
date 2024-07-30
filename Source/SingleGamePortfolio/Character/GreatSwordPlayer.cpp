@@ -111,10 +111,13 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 
 	APlayerWeapon* Weapon = GetWeapon();
 	if (!Weapon)	return;
+	
 	// 이전 프레임 검 중앙 위치
 	FVector Start = mWeapon->GetPrevCollisionPos();
 	// 현재 프레임 검 중앙 위치
 	FVector End = (mWeapon->GetCollisionStartPos() + mWeapon->GetCollisonEndPos()) * 0.5f;
+		
+	if (Start == End) return;
 
 	float Radius = (mWeapon->GetCollisionStartPos() - mWeapon->GetCollisionRadiusPos()).Length();
 	FVector Origin = (Start + End) * 0.5f;
@@ -122,7 +125,7 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 	FCollisionQueryParams Params(NAME_None, false, this);
 	TArray<FHitResult> HitResults;
 	bool Collision = GetWorld()->SweepMultiByChannel(HitResults,
-		Start, End, FRotationMatrix::MakeFromZ((End-Start)).ToQuat(),
+		Start, End, FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
 		ECollisionChannel::ECC_GameTraceChannel3,
 		FCollisionShape::MakeBox(
 		FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5f,
@@ -140,9 +143,13 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 				mAttackedCharacters.Add(AttackedCharacter);
 				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
+
+				//AttackedCharacter->Attacked();
+
 			}
 		}
 	}
+
 
 #if ENABLE_DRAW_DEBUG
 	FColor DrawColor = Collision ? FColor::Green : FColor::Red;
@@ -152,13 +159,12 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 	//	Radius, FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
 	//	DrawColor, false, 1);
 
-	if(End - Start != FVector::ZeroVector)
 	DrawDebugBox(GetWorld(), Origin,
 		//FVector(100.f, 50.f, 100.f),
 		FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5,
 			Radius, (Origin - Start).Length() + Radius),
-		FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
-		DrawColor, false, 3.f);
+		FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
+		DrawColor, false, 1.f);
 #endif
 	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
 	mWeapon->SetPrevCollisionPos

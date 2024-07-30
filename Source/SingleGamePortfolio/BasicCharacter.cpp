@@ -290,9 +290,6 @@ void ABasicCharacter::Attack(bool IsWeak)
 	FString NextAttack = mAnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
 	if (!NextAttack.Compare(TEXT(""))) return;
 
-	//if (GEngine)	GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue,
-	//	*NextAttack);
-	//UE_LOG(LogTemp, Warning, TEXT("%s"), *NextAttack);
 	mAnimInstance->PlayMontage(TEXT("Attack"), *NextAttack);
 	mCurrentAttack = NextAttack;
 }
