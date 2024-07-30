@@ -41,6 +41,14 @@ UDefaultInput::UDefaultInput()
 	}
 	{
 		static ConstructorHelpers::FObjectFinder<UInputAction>
+			Asset(TEXT("/Script/EnhancedInput.InputAction'/Game/_Programming/Input/DefaultInput/IA_Run.IA_Run'"));
+		if (Asset.Succeeded())
+		{
+			mRunAction = Asset.Object;
+		}
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction>
 			Asset(TEXT("/Script/EnhancedInput.InputAction'/Game/_Programming/Input/DefaultInput/IA_WeakAttack.IA_WeakAttack'"));
 		if (Asset.Succeeded())
 		{

@@ -38,10 +38,10 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
+	void Run(const FInputActionValue& Value);
 	void WeakAttack(const FInputActionValue& Value);
 	void StrongAttack(const FInputActionValue& Value);
 	void Dash(const FInputActionValue& Value);
-	void StopDash(const FInputActionValue& Value);
 	void ArmUnarm(const FInputActionValue& Value);
 	virtual void Arm();
 	virtual void Unarm();

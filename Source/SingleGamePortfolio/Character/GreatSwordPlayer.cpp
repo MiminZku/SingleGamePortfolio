@@ -44,51 +44,6 @@ void AGreatSwordPlayer::PostInitializeComponents()
 void AGreatSwordPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-
-	FVector Start = GetActorLocation(); // 시작 위치
-	FVector End = Start + FVector(100.f, 0.f, 50.f); // 끝 위치 (Z 값이 다름)
-	FQuat Rotation = FQuat::Identity; // 회전 값 (회전이 필요 없다면 Identity 사용)
-
-	// Box의 크기
-	FVector BoxExtent = FVector(50.f, 50.f, 50.f);
-
-	// Sweep 결과
-	FHitResult HitResult;
-
-	// Sweep을 수행
-	bool bHit = GetWorld()->SweepSingleByChannel(
-		HitResult,
-		Start,
-		End,
-		Rotation,
-		ECC_Visibility, // 사용할 채널
-		FCollisionShape::MakeBox(BoxExtent) // Box Collision Shape 생성
-	);
-
-	// 평행사변형 꼭짓점 계산
-	FVector Offset = FVector(0, 0, BoxExtent.Z);
-	FVector Point1 = Start - Offset;  // 시작점 아래쪽
-	FVector Point2 = Start + Offset;  // 시작점 위쪽
-	FVector Point3 = End - Offset;    // 끝점 아래쪽
-	FVector Point4 = End + Offset;    // 끝점 위쪽
-
-	// 평행사변형을 그리기
-	if (bHit)
-	{
-		// 충돌이 발생한 경우, 초록색 평행사변형
-		DrawDebugLine(GetWorld(), Point1, Point2, FColor::Green, true);
-		DrawDebugLine(GetWorld(), Point3, Point4, FColor::Green, true);
-		DrawDebugLine(GetWorld(), Point1, Point3, FColor::Green, true);
-		DrawDebugLine(GetWorld(), Point2, Point4, FColor::Green, true);
-	}
-	else
-	{
-		// 충돌이 발생하지 않은 경우, 빨간색 평행사변형
-		DrawDebugLine(GetWorld(), Point1, Point2, FColor::Red, true);
-		DrawDebugLine(GetWorld(), Point3, Point4, FColor::Red, true);
-		DrawDebugLine(GetWorld(), Point1, Point3, FColor::Red, true);
-		DrawDebugLine(GetWorld(), Point2, Point4, FColor::Red, true);
-	}
 }
 
 void AGreatSwordPlayer::Tick(float DeltaTime)
@@ -156,22 +111,19 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 
 	APlayerWeapon* Weapon = GetWeapon();
 	if (!Weapon)	return;
-
+	// 이전 프레임 검 중앙 위치
 	FVector Start = mWeapon->GetPrevCollisionPos();
-		//mWeapon->GetCollisionStartPos();
+	// 현재 프레임 검 중앙 위치
 	FVector End = (mWeapon->GetCollisionStartPos() + mWeapon->GetCollisonEndPos()) * 0.5f;
-		//mWeapon->GetCollisonEndPos();
-	float Radius = (Start - mWeapon->GetCollisionRadiusPos()).Length();
-	//FVector SwordVec = End - Start;
-	//SwordVec.Normalize();
-	//Start += SwordVec * Radius;
-	//End -= SwordVec * Radius;
+
+	float Radius = (mWeapon->GetCollisionStartPos() - mWeapon->GetCollisionRadiusPos()).Length();
+	FVector Origin = (Start + End) * 0.5f;
 
 	FCollisionQueryParams Params(NAME_None, false, this);
 	TArray<FHitResult> HitResults;
 	bool Collision = GetWorld()->SweepMultiByChannel(HitResults,
-		Start, End, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel3,
-		//FCollisionShape::MakeSphere(Radius),
+		Start, End, FRotationMatrix::MakeFromZ((End-Start)).ToQuat(),
+		ECollisionChannel::ECC_GameTraceChannel3,
 		FCollisionShape::MakeBox(
 		FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5f,
 			Radius, Radius)), Params);
@@ -194,22 +146,21 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 
 #if ENABLE_DRAW_DEBUG
 	FColor DrawColor = Collision ? FColor::Green : FColor::Red;
-	FVector Origin = (Start + End) * 0.5f;
 	//const float CapsuleHalfHeight = (End - Start).Length() * 0.5f + Radius;
-	
 
 	//DrawDebugCapsule(GetWorld(), Origin, CapsuleHalfHeight,
 	//	Radius, FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
 	//	DrawColor, false, 1);
 
 	if(End - Start != FVector::ZeroVector)
-	DrawDebugBox(GetWorld(), Origin, 
+	DrawDebugBox(GetWorld(), Origin,
+		//FVector(100.f, 50.f, 100.f),
 		FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5,
-			(Origin - Start).Length(), Radius),
+			Radius, (Origin - Start).Length() + Radius),
 		FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
-		//FQuat::Identity,
-		DrawColor, false, 1.f);
+		DrawColor, false, 3.f);
 #endif
+	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
 	mWeapon->SetPrevCollisionPos
 	((mWeapon->GetCollisonEndPos() + mWeapon->GetCollisionStartPos()) * 0.5f);
 }

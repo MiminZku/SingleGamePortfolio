@@ -22,6 +22,7 @@ public:
 	UInputAction* GetMoveInputAction() const { return mMoveAction; }
 	UInputAction* GetLookInputAction() const { return mLookAction; }
 	UInputAction* GetJumpInputAction() const { return mJumpAction; }
+	UInputAction* GetRunInputAction() const { return mRunAction; }
 	UInputAction* GetWeakAttackInputAction() const { return mWeakAttackAction; }
 	UInputAction* GetStrongAttackInpuAction() const { return mStrongAttackAction; }
 	UInputAction* GetDashInputAction() const { return mDashAction; }
@@ -33,6 +34,7 @@ private:
 	UInputAction* mMoveAction = nullptr;
 	UInputAction* mLookAction = nullptr;
 	UInputAction* mJumpAction = nullptr;
+	UInputAction* mRunAction = nullptr;
 	UInputAction* mWeakAttackAction = nullptr;
 	UInputAction* mStrongAttackAction = nullptr;
 	UInputAction* mDashAction = nullptr;

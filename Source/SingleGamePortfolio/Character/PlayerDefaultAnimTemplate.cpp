@@ -98,7 +98,7 @@ void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterru
 	{
 		if (bInterrupted)
 		{
-			//mOwningCharacter->SetDodgeEnable(true);
+			mOwningCharacter->SetJumpEnable(true);
 		}
 		else
 		{
@@ -106,6 +106,11 @@ void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterru
 			mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 		}
 		return;
+	}
+	if (*mMontageMap.Find(TEXT("ArmUnarm")) == Montage &&
+		Montage_GetCurrentSection() == TEXT("Unarm"))
+	{
+		bIsHolstering = false;
 	}
 }
 
@@ -120,6 +125,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_Holster()
 {
 	if (!mOwningCharacter)	return;
 	mOwningCharacter->HolsterWeapon();
+	bIsHolstering = true;
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()

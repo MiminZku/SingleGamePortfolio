@@ -106,4 +106,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float mWalkRight = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bIsHolstering = false;
 };

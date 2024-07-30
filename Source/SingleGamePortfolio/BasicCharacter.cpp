@@ -26,7 +26,7 @@ ABasicCharacter::ABasicCharacter()
 
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f); // ...at this rotation rate
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
@@ -67,6 +67,12 @@ void ABasicCharacter::Tick(float DeltaTime)
 
 	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Black,
 	//	GetVelocity().ToString());
+
+	// ¸ØÃß¸é ´Ù½Ã °È±â
+	if (GetVelocity().IsNearlyZero(0.01))
+	{
+		GetCharacterMovement()->MaxWalkSpeed = mWalkSpeed;
+	}
 }
 
 // Called to bind functionality to input
@@ -107,6 +113,10 @@ void ABasicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		EnhancedInputComponent->BindAction(InputData->GetJumpInputAction(),
 			ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
+		// Running
+		EnhancedInputComponent->BindAction(InputData->GetRunInputAction(),
+			ETriggerEvent::Started, this, &ABasicCharacter::Run);
+
 		// Attacking
 		EnhancedInputComponent->BindAction(InputData->GetWeakAttackInputAction(),
 			ETriggerEvent::Started, this, &ABasicCharacter::WeakAttack);
@@ -116,8 +126,6 @@ void ABasicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 		// Dash
 		EnhancedInputComponent->BindAction(InputData->GetDashInputAction(),
 			ETriggerEvent::Started, this, &ABasicCharacter::Dash);
-		EnhancedInputComponent->BindAction(InputData->GetDashInputAction(),
-			ETriggerEvent::Completed, this, &ABasicCharacter::StopDash);
 
 		// Arm, Unarm
 		EnhancedInputComponent->BindAction(InputData->GetArmUnarmAction(),
@@ -171,6 +179,16 @@ void ABasicCharacter::Jump(const FInputActionValue& Value)
 	ACharacter::Jump();
 }
 
+void ABasicCharacter::Run(const FInputActionValue& Value)
+{
+	if (GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Flying) return;
+	if (EPlayerState::Armed == mState)
+	{
+		Unarm();
+	}
+	GetCharacterMovement()->MaxWalkSpeed = 2 * mWalkSpeed;
+}
+
 void ABasicCharacter::WeakAttack(const FInputActionValue& Value)
 {
 	Attack(true);
@@ -217,14 +235,7 @@ void ABasicCharacter::Dash(const FInputActionValue& Value)
 	}
 	else if (EPlayerState::UnArmed == mState)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = 2 * mWalkSpeed;
 	}
-}
-
-void ABasicCharacter::StopDash(const FInputActionValue& Value)
-{
-	GetCharacterMovement()->MaxWalkSpeed = mWalkSpeed;
-
 }
 
 void ABasicCharacter::ArmUnarm(const FInputActionValue& Value)
