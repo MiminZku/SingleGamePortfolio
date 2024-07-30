@@ -54,12 +54,20 @@ public:
 
 	void PickWeaponUp(APlayerWeapon* Weapon);
 	void ResetAttackedCharacters();
+	void HitStop(float NewTimeDilation, float Duration);
 
-
-	void SetState(EPlayerState State);
+	void SetState(EPlayerState State)
+	{
+		mState = State;
+		if (IsValid(mAnimInstance))
+		{
+			mAnimInstance->SetState(mState);
+		}
+	}
 	void SetDodgeEnable(bool b) { bCanDodge = b; bIsDodging = !b; }
 	void SetAttackEnable(bool Enable) { bCanAttack = Enable; }
 	void SetJumpEnable(bool Enable) { bCanJump = Enable; }
+	void SetRunEnable(bool Enable) { bCanRun = Enable; }
 	void SetCurrnetAttack(const FString& String) { mCurrentAttack = String; }
 	void SetHasWeapon(bool b) { bHasWeapon = b; }
 	void SetDamaged(bool Enable) { bDamaged = Enable; }
@@ -91,9 +99,14 @@ protected:
 
 	bool bCanJump = true;
 
+	bool bCanRun = true;
+
 	bool bHasWeapon = false;
 
 	bool bDamaged = false;
+
+	UPROPERTY(EditAnywhere)
+	bool bDrawDebug = false;
 
 	FString mCurrentAttack = TEXT("Idle");
 

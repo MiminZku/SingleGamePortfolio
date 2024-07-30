@@ -145,26 +145,28 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 
 				//AttackedCharacter->Attacked();
-
+				HitStop(0.1f, 0.01f);
 			}
 		}
 	}
 
 
 #if ENABLE_DRAW_DEBUG
-	FColor DrawColor = Collision ? FColor::Green : FColor::Red;
-	//const float CapsuleHalfHeight = (End - Start).Length() * 0.5f + Radius;
+	if (bDrawDebug)
+	{
+		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
+		//const float CapsuleHalfHeight = (End - Start).Length() * 0.5f + Radius;
 
-	//DrawDebugCapsule(GetWorld(), Origin, CapsuleHalfHeight,
-	//	Radius, FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
-	//	DrawColor, false, 1);
+		//DrawDebugCapsule(GetWorld(), Origin, CapsuleHalfHeight,
+		//	Radius, FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
+		//	DrawColor, false, 1);
 
-	DrawDebugBox(GetWorld(), Origin,
-		//FVector(100.f, 50.f, 100.f),
-		FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5,
-			Radius, (Origin - Start).Length() + Radius),
-		FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
-		DrawColor, false, 1.f);
+		DrawDebugBox(GetWorld(), Origin,
+			FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5,
+				Radius, (Origin - Start).Length() + Radius),
+			FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
+			DrawColor, false, 1.f);
+	}
 #endif
 	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
 	mWeapon->SetPrevCollisionPos

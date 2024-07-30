@@ -181,7 +181,9 @@ void ABasicCharacter::Jump(const FInputActionValue& Value)
 
 void ABasicCharacter::Run(const FInputActionValue& Value)
 {
-	if (GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Flying) return;
+	if (!bCanRun) return;
+	if (GetCharacterMovement()->IsFalling())	return;
+	//if (GetCharacterMovement()->MovementMode == EMovementMode::MOVE_Flying) return;
 	if (EPlayerState::Armed == mState)
 	{
 		Unarm();
@@ -286,6 +288,8 @@ void ABasicCharacter::Attack(bool IsWeak)
 
 	bCanAttack = false;
 	bCanJump = false;
+	bCanDodge = false;
+	bCanRun = false;
 
 	FString NextAttack = mAnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
 	if (!NextAttack.Compare(TEXT(""))) return;
@@ -324,13 +328,18 @@ void ABasicCharacter::ResetAttackedCharacters()
 	mAttackedCharacters.Empty();
 }
 
-void ABasicCharacter::SetState(EPlayerState State)
+void ABasicCharacter::HitStop(float NewTimeDilation, float Duration)
 {
-	mState = State;
-	if (IsValid(mAnimInstance))
-	{
-		mAnimInstance->SetState(mState);
-	}
+	// 새로운 시간 왜곡 값 설정
+	GetWorld()->GetWorldSettings()->SetTimeDilation(NewTimeDilation);
 
+	// 일정 시간이 지난 후 원래 값으로 되돌리기
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
+		{
+			// 원래 시간 왜곡 값으로 되돌리기
+			GetWorld()->GetWorldSettings()->SetTimeDilation(1.f);
+		}, Duration, false); // false는 반복하지 않도록 설정
 }
+
 

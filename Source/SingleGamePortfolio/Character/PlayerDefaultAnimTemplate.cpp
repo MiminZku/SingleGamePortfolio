@@ -133,6 +133,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->SetAttackEnable(true);
 	mOwningCharacter->SetDodgeEnable(true);
+	mOwningCharacter->SetRunEnable(true);
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_ComboDisable()
@@ -147,12 +148,14 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnd()
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->SetJumpEnable(true);
 	mOwningCharacter->SetDodgeEnable(true);
+	mOwningCharacter->SetRunEnable(true);
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_Jump()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	mOwningCharacter->SetRunEnable(false);
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_Walk()
