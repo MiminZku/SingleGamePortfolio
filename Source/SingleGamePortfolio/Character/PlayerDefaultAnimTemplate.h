@@ -102,11 +102,11 @@ protected:
 	bool bIsFalling = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	bool bCanJump = true;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float mWalkForward = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	float mWalkRight = 0.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	bool bIsHolstering = false;
 };

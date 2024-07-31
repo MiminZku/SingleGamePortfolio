@@ -31,6 +31,7 @@ void UPlayerDefaultAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 		bShouldMove = mMoveSpeed > 5.f;
 		
 		bIsFalling = Movement->IsFalling();
+		bCanJump = mOwningCharacter->GetJumpEnable();
 		
 		mWalkForward = mOwningCharacter->GetMoveVector().X;
 		mWalkRight = mOwningCharacter->GetMoveVector().Y;
@@ -92,13 +93,14 @@ void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterru
 		mOwningCharacter->SetAttackEnable(true);
 		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 		mOwningCharacter->SetJumpEnable(true);
+		mOwningCharacter->SetRunEnable(true);
 		return;
 	}
 	if (*mMontageMap.Find(TEXT("Attack")) == Montage)
 	{
 		if (bInterrupted)
 		{
-			mOwningCharacter->SetJumpEnable(true);
+			//mOwningCharacter->SetJumpEnable(true);
 		}
 		else
 		{
@@ -106,11 +108,6 @@ void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterru
 			mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 		}
 		return;
-	}
-	if (*mMontageMap.Find(TEXT("ArmUnarm")) == Montage &&
-		Montage_GetCurrentSection() == TEXT("Unarm"))
-	{
-		bIsHolstering = false;
 	}
 }
 
@@ -125,7 +122,8 @@ void UPlayerDefaultAnimTemplate::AnimNotify_Holster()
 {
 	if (!mOwningCharacter)	return;
 	mOwningCharacter->HolsterWeapon();
-	bIsHolstering = true;
+	if (mOwningCharacter->GetVelocity().SquaredLength() > 100.f)
+		Montage_Stop(0.1f, GetCurrentActiveMontage());
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()
@@ -146,8 +144,8 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboDisable()
 void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnd()
 {
 	if (!IsValid(mOwningCharacter))	return;
-	mOwningCharacter->SetJumpEnable(true);
 	mOwningCharacter->SetDodgeEnable(true);
+	mOwningCharacter->SetJumpEnable(true);
 	mOwningCharacter->SetRunEnable(true);
 }
 
@@ -156,6 +154,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_Jump()
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 	mOwningCharacter->SetRunEnable(false);
+	mOwningCharacter->SetJumpEnable(false);
 }
 
 void UPlayerDefaultAnimTemplate::AnimNotify_Walk()

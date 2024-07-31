@@ -73,6 +73,7 @@ public:
 	void SetDamaged(bool Enable) { bDamaged = Enable; }
 
 	bool HasWeapon() const { return bHasWeapon; }
+	bool GetJumpEnable() { return bCanJump; }
 	FVector GetMoveVector() const { return mMoveVector; }
 	APlayerWeapon* GetWeapon() { return mWeapon; }
 
