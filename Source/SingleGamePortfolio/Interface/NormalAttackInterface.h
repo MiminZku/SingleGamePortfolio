@@ -32,15 +32,17 @@ class SINGLEGAMEPORTFOLIO_API INormalAttackInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void AttackCollisionCheck() abstract;
+	virtual void AttackCollisionCheck(EAttackType AttackType) abstract;
+
+	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius, 
+		EAttackType AttackType) abstract;
 
 	void SetDamaged(bool b) { bDamaged = b; }
 
 	bool IsDamaged() { return bDamaged; }
 
-	//virtual void Attacked(float DamageAmount,struct FDamageEvent const& DamageEvent,
-	//	class AController* EventInstigator, AActor* DamageCauser,
-	//	FVector AttackedPos, EAttackType AttackType) abstract;
+	virtual void Attacked(float DamageAmount,struct FDamageEvent const& DamageEvent,
+		class AController* EventInstigator, AActor* DamageCauser, EAttackType AttackType) abstract;
 
 private:
 	bool bDamaged = false;

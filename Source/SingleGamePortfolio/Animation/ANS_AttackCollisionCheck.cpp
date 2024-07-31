@@ -11,6 +11,7 @@ void UANS_AttackCollisionCheck::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
+
 	ABasicCharacter* Player = Cast<ABasicCharacter>(MeshComp->GetOwner());
 	if (Player)
 	{
@@ -29,7 +30,7 @@ void UANS_AttackCollisionCheck::NotifyTick(USkeletalMeshComponent* MeshComp,
 
 	if (mOwningCharacter)
 	{
-		mOwningCharacter->AttackCollisionCheck();
+		mOwningCharacter->AttackCollisionCheck(AttackType);
 	}
 }
 
@@ -37,6 +38,7 @@ void UANS_AttackCollisionCheck::NotifyEnd(USkeletalMeshComponent* MeshComp,
 	UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
 	Super::NotifyEnd(MeshComp, Animation, EventReference);
+
 	if (mOwningCharacter)
 	{
 		mOwningCharacter->ResetAttackedCharacters();

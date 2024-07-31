@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "PlayerDefaultAnimTemplate.h"
 #include "../Item/PlayerWeapon.h"
+#include "Engine/DamageEvents.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
 {
@@ -105,9 +106,9 @@ void AGreatSwordPlayer::HolsterWeapon()
 		TEXT("unequiped_weapon"));
 }
 
-void AGreatSwordPlayer::AttackCollisionCheck()
+void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 {
-	Super::AttackCollisionCheck();
+	Super::AttackCollisionCheck(AttackType);
 
 	APlayerWeapon* Weapon = GetWeapon();
 	if (!Weapon)	return;
@@ -124,7 +125,7 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 
 	FCollisionQueryParams Params(NAME_None, false, this);
 	TArray<FHitResult> HitResults;
-	bool Collision = GetWorld()->SweepMultiByChannel(HitResults,
+	bool Collision = GetWorld()->SweepMultiByChannel(OUT HitResults,
 		Start, End, FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
 		ECollisionChannel::ECC_GameTraceChannel3,
 		FCollisionShape::MakeBox(
@@ -144,7 +145,9 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 
-				//AttackedCharacter->Attacked();
+				FDamageEvent Dmg;
+				AttackedCharacter->Attacked(1.f, Dmg, GetController(), this,
+					AttackType);
 				HitStop(0.1f, 0.01f);
 			}
 		}

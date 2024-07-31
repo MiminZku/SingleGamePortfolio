@@ -12,6 +12,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Item/PlayerWeapon.h"
+#include "Engine/DamageEvents.h"
 
 // Sets default values
 ABasicCharacter::ABasicCharacter()
@@ -216,7 +217,7 @@ void ABasicCharacter::Dash(const FInputActionValue& Value)
 
 		FVector DirWannaGo = GetActorForwardVector() * Vec.X + GetActorRightVector() * Vec.Y;
 		float Direction = mAnimInstance->CalculateDirection(DirWannaGo, GetActorRotation());
-		int32 Option = FMath::Floor(int(Direction + 495) % 360 / 90);
+		int32 Option = FMath::Floor(int(Direction + 45 + 90 + 360) % 360 / 90);
 		switch (Option)
 		{
 		case 0:
@@ -298,8 +299,76 @@ void ABasicCharacter::Attack(bool IsWeak)
 	mCurrentAttack = NextAttack;
 }
 
-void ABasicCharacter::AttackCollisionCheck()
+void ABasicCharacter::AttackCollisionCheck(EAttackType AttackType)
 {
+}
+
+void ABasicCharacter::AttackCollisionCheckOnce(FVector Offset,
+	float Radius, EAttackType AttackType)
+{
+	FVector Origin = GetActorLocation() + Offset;
+	FCollisionQueryParams Params(NAME_None, false, this);
+	TArray<FHitResult> HitResults;
+	bool Collision = GetWorld()->SweepMultiByChannel(OUT HitResults,
+		Origin, Origin, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(Radius), Params);
+
+	if (Collision)
+	{
+		for (const FHitResult& HitResult : HitResults)
+		{
+			INormalAttackInterface* AttackedCharacter = Cast<INormalAttackInterface>(HitResult.GetActor());
+			if (AttackedCharacter)
+			{
+				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
+					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
+
+				HitStop(0.1f, 0.01f);
+
+				FDamageEvent Dmg;
+				AttackedCharacter->Attacked(1.f, Dmg, GetController(), this,
+					AttackType);
+			}
+		}
+	}
+
+#if ENABLE_DRAW_DEBUG
+	if (bDrawDebug)
+	{
+		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
+
+		DrawDebugSphere(GetWorld(), Origin, Radius, 26, DrawColor, false, 1.f);
+		//DrawDebugCapsule(GetWorld(), Origin, CapsuleHalfHeight,
+		//	Radius, FRotationMatrix::MakeFromZ((End - Start)).ToQuat(),
+		//	DrawColor, false, 1);
+	}
+#endif
+
+}
+
+void ABasicCharacter::Attacked(float DamageAmount,
+	struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
+	AActor* DamageCauser, EAttackType AttackType)
+{
+	switch (AttackType)
+	{
+	case EAttackType::Default:
+		GetCharacterMovement()->AddImpulse(FVector::UpVector * 1000.f);
+		break;
+	case EAttackType::Airborn:
+
+		break;
+	case EAttackType::Knockback:
+		break;
+	case EAttackType::KnockDown:
+		break;
+	case EAttackType::Slow:
+		break;
+	case EAttackType::Stun:
+		break;
+	default:
+		break;
+	}
 }
 
 void ABasicCharacter::GrabWeapon()

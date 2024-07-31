@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
+#include "../Interface/NormalAttackInterface.h"
 #include "ANS_AttackCollisionCheck.generated.h"
 
 
@@ -15,9 +16,6 @@ class SINGLEGAMEPORTFOLIO_API UANS_AttackCollisionCheck : public UAnimNotifyStat
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	ABasicCharacter* mOwningCharacter = nullptr;
-
 	virtual void NotifyBegin(USkeletalMeshComponent* MeshComp,
 		UAnimSequenceBase* Animation, float TotalDuration,
 		const FAnimNotifyEventReference& EventReference) override;
@@ -30,4 +28,10 @@ public:
 		UAnimSequenceBase* Animation, 
 		const FAnimNotifyEventReference& EventReference) override;
 	
+public:
+	UPROPERTY()
+	ABasicCharacter* mOwningCharacter = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	EAttackType AttackType = EAttackType::Default;
 };
