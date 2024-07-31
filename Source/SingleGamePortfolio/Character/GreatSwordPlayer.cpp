@@ -7,6 +7,7 @@
 #include "PlayerDefaultAnimTemplate.h"
 #include "../Item/PlayerWeapon.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
 {
@@ -93,7 +94,7 @@ void AGreatSwordPlayer::Attack(bool IsWeak)
 void AGreatSwordPlayer::GrabWeapon()
 {
 	Super::GrabWeapon();
-	mWeapon->AttachToComponent(GetMesh(),
+	mWeapon->GetMesh()->AttachToComponent(GetMesh(),
 		FAttachmentTransformRules::SnapToTargetIncludingScale,
 		TEXT("hand_r_weapon"));
 }
@@ -101,9 +102,21 @@ void AGreatSwordPlayer::GrabWeapon()
 void AGreatSwordPlayer::HolsterWeapon()
 {
 	Super::HolsterWeapon();
-	mWeapon->AttachToComponent(GetMesh(),
-		FAttachmentTransformRules::SnapToTargetIncludingScale,
+	FAttachmentTransformRules Rules(
+		EAttachmentRule::KeepWorld,
+		EAttachmentRule::KeepWorld,
+		EAttachmentRule::KeepRelative,
+		true);
+	mWeapon->GetMesh()->AttachToComponent(GetMesh(),
+		FAttachmentTransformRules::KeepWorldTransform,
 		TEXT("unequiped_weapon"));
+
+	FLatentActionInfo Info;
+	Info.CallbackTarget = this;
+	UKismetSystemLibrary::MoveComponentTo(mWeapon->GetMesh(),
+		FVector::ZeroVector, FRotator::ZeroRotator,
+		true, true, 0.2f, false,
+		EMoveComponentAction::Type::Move, Info);
 }
 
 void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
