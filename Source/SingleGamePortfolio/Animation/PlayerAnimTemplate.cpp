@@ -27,12 +27,18 @@ void UPlayerAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 		UCharacterMovementComponent* Movement = mOwningCharacter->GetCharacterMovement();
 
 		mVelocity = mOwningCharacter->GetVelocity();
-		mMoveSpeed = mVelocity.Length();
+		FVector AccelerationLength = Movement->GetCurrentAcceleration();
+		AccelerationLength.Z = 0;
+		mMoveSpeed = FMath::Min(FVector(mVelocity.X, mVelocity.Y, 0).Length(), AccelerationLength.Length());
 		bShouldMove = mMoveSpeed > 5.f;
 		
 		bIsFalling = Movement->IsFalling();
 		bCanJump = mOwningCharacter->GetJumpEnable();
 		
+		float Direction = CalculateDirection(mVelocity, mOwningCharacter->GetActorRotation());
+
+		//mWalkForward = mMoveSpeed * FMath::Cos(Direction);
+		//mWalkRight = mMoveSpeed * FMath::Sin(Direction);
 		mWalkForward = mOwningCharacter->GetMoveVector().X;
 		mWalkRight = mOwningCharacter->GetMoveVector().Y;
 	}

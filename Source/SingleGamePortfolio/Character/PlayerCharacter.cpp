@@ -102,7 +102,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		// Moving
 		EnhancedInputComponent->BindAction(InputData->GetMoveInputAction(),
 			ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
-		mMoveActionBinding = &EnhancedInputComponent->BindActionValue(InputData->GetMoveInputAction());
+		//mMoveActionBinding = &EnhancedInputComponent->BindActionValue(InputData->GetMoveInputAction());
+		EnhancedInputComponent->BindAction(InputData->GetMoveInputAction(),
+			ETriggerEvent::Completed, this, &APlayerCharacter::StopMove);
 
 		// Looking
 		EnhancedInputComponent->BindAction(InputData->GetLookInputAction(),
@@ -161,6 +163,11 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
+void APlayerCharacter::StopMove(const FInputActionValue& Value)
+{
+	mMoveVector = FVector::ZeroVector;
+}
+
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -207,15 +214,16 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 	if (EPlayerState::Armed == mState)
 	{
 		if (!bCanDodge)	return;
-		FVector Vec = mMoveActionBinding->GetValue().Get<FVector>();
+		//FVector Vec = mMoveActionBinding->GetValue().Get<FVector>();
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, Vec.ToString());
-		if (Vec.IsNearlyZero(0.0001))		return;
+		if (mMoveVector.IsNearlyZero(0.0001))		return;
 		if (GetCharacterMovement()->IsFalling())	return;
 		bCanDodge = false;
 		bIsDodging = true;
 		bCanJump = false;
 
-		FVector DirWannaGo = GetActorForwardVector() * Vec.X + GetActorRightVector() * Vec.Y;
+		FVector DirWannaGo = 
+			GetActorForwardVector() * mMoveVector.X + GetActorRightVector() * mMoveVector.Y;
 		float Direction = mAnimInstance->CalculateDirection(DirWannaGo, GetActorRotation());
 		int32 Option = FMath::Floor(int(Direction + 45 + 90 + 360) % 360 / 90);
 		switch (Option)
@@ -410,5 +418,3 @@ void APlayerCharacter::HitStop(float NewTimeDilation, float Duration)
 			GetWorld()->GetWorldSettings()->SetTimeDilation(1.f);
 		}, Duration, false); // false는 반복하지 않도록 설정
 }
-
-

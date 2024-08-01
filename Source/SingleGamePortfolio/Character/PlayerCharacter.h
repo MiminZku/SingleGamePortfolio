@@ -36,6 +36,7 @@ public:
 
 protected:
 	void Move(const FInputActionValue& Value);
+	void StopMove(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 	void Run(const FInputActionValue& Value);
@@ -78,7 +79,7 @@ public:
 
 	bool HasWeapon() const { return bHasWeapon; }
 	bool GetJumpEnable() { return bCanJump; }
-	FVector GetMoveVector() const { return mMoveVector; }
+	FVector GetMoveVector() { return mMoveVector; }
 	APlayerWeapon* GetWeapon() { return mWeapon; }
 
 protected:
