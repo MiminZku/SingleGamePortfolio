@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BasicCharacter.h"
+#include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Input/DefaultInput.h"
@@ -15,7 +15,7 @@
 #include "Engine/DamageEvents.h"
 
 // Sets default values
-ABasicCharacter::ABasicCharacter()
+APlayerCharacter::APlayerCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -55,14 +55,14 @@ ABasicCharacter::ABasicCharacter()
 }
 
 // Called when the game starts or when spawned
-void ABasicCharacter::BeginPlay()
+void APlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
 }
 
 // Called every frame
-void ABasicCharacter::Tick(float DeltaTime)
+void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -77,7 +77,7 @@ void ABasicCharacter::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void ABasicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
@@ -101,36 +101,36 @@ void ABasicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 		// Moving
 		EnhancedInputComponent->BindAction(InputData->GetMoveInputAction(),
-			ETriggerEvent::Triggered, this, &ABasicCharacter::Move);
+			ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
 		mMoveActionBinding = &EnhancedInputComponent->BindActionValue(InputData->GetMoveInputAction());
 
 		// Looking
 		EnhancedInputComponent->BindAction(InputData->GetLookInputAction(),
-			ETriggerEvent::Triggered, this, &ABasicCharacter::Look);
+			ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
 
 		// Jumping
 		EnhancedInputComponent->BindAction(InputData->GetJumpInputAction(),
-			ETriggerEvent::Started, this, &ABasicCharacter::Jump);
+			ETriggerEvent::Started, this, &APlayerCharacter::Jump);
 		EnhancedInputComponent->BindAction(InputData->GetJumpInputAction(),
 			ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Running
 		EnhancedInputComponent->BindAction(InputData->GetRunInputAction(),
-			ETriggerEvent::Started, this, &ABasicCharacter::Run);
+			ETriggerEvent::Started, this, &APlayerCharacter::Run);
 
 		// Attacking
 		EnhancedInputComponent->BindAction(InputData->GetWeakAttackInputAction(),
-			ETriggerEvent::Started, this, &ABasicCharacter::WeakAttack);
+			ETriggerEvent::Started, this, &APlayerCharacter::WeakAttack);
 		EnhancedInputComponent->BindAction(InputData->GetStrongAttackInpuAction(),
-			ETriggerEvent::Started, this, &ABasicCharacter::StrongAttack);
+			ETriggerEvent::Started, this, &APlayerCharacter::StrongAttack);
 
 		// Dash
 		EnhancedInputComponent->BindAction(InputData->GetDashInputAction(),
-			ETriggerEvent::Started, this, &ABasicCharacter::Dash);
+			ETriggerEvent::Started, this, &APlayerCharacter::Dash);
 
 		// Arm, Unarm
 		EnhancedInputComponent->BindAction(InputData->GetArmUnarmAction(),
-			ETriggerEvent::Started, this, &ABasicCharacter::ArmUnarm);
+			ETriggerEvent::Started, this, &APlayerCharacter::ArmUnarm);
 	}
 	else
 	{
@@ -138,7 +138,7 @@ void ABasicCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	}
 }
 
-void ABasicCharacter::Move(const FInputActionValue& Value)
+void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	mMoveVector = Value.Get<FVector>();
@@ -161,7 +161,7 @@ void ABasicCharacter::Move(const FInputActionValue& Value)
 	}
 }
 
-void ABasicCharacter::Look(const FInputActionValue& Value)
+void APlayerCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
@@ -174,13 +174,13 @@ void ABasicCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void ABasicCharacter::Jump(const FInputActionValue& Value)
+void APlayerCharacter::Jump(const FInputActionValue& Value)
 {
 	if (!bCanJump) return;
 	ACharacter::Jump();
 }
 
-void ABasicCharacter::Run(const FInputActionValue& Value)
+void APlayerCharacter::Run(const FInputActionValue& Value)
 {
 	if (!bCanRun) return;
 	if (GetCharacterMovement()->IsFalling())	return;
@@ -192,17 +192,17 @@ void ABasicCharacter::Run(const FInputActionValue& Value)
 	GetCharacterMovement()->MaxWalkSpeed = 2 * mWalkSpeed;
 }
 
-void ABasicCharacter::WeakAttack(const FInputActionValue& Value)
+void APlayerCharacter::WeakAttack(const FInputActionValue& Value)
 {
 	Attack(true);
 }
 
-void ABasicCharacter::StrongAttack(const FInputActionValue& Value)
+void APlayerCharacter::StrongAttack(const FInputActionValue& Value)
 {
 	Attack(false);
 }
 
-void ABasicCharacter::Dash(const FInputActionValue& Value)
+void APlayerCharacter::Dash(const FInputActionValue& Value)
 {
 	if (EPlayerState::Armed == mState)
 	{
@@ -241,7 +241,7 @@ void ABasicCharacter::Dash(const FInputActionValue& Value)
 	}
 }
 
-void ABasicCharacter::ArmUnarm(const FInputActionValue& Value)
+void APlayerCharacter::ArmUnarm(const FInputActionValue& Value)
 {
 	if (EPlayerState::Armed == mState)
 	{
@@ -253,7 +253,7 @@ void ABasicCharacter::ArmUnarm(const FInputActionValue& Value)
 	}
 }
 
-void ABasicCharacter::Arm()
+void APlayerCharacter::Arm()
 {
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
@@ -261,7 +261,7 @@ void ABasicCharacter::Arm()
 	SetAttackEnable(false);
 }
 
-void ABasicCharacter::Unarm()
+void APlayerCharacter::Unarm()
 {
 	SetState(EPlayerState::UnArmed);
 	bUseControllerRotationYaw = false;
@@ -269,7 +269,7 @@ void ABasicCharacter::Unarm()
 	mCurrentAttack = TEXT("Idle");
 }
 
-void ABasicCharacter::Attack(bool IsWeak)
+void APlayerCharacter::Attack(bool IsWeak)
 {
 	if (EPlayerState::UnArmed == mState)
 	{
@@ -299,11 +299,11 @@ void ABasicCharacter::Attack(bool IsWeak)
 	mCurrentAttack = NextAttack;
 }
 
-void ABasicCharacter::AttackCollisionCheck(EAttackType AttackType)
+void APlayerCharacter::AttackCollisionCheck(EAttackType AttackType)
 {
 }
 
-void ABasicCharacter::AttackCollisionCheckOnce(FVector Offset,
+void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
 	float Radius, EAttackType AttackType)
 {
 	FVector Origin = GetActorLocation() + Offset;
@@ -346,7 +346,7 @@ void ABasicCharacter::AttackCollisionCheckOnce(FVector Offset,
 
 }
 
-void ABasicCharacter::Attacked(float DamageAmount,
+void APlayerCharacter::Attacked(float DamageAmount,
 	struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 	AActor* DamageCauser, EAttackType AttackType)
 {
@@ -371,15 +371,15 @@ void ABasicCharacter::Attacked(float DamageAmount,
 	}
 }
 
-void ABasicCharacter::GrabWeapon()
+void APlayerCharacter::GrabWeapon()
 {
 }
 
-void ABasicCharacter::HolsterWeapon()
+void APlayerCharacter::HolsterWeapon()
 {
 }
 
-void ABasicCharacter::PickWeaponUp(APlayerWeapon* Weapon)
+void APlayerCharacter::PickWeaponUp(APlayerWeapon* Weapon)
 {
 	SetHasWeapon(true);
 	mWeapon = Weapon;
@@ -388,7 +388,7 @@ void ABasicCharacter::PickWeaponUp(APlayerWeapon* Weapon)
 		TEXT("unequiped_weapon"));
 }
 
-void ABasicCharacter::ResetAttackedCharacters()
+void APlayerCharacter::ResetAttackedCharacters()
 {
 	for (INormalAttackInterface* AttackedCharacter : mAttackedCharacters)
 	{
@@ -397,7 +397,7 @@ void ABasicCharacter::ResetAttackedCharacters()
 	mAttackedCharacters.Empty();
 }
 
-void ABasicCharacter::HitStop(float NewTimeDilation, float Duration)
+void APlayerCharacter::HitStop(float NewTimeDilation, float Duration)
 {
 	// 새로운 시간 왜곡 값 설정
 	GetWorld()->GetWorldSettings()->SetTimeDilation(NewTimeDilation);

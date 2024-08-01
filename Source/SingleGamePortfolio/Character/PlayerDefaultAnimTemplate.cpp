@@ -3,7 +3,7 @@
 
 #include "PlayerDefaultAnimTemplate.h"
 #include "Kismet/GameplayStatics.h"
-#include "../BasicCharacter.h"
+#include "../PlayerCharacter.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -15,7 +15,7 @@ void UPlayerDefaultAnimTemplate::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	mOwningCharacter = Cast<ABasicCharacter>(TryGetPawnOwner());
+	mOwningCharacter = Cast<APlayerCharacter>(TryGetPawnOwner());
 }
 
 void UPlayerDefaultAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)

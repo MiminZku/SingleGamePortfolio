@@ -2,7 +2,7 @@
 
 
 #include "PlayerWeapon.h"
-#include "../BasicCharacter.h"
+#include "../PlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
 
@@ -48,7 +48,7 @@ void APlayerWeapon::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent,
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-	ABasicCharacter* Player = Cast<ABasicCharacter>(OtherActor);
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
 	if (Player)
 	{
 		if (!Player->HasWeapon())

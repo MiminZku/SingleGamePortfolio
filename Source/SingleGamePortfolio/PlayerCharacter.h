@@ -6,7 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Character/PlayerDefaultAnimTemplate.h"
 #include "Interface/NormalAttackInterface.h"
-#include "BasicCharacter.generated.h"
+#include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
@@ -15,13 +15,13 @@ struct FInputActionValue;
 class APlayerWeapon;
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API ABasicCharacter : public ACharacter, public INormalAttackInterface
+class SINGLEGAMEPORTFOLIO_API APlayerCharacter : public ACharacter, public INormalAttackInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	ABasicCharacter();
+	APlayerCharacter();
 
 protected:
 	// Called when the game starts or when spawned

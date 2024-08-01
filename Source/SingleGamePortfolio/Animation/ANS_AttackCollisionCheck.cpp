@@ -2,7 +2,7 @@
 
 
 #include "ANS_AttackCollisionCheck.h"
-#include "../BasicCharacter.h"
+#include "../PlayerCharacter.h"
 #include "../Item/PlayerWeapon.h"
 
 
@@ -12,7 +12,7 @@ void UANS_AttackCollisionCheck::NotifyBegin(USkeletalMeshComponent* MeshComp,
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	ABasicCharacter* Player = Cast<ABasicCharacter>(MeshComp->GetOwner());
+	APlayerCharacter* Player = Cast<APlayerCharacter>(MeshComp->GetOwner());
 	if (Player)
 	{
 		mOwningCharacter = Player;

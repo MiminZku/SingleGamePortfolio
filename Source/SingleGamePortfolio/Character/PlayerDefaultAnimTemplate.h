@@ -7,7 +7,7 @@
 #include "../MyGameInstance.h"
 #include "PlayerDefaultAnimTemplate.generated.h"
 
-class ABasicCharacter;
+class APlayerCharacter;
 
 UENUM(BlueprintType)
 enum class EPlayerState: uint8
@@ -72,7 +72,7 @@ private:
 	
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	ABasicCharacter* mOwningCharacter;
+	APlayerCharacter* mOwningCharacter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TMap<FString, UAnimSequence*> mSequenceMap;

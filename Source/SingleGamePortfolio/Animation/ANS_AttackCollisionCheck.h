@@ -8,7 +8,7 @@
 #include "ANS_AttackCollisionCheck.generated.h"
 
 
-class ABasicCharacter;
+class APlayerCharacter;
 
 UCLASS()
 class SINGLEGAMEPORTFOLIO_API UANS_AttackCollisionCheck : public UAnimNotifyState
@@ -30,7 +30,7 @@ public:
 	
 public:
 	UPROPERTY()
-	ABasicCharacter* mOwningCharacter = nullptr;
+	APlayerCharacter* mOwningCharacter = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	EAttackType AttackType = EAttackType::Default;

@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../BasicCharacter.h"
+#include "../PlayerCharacter.h"
 #include "GreatSwordPlayer.generated.h"
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API AGreatSwordPlayer : public ABasicCharacter
+class SINGLEGAMEPORTFOLIO_API AGreatSwordPlayer : public APlayerCharacter
 {
 	GENERATED_BODY()
 	
