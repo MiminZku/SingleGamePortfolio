@@ -6,7 +6,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "../Animation/PlayerAnimTemplate.h"
 #include "../Item/PlayerWeapon.h"
-#include "Engine/DamageEvents.h"
 #include "Kismet/KismetSystemLibrary.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
@@ -57,16 +56,6 @@ void AGreatSwordPlayer::Tick(float DeltaTime)
 void AGreatSwordPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
-float AGreatSwordPlayer::TakeDamage(float DamageAmount,
-	FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
-{
-	DamageAmount = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator,
-		DamageCauser);
-
-	return DamageAmount;
 }
 
 void AGreatSwordPlayer::Arm()
@@ -157,11 +146,8 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				mAttackedCharacters.Add(AttackedCharacter);
 				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
-
-				FDamageEvent Dmg;
-				AttackedCharacter->Attacked(1.f, Dmg, GetController(), this,
-					AttackType);
-				HitStop(0.1f, 0.01f);
+				
+				
 			}
 		}
 	}

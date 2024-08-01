@@ -54,8 +54,9 @@ public:
 	virtual void AttackCollisionCheck(EAttackType AttackType) override;
 	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius,
 		EAttackType AttackType) override;
-	virtual void Attacked(float DamageAmount, struct FDamageEvent const& DamageEvent,
-		class AController* EventInstigator, AActor* DamageCauser, EAttackType AttackType) override;
+	virtual float TakeDamage(float DamageAmount,
+		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
+		AActor* DamageCauser) override;
 
 	void PickWeaponUp(APlayerWeapon* Weapon);
 	void ResetAttackedCharacters();

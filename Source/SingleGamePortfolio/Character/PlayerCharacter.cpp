@@ -332,10 +332,8 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 
 				HitStop(0.1f, 0.01f);
+				
 
-				FDamageEvent Dmg;
-				AttackedCharacter->Attacked(1.f, Dmg, GetController(), this,
-					AttackType);
 			}
 		}
 	}
@@ -354,29 +352,14 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
 
 }
 
-void APlayerCharacter::Attacked(float DamageAmount,
-	struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
-	AActor* DamageCauser, EAttackType AttackType)
+float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	switch (AttackType)
-	{
-	case EAttackType::Default:
-		GetCharacterMovement()->AddImpulse(FVector::UpVector * 1000.f);
-		break;
-	case EAttackType::Airborn:
+	float Damage = 
+		Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-		break;
-	case EAttackType::Knockback:
-		break;
-	case EAttackType::KnockDown:
-		break;
-	case EAttackType::Slow:
-		break;
-	case EAttackType::Stun:
-		break;
-	default:
-		break;
-	}
+	FDamageEvent Dmg;
+
+	return Damage;
 }
 
 void APlayerCharacter::GrabWeapon()

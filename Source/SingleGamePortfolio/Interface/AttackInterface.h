@@ -41,9 +41,6 @@ public:
 
 	bool IsDamaged() { return bDamaged; }
 
-	virtual void Attacked(float DamageAmount,struct FDamageEvent const& DamageEvent,
-		class AController* EventInstigator, AActor* DamageCauser, EAttackType AttackType) abstract;
-
 private:
 	bool bDamaged = false;
 };
