@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Character/PlayerDefaultAnimTemplate.h"
-#include "Interface/NormalAttackInterface.h"
+#include "../Animation/PlayerAnimTemplate.h"
+#include "../Interface/AttackInterface.h"
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
 class UCameraComponent;
-class UPlayerDefaultAnimTemplate;
+class UPlayerAnimTemplate;
 struct FInputActionValue;
 class APlayerWeapon;
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API APlayerCharacter : public ACharacter, public INormalAttackInterface
+class SINGLEGAMEPORTFOLIO_API APlayerCharacter : public ACharacter, public IAttackInterface
 {
 	GENERATED_BODY()
 
@@ -88,7 +88,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* mCamera;
 
-	TObjectPtr<UPlayerDefaultAnimTemplate> mAnimInstance;
+	TObjectPtr<UPlayerAnimTemplate> mAnimInstance;
 
 	EPlayerState mState = EPlayerState::UnArmed;
 
@@ -118,7 +118,7 @@ protected:
 	UPROPERTY()
 	APlayerWeapon* mWeapon = nullptr;
 
-	TArray<INormalAttackInterface*> mAttackedCharacters;
+	TArray<IAttackInterface*> mAttackedCharacters;
 
 private:
 	struct FEnhancedInputActionValueBinding* mMoveActionBinding;

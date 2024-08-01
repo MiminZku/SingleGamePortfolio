@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "NormalAttackInterface.generated.h"
+#include "AttackInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UNormalAttackInterface : public UInterface
+class UAttackInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -26,7 +26,7 @@ enum class EAttackType : uint8
 /**
  * 
  */
-class SINGLEGAMEPORTFOLIO_API INormalAttackInterface
+class SINGLEGAMEPORTFOLIO_API IAttackInterface
 {
 	GENERATED_BODY()
 

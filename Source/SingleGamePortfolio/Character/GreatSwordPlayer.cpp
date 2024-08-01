@@ -4,7 +4,7 @@
 #include "GreatSwordPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "PlayerDefaultAnimTemplate.h"
+#include "../Animation/PlayerAnimTemplate.h"
 #include "../Item/PlayerWeapon.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -35,7 +35,7 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 
 void AGreatSwordPlayer::PostInitializeComponents()
 {
-	mAnimInstance = Cast<UPlayerDefaultAnimTemplate>(GetMesh()->GetAnimInstance());
+	mAnimInstance = Cast<UPlayerAnimTemplate>(GetMesh()->GetAnimInstance());
 	if (mAnimInstance)
 	{
 		mAnimInstance->SetAnimData(TEXT("Hercules"));
@@ -149,7 +149,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			INormalAttackInterface* AttackedCharacter = Cast<INormalAttackInterface>(HitResult.GetActor());
+			IAttackInterface* AttackedCharacter = Cast<IAttackInterface>(HitResult.GetActor());
 			if (AttackedCharacter)
 			{
 				if (AttackedCharacter->IsDamaged())	continue;

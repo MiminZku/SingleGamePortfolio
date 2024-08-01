@@ -2,7 +2,7 @@
 
 
 #include "PlayerWeapon.h"
-#include "../PlayerCharacter.h"
+#include "../Character/PlayerCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/CapsuleComponent.h"
 

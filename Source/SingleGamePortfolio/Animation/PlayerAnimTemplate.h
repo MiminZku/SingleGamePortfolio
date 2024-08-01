@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
 #include "../MyGameInstance.h"
-#include "PlayerDefaultAnimTemplate.generated.h"
+#include "PlayerAnimTemplate.generated.h"
 
 class APlayerCharacter;
 
@@ -18,12 +18,12 @@ enum class EPlayerState: uint8
 };
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API UPlayerDefaultAnimTemplate : public UAnimInstance
+class SINGLEGAMEPORTFOLIO_API UPlayerAnimTemplate : public UAnimInstance
 {
 	GENERATED_BODY()
 
 public:
-	UPlayerDefaultAnimTemplate();
+	UPlayerAnimTemplate();
 
 
 public:

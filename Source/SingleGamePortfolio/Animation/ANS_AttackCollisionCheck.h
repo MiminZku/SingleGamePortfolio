@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "../Interface/NormalAttackInterface.h"
+#include "../Interface/AttackInterface.h"
 #include "ANS_AttackCollisionCheck.generated.h"
 
 

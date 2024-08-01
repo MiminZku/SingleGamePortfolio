@@ -8,8 +8,8 @@ void UAN_AttackCollision::Notify(USkeletalMeshComponent* MeshComp,
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	INormalAttackInterface* AttackCharacter = 
-		Cast<INormalAttackInterface>(MeshComp->GetOwner());
+	IAttackInterface* AttackCharacter = 
+		Cast<IAttackInterface>(MeshComp->GetOwner());
 
 	if (AttackCharacter)
 	{

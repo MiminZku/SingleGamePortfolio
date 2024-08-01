@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../PlayerCharacter.h"
+#include "PlayerCharacter.h"
 #include "GreatSwordPlayer.generated.h"
 
 UCLASS()

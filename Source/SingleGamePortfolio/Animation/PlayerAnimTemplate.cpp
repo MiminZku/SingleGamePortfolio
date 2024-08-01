@@ -1,24 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerDefaultAnimTemplate.h"
+#include "PlayerAnimTemplate.h"
 #include "Kismet/GameplayStatics.h"
-#include "../PlayerCharacter.h"
+#include "../Character/PlayerCharacter.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-UPlayerDefaultAnimTemplate::UPlayerDefaultAnimTemplate()
+UPlayerAnimTemplate::UPlayerAnimTemplate()
 {
 }
 
-void UPlayerDefaultAnimTemplate::NativeInitializeAnimation()
+void UPlayerAnimTemplate::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
 	mOwningCharacter = Cast<APlayerCharacter>(TryGetPawnOwner());
 }
 
-void UPlayerDefaultAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
+void UPlayerAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
@@ -38,14 +38,14 @@ void UPlayerDefaultAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UPlayerDefaultAnimTemplate::NativeBeginPlay()
+void UPlayerAnimTemplate::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 
-	OnMontageEnded.AddDynamic(this, &UPlayerDefaultAnimTemplate::MontageEnd);
+	OnMontageEnded.AddDynamic(this, &UPlayerAnimTemplate::MontageEnd);
 }
 
-void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
+void UPlayerAnimTemplate::SetAnimData(const FName& Name)
 {
 	auto GI = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	if (GI)
@@ -61,7 +61,7 @@ void UPlayerDefaultAnimTemplate::SetAnimData(const FName& Name)
 	}
 }
 
-void UPlayerDefaultAnimTemplate::PlayMontage(const FString& Name, const FName& SectionName)
+void UPlayerAnimTemplate::PlayMontage(const FString& Name, const FName& SectionName)
 {
 	UAnimMontage** Montage = mMontageMap.Find(Name);
 	//if (Montage_IsPlaying(*Montage) && 
@@ -73,7 +73,7 @@ void UPlayerDefaultAnimTemplate::PlayMontage(const FString& Name, const FName& S
 	}
 }
 
-FString UPlayerDefaultAnimTemplate::GetNextAttackSection(const FString& CurrnetAttackName, bool IsWeak)
+FString UPlayerAnimTemplate::GetNextAttackSection(const FString& CurrnetAttackName, bool IsWeak)
 {
 	FNextAttack* NextAttack = mComboMap.Find(CurrnetAttackName);
 	if (NextAttack)
@@ -84,7 +84,7 @@ FString UPlayerDefaultAnimTemplate::GetNextAttackSection(const FString& CurrnetA
 	return TEXT("");
 }
 
-void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
+void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (!IsValid(mOwningCharacter))	return;
 	if (*mMontageMap.Find(TEXT("Dash")) == Montage)
@@ -111,14 +111,14 @@ void UPlayerDefaultAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterru
 	}
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_GrabWeapon()
+void UPlayerAnimTemplate::AnimNotify_GrabWeapon()
 {
 	if (!mOwningCharacter)	return;
 	mOwningCharacter->SetAttackEnable(true);
 	mOwningCharacter->GrabWeapon();
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_Holster()
+void UPlayerAnimTemplate::AnimNotify_Holster()
 {
 	if (!mOwningCharacter)	return;
 	mOwningCharacter->HolsterWeapon();
@@ -126,7 +126,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_Holster()
 		Montage_Stop(0.1f, GetCurrentActiveMontage());
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()
+void UPlayerAnimTemplate::AnimNotify_ComboEnable()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->SetAttackEnable(true);
@@ -134,14 +134,14 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnable()
 	mOwningCharacter->SetRunEnable(true);
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_ComboDisable()
+void UPlayerAnimTemplate::AnimNotify_ComboDisable()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->SetAttackEnable(false);
 	mOwningCharacter->SetJumpEnable(true);
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnd()
+void UPlayerAnimTemplate::AnimNotify_ComboEnd()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->SetDodgeEnable(true);
@@ -149,7 +149,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_ComboEnd()
 	mOwningCharacter->SetRunEnable(true);
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_Jump()
+void UPlayerAnimTemplate::AnimNotify_Jump()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
@@ -157,7 +157,7 @@ void UPlayerDefaultAnimTemplate::AnimNotify_Jump()
 	mOwningCharacter->SetJumpEnable(false);
 }
 
-void UPlayerDefaultAnimTemplate::AnimNotify_Walk()
+void UPlayerAnimTemplate::AnimNotify_Walk()
 {
 	if (!IsValid(mOwningCharacter))	return;
 	mOwningCharacter->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);

@@ -4,14 +4,14 @@
 #include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "Input/DefaultInput.h"
+#include "../Input/DefaultInput.h"
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Item/PlayerWeapon.h"
+#include "../Item/PlayerWeapon.h"
 #include "Engine/DamageEvents.h"
 
 // Sets default values
@@ -317,7 +317,7 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			INormalAttackInterface* AttackedCharacter = Cast<INormalAttackInterface>(HitResult.GetActor());
+			IAttackInterface* AttackedCharacter = Cast<IAttackInterface>(HitResult.GetActor());
 			if (AttackedCharacter)
 			{
 				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
@@ -390,7 +390,7 @@ void APlayerCharacter::PickWeaponUp(APlayerWeapon* Weapon)
 
 void APlayerCharacter::ResetAttackedCharacters()
 {
-	for (INormalAttackInterface* AttackedCharacter : mAttackedCharacters)
+	for (IAttackInterface* AttackedCharacter : mAttackedCharacters)
 	{
 		AttackedCharacter->SetDamaged(false);
 	}
