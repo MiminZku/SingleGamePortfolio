@@ -8,7 +8,12 @@ public class SingleGamePortfolio : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] 
+        PublicIncludePaths.AddRange(new string[]
+        {
+            "SingleGamePortfolio"
+        });
+
+        PublicDependencyModuleNames.AddRange(new string[] 
 		{ 
 			"Core",
 			"CoreUObject",
