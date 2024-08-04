@@ -147,7 +147,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
-				
+				HitStop(0.1f, 0.01f);
 			}
 		}
 	}

@@ -74,7 +74,7 @@ public:
 	void SetAttackEnable(bool Enable) { bCanAttack = Enable; }
 	void SetJumpEnable(bool Enable) { bCanJump = Enable; }
 	void SetRunEnable(bool Enable) { bCanRun = Enable; }
-	void SetCurrnetAttack(const FString& String) { mCurrentAttack = String; }
+	void SetCurrnetAttack(const FName& String) { mCurrentAttack = String; }
 	void SetHasWeapon(bool b) { bHasWeapon = b; }
 	void SetDamaged(bool Enable) { bDamaged = Enable; }
 
@@ -115,7 +115,7 @@ protected:
 	UPROPERTY(EditAnywhere)
 	bool bDrawDebug = false;
 
-	FString mCurrentAttack = TEXT("Idle");
+	FName mCurrentAttack = TEXT("Idle");
 
 	UPROPERTY()
 	APlayerWeapon* mWeapon = nullptr;

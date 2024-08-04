@@ -67,7 +67,7 @@ void UPlayerAnimTemplate::SetAnimData(const FName& Name)
 	}
 }
 
-void UPlayerAnimTemplate::PlayMontage(const FString& Name, const FName& SectionName)
+void UPlayerAnimTemplate::PlayMontage(const FName& Name, const FName& SectionName)
 {
 	UAnimMontage** Montage = mMontageMap.Find(Name);
 	//if (Montage_IsPlaying(*Montage) && 
@@ -79,7 +79,7 @@ void UPlayerAnimTemplate::PlayMontage(const FString& Name, const FName& SectionN
 	}
 }
 
-FString UPlayerAnimTemplate::GetNextAttackSection(const FString& CurrnetAttackName, bool IsWeak)
+FName UPlayerAnimTemplate::GetNextAttackSection(const FName& CurrnetAttackName, bool IsWeak)
 {
 	FNextAttack* NextAttack = mComboMap.Find(CurrnetAttackName);
 	if (NextAttack)

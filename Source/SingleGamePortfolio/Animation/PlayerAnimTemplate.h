@@ -40,8 +40,8 @@ public:
 		mCurrentState = State;
 	}
 	void SetAnimData(const FName& Name);
-	void PlayMontage(const FString& Name, const FName& SectionName);
-	FString GetNextAttackSection(const FString& CurrnetAttackName, bool IsWeak);
+	void PlayMontage(const FName& Name, const FName& SectionName);
+	FName GetNextAttackSection(const FName& CurrnetAttackName, bool IsWeak);
 
 	void SetState(EPlayerState State) { mCurrentState = State; }
 
@@ -75,16 +75,16 @@ protected:
 	APlayerCharacter* mOwningCharacter;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TMap<FString, UAnimSequence*> mSequenceMap;
+	TMap<FName, UAnimSequence*> mSequenceMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TMap<FString, UBlendSpace*> mBlendSpaceMap;
+	TMap<FName, UBlendSpace*> mBlendSpaceMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TMap<FString, UAnimMontage*> mMontageMap;
+	TMap<FName, UAnimMontage*> mMontageMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	TMap<FString, FNextAttack> mComboMap;
+	TMap<FName, FNextAttack> mComboMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	EPlayerState mCurrentState = EPlayerState::UnArmed;

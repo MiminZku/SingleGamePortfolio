@@ -300,10 +300,10 @@ void APlayerCharacter::Attack(bool IsWeak)
 	bCanDodge = false;
 	bCanRun = false;
 
-	FString NextAttack = mAnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
+	FName NextAttack = mAnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
 	if (!NextAttack.Compare(TEXT(""))) return;
 
-	mAnimInstance->PlayMontage(TEXT("Attack"), *NextAttack);
+	mAnimInstance->PlayMontage(TEXT("Attack"), NextAttack);
 	mCurrentAttack = NextAttack;
 }
 

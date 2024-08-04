@@ -12,10 +12,10 @@ struct FNextAttack
 	GENERATED_BODY()
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString WeakAttack;
+	FName WeakAttack;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FString StrongAttack;
+	FName StrongAttack;
 };
 
 USTRUCT()
@@ -24,16 +24,16 @@ struct FPlayerAnimData : public FTableRowBase
 	GENERATED_USTRUCT_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<FString, UAnimSequence*> mSequenceMap;
+	TMap<FName, UAnimSequence*> mSequenceMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<FString, UBlendSpace*> mBlendSpaceMap;
+	TMap<FName, UBlendSpace*> mBlendSpaceMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<FString, UAnimMontage*> mMontageMap;
+	TMap<FName, UAnimMontage*> mMontageMap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TMap<FString, FNextAttack> mComboMap;
+	TMap<FName, FNextAttack> mComboMap;
 };
 
 UCLASS()
