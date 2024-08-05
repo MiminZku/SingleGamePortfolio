@@ -57,10 +57,12 @@ public:
 	virtual float TakeDamage(float DamageAmount,
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
+	virtual void Die() override;
 
 	void PickWeaponUp(APlayerWeapon* Weapon);
 	void ResetAttackedCharacters();
 	void HitStop(float NewTimeDilation, float Duration);
+;
 
 	void SetState(EPlayerState State)
 	{

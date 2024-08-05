@@ -5,6 +5,7 @@
 #include "CharacterStat/CharacterStatComponent.h"
 #include "Components/WidgetComponent.h"
 #include "UI/HpBarWidget.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -42,6 +43,7 @@ void ACharacterBase::PostInitializeComponents()
 	{
 		HpWidget->BindHp(mStats);
 	}
+	mStats->OnHpZero.AddUObject(this, &ACharacterBase::Die);
 }
 
 // Called when the game starts or when spawned
@@ -70,5 +72,10 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	mStats->ApplyDamage(DamageAmount);
 	return Damage;
+}
+
+void ACharacterBase::Die()
+{
+	mHpBar->SetHiddenInGame(true);
 }
 

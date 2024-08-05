@@ -362,6 +362,16 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	return Damage;
 }
 
+void APlayerCharacter::Die()
+{
+	Super::Die();
+
+	mAnimInstance->StopAllMontages(0.f);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+}
+
 void APlayerCharacter::GrabWeapon()
 {
 }
