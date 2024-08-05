@@ -150,6 +150,7 @@ void UPlayerAnimTemplate::AnimNotify_ComboDisable()
 void UPlayerAnimTemplate::AnimNotify_ComboEnd()
 {
 	if (!IsValid(mOwningCharacter))	return;
+	mOwningCharacter->SetAttackEnable(true);
 	mOwningCharacter->SetDodgeEnable(true);
 	mOwningCharacter->SetJumpEnable(true);
 	mOwningCharacter->SetRunEnable(true);

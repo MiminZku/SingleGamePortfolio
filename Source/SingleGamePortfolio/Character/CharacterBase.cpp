@@ -42,6 +42,7 @@ void ACharacterBase::PostInitializeComponents()
 	if (HpWidget)
 	{
 		HpWidget->BindHp(mStats);
+		mHpBar->SetVisibility(false);
 	}
 	mStats->OnHpZero.AddUObject(this, &ACharacterBase::Die);
 }
@@ -70,7 +71,12 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	mStats->ApplyDamage(DamageAmount);
+	mHpBar->SetVisibility(true);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, DamageAmount]()
+		{
+			mStats->ApplyDamage(DamageAmount);
+		}, 0.1f, false);
 	return Damage;
 }
 

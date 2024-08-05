@@ -146,21 +146,28 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	mMoveVector = Value.Get<FVector>();
 
-	if (Controller != nullptr)
+	if (Controller)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		if (bCanAttack)
+		{
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
-		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			// get forward vector
+			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-		// get right vector 
-		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			// get right vector 
+			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
-		AddMovementInput(ForwardDirection, mMoveVector.X);
-		AddMovementInput(RightDirection, mMoveVector.Y);
+			// add movement 
+			AddMovementInput(ForwardDirection, mMoveVector.X);
+			AddMovementInput(RightDirection, mMoveVector.Y);
+		}
+		else
+		{
+			AddControllerYawInput(mMoveVector.Y * GetWorld()->DeltaTimeSeconds * 50);
+		}
 	}
 }
 
@@ -212,16 +219,17 @@ void APlayerCharacter::StrongAttack(const FInputActionValue& Value)
 
 void APlayerCharacter::Dash(const FInputActionValue& Value)
 {
+	if (!bCanDodge)	return;
+	if (mMoveVector.IsNearlyZero(0.0001))		return;
+	if (GetCharacterMovement()->IsFalling())	return;
+	bCanDodge = false;
+	bIsDodging = true;
+	bCanJump = false;
+
 	if (EPlayerState::Armed == mState)
 	{
-		if (!bCanDodge)	return;
 		//FVector Vec = mMoveActionBinding->GetValue().Get<FVector>();
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, Vec.ToString());
-		if (mMoveVector.IsNearlyZero(0.0001))		return;
-		if (GetCharacterMovement()->IsFalling())	return;
-		bCanDodge = false;
-		bIsDodging = true;
-		bCanJump = false;
 
 		FVector DirWannaGo = 
 			GetActorForwardVector() * mMoveVector.X + GetActorRightVector() * mMoveVector.Y;
@@ -247,6 +255,7 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 	}
 	else if (EPlayerState::UnArmed == mState)
 	{
+		mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("Unarm"));
 	}
 }
 
@@ -267,7 +276,7 @@ void APlayerCharacter::Arm()
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
 	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
-	SetAttackEnable(false);
+	SetAttackEnable(false);	// 검 잡는 모션 나올때까지
 }
 
 void APlayerCharacter::Unarm()
@@ -289,7 +298,7 @@ void APlayerCharacter::Attack(bool IsWeak)
 	if (!bCanAttack || bIsDodging)	return;
 	if (GetCharacterMovement()->IsFalling())
 	{
-		mAnimInstance->PlayMontage(TEXT("Attack"), TEXT("Air"));
+		mAnimInstance->PlayMontage(TEXT("Attack"), IsWeak ? TEXT("AirWeak") : TEXT("AirStrong"));
 		bCanAttack = false;
 		bCanJump = false;
 		return;
