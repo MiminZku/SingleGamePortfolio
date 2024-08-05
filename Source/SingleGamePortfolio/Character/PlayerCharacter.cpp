@@ -13,6 +13,7 @@
 #include "Components/CapsuleComponent.h"
 #include "../Item/PlayerWeapon.h"
 #include "Engine/DamageEvents.h"
+#include "CharacterStat/CharacterStatComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -332,8 +333,9 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 
 				HitStop(0.1f, 0.01f);
-				
 
+				FDamageEvent DmgEvent;
+				HitResult.GetActor()->TakeDamage(30.f, DmgEvent, GetController(), mWeapon);
 			}
 		}
 	}
@@ -354,10 +356,8 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
-	float Damage = 
-		Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	FDamageEvent Dmg;
 
 	return Damage;
 }

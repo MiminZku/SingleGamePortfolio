@@ -21,7 +21,7 @@ struct FNextAttack
 USTRUCT()
 struct FPlayerAnimData : public FTableRowBase
 {
-	GENERATED_USTRUCT_BODY()
+	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TMap<FName, UAnimSequence*> mSequenceMap;

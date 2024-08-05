@@ -7,6 +7,7 @@
 #include "../Animation/PlayerAnimTemplate.h"
 #include "../Item/PlayerWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Engine/DamageEvents.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
 {
@@ -148,6 +149,9 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
 				HitStop(0.1f, 0.01f);
+
+				FDamageEvent DmgEvent;
+				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);
 			}
 		}
 	}

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
+#include "Character/CharacterBase.h"
 #include "../Animation/PlayerAnimTemplate.h"
 #include "../Interface/AttackInterface.h"
 #include "PlayerCharacter.generated.h"
@@ -15,7 +15,7 @@ struct FInputActionValue;
 class APlayerWeapon;
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API APlayerCharacter : public ACharacter, public IAttackInterface
+class SINGLEGAMEPORTFOLIO_API APlayerCharacter : public ACharacterBase, public IAttackInterface
 {
 	GENERATED_BODY()
 
