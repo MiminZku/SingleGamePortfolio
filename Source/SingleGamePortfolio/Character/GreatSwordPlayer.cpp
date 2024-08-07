@@ -18,10 +18,7 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 		GetMesh()->SetSkeletalMeshAsset(MeshAsset.Object);
 	}
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -95.f));
-	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetRelativeScale3D(FVector(1.25f, 1.25f, 1.25f));
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	GetMesh()->bReceivesDecals = false;
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
 
@@ -148,7 +145,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
-				HitStop(0.1f, 0.01f);
+				HitStop(0.1f, 0.015f);
 
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);

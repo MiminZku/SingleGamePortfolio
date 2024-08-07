@@ -45,6 +45,7 @@ public:
 
 	void SetState(EPlayerState State) { mCurrentState = State; }
 
+private:
 	UFUNCTION()
 	void MontageEnd(UAnimMontage* Montage, bool bInterrupted);
 

@@ -20,7 +20,6 @@ enum class EAttackType : uint8
 	Airborn,
 	Knockback,
 	KnockDown,
-	Slow,
 	Stun
 };
 /**

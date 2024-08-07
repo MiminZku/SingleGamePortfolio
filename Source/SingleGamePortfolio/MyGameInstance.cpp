@@ -5,11 +5,21 @@
 
 UMyGameInstance::UMyGameInstance()
 {
-	static ConstructorHelpers::FObjectFinder<UDataTable>
-		DT(TEXT("/Script/Engine.DataTable'/Game/_Programming/Character/DT_PlayerAnim.DT_PlayerAnim'"));
-	if (DT.Succeeded())
 	{
-		mPlayerAnims = DT.Object;
+		static ConstructorHelpers::FObjectFinder<UDataTable>
+			DT(TEXT("/Script/Engine.DataTable'/Game/_Programming/Character/DT_PlayerAnim.DT_PlayerAnim'"));
+		if (DT.Succeeded())
+		{
+			mPlayerAnims = DT.Object;
+		}
+	}
+	{
+		static ConstructorHelpers::FObjectFinder<UDataTable>
+			DT(TEXT("/Script/Engine.DataTable'/Game/_Programming/Character/Enemy/DT_MonsterAnim.DT_MonsterAnim'"));
+		if (DT.Succeeded())
+		{
+			mMonsterAnims = DT.Object;
+		}
 	}
 }
 
@@ -23,4 +33,9 @@ void UMyGameInstance::Init()
 FPlayerAnimData* UMyGameInstance::GetPlayerAnimData(const FName& CharacterName) const
 {
 	return mPlayerAnims->FindRow<FPlayerAnimData>(CharacterName, TEXT(""));
+}
+
+FMonsterAnimData* UMyGameInstance::GetMonsterAnimData(const FName& MonsterName) const
+{
+	return  mMonsterAnims->FindRow<FMonsterAnimData>(MonsterName, TEXT(""));
 }

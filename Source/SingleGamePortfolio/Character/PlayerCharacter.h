@@ -67,7 +67,7 @@ public:
 
 	bool HasWeapon() const { return bHasWeapon; }
 	bool GetJumpEnable() { return bCanJump; }
-	FVector GetMoveVector() { return mMoveVector; }
+	FVector GetMoveVector() { return mMoveInputVec; }
 	FVector GetLookInputVector() { return mLookInputVec; }
 	APlayerWeapon* GetWeapon() { return mWeapon; }
 
@@ -94,11 +94,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* mCamera;
 
-	TObjectPtr<UPlayerAnimTemplate> mAnimInstance;
-
 	EPlayerState mState = EPlayerState::UnArmed;
 
-	FVector mMoveVector = FVector::ZeroVector;
+	FVector mMoveInputVec = FVector::ZeroVector;
 
 	FVector mLookInputVec = FVector::ZeroVector;
 

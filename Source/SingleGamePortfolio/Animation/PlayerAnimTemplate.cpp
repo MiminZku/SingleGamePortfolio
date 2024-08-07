@@ -42,7 +42,7 @@ void UPlayerAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 		mWalkForward = mOwningCharacter->GetMoveVector().X;
 		mWalkRight = mOwningCharacter->GetMoveVector().Y;
 
-		bIsRotating = !mOwningCharacter->GetLookInputVector().IsNearlyZero(0.01);
+		bIsRotating = !mOwningCharacter->GetLookInputVector().IsNearlyZero(0.1);
 	}
 }
 

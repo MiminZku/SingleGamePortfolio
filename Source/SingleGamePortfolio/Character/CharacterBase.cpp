@@ -14,6 +14,10 @@ ACharacterBase::ACharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 
+	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->bReceivesDecals = false;
+
 	// Stat Component
 	mStats = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stats"));
 

@@ -35,13 +35,14 @@ public:
 public:
 	virtual void Die();
 
-// Stat Section
 protected:
+// Stat Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterStatComponent> mStats;
 
 // UI WIdget Section
-protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UWidgetComponent> mHpBar;
+
+	TObjectPtr<class UPlayerAnimTemplate> mAnimInstance;
 };

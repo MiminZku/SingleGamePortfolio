@@ -146,7 +146,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	mMoveVector = Value.Get<FVector>();
+	mMoveInputVec = Value.Get<FVector>();
 
 	if (Controller)
 	{
@@ -163,18 +163,18 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 			// add movement 
-			AddMovementInput(ForwardDirection, mMoveVector.X);
-			AddMovementInput(RightDirection, mMoveVector.Y);
+			AddMovementInput(ForwardDirection, mMoveInputVec.X);
+			AddMovementInput(RightDirection, mMoveInputVec.Y);
 		}
 		else
 		{
-			AddControllerYawInput(mMoveVector.Y * GetWorld()->DeltaTimeSeconds * 50);
+			AddControllerYawInput(mMoveInputVec.Y * GetWorld()->DeltaTimeSeconds * 50);
 		}
 	}
 }
 void APlayerCharacter::StopMove(const FInputActionValue& Value)
 {
-	mMoveVector = FVector::ZeroVector;
+	mMoveInputVec = FVector::ZeroVector;
 }
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
@@ -225,7 +225,7 @@ void APlayerCharacter::StrongAttack(const FInputActionValue& Value)
 void APlayerCharacter::Dash(const FInputActionValue& Value)
 {
 	if (!bCanDodge)	return;
-	if (mMoveVector.IsNearlyZero(0.0001))		return;
+	if (mMoveInputVec.IsNearlyZero(0.0001))		return;
 	if (GetCharacterMovement()->IsFalling())	return;
 	bCanDodge = false;
 	bIsDodging = true;
@@ -237,7 +237,7 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, Vec.ToString());
 
 		FVector DirWannaGo = 
-			GetActorForwardVector() * mMoveVector.X + GetActorRightVector() * mMoveVector.Y;
+			GetActorForwardVector() * mMoveInputVec.X + GetActorRightVector() * mMoveInputVec.Y;
 		float Direction = mAnimInstance->CalculateDirection(DirWannaGo, GetActorRotation());
 		int32 Option = FMath::Floor(int(Direction + 45 + 90 + 360) % 360 / 90);
 		switch (Option)

@@ -18,7 +18,7 @@ struct FNextAttack
 	FName StrongAttack;
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FPlayerAnimData : public FTableRowBase
 {
 	GENERATED_BODY()
@@ -36,6 +36,21 @@ struct FPlayerAnimData : public FTableRowBase
 	TMap<FName, FNextAttack> mComboMap;
 };
 
+USTRUCT(BlueprintType)
+struct FMonsterAnimData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FName, UAnimSequence*> mSequenceMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FName, UBlendSpace*> mBlendSpaceMap;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TMap<FName, UAnimMontage*> mMontageMap;
+};
+
 UCLASS()
 class SINGLEGAMEPORTFOLIO_API UMyGameInstance : public UGameInstance
 {
@@ -48,8 +63,12 @@ public:
 	virtual void Init() override;
 
 	FPlayerAnimData* GetPlayerAnimData(const FName& CharacterName) const;
+	FMonsterAnimData* GetMonsterAnimData(const FName& MonsterName) const;
 
 private:
 	UPROPERTY()
-	UDataTable* mPlayerAnims = nullptr;
+	TObjectPtr<UDataTable> mPlayerAnims;
+
+	UPROPERTY()
+	TObjectPtr<UDataTable> mMonsterAnims;
 };
