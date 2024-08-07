@@ -38,6 +38,7 @@ protected:
 	void Move(const FInputActionValue& Value);
 	void StopMove(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
+	void StopLook(const FInputActionValue& Value);
 	void Jump(const FInputActionValue& Value);
 	void Run(const FInputActionValue& Value);
 	void WeakAttack(const FInputActionValue& Value);
@@ -64,6 +65,12 @@ public:
 	void HitStop(float NewTimeDilation, float Duration);
 ;
 
+	bool HasWeapon() const { return bHasWeapon; }
+	bool GetJumpEnable() { return bCanJump; }
+	FVector GetMoveVector() { return mMoveVector; }
+	FVector GetLookInputVector() { return mLookInputVec; }
+	APlayerWeapon* GetWeapon() { return mWeapon; }
+
 	void SetState(EPlayerState State)
 	{
 		mState = State;
@@ -80,11 +87,6 @@ public:
 	void SetHasWeapon(bool b) { bHasWeapon = b; }
 	void SetDamaged(bool Enable) { bDamaged = Enable; }
 
-	bool HasWeapon() const { return bHasWeapon; }
-	bool GetJumpEnable() { return bCanJump; }
-	FVector GetMoveVector() { return mMoveVector; }
-	APlayerWeapon* GetWeapon() { return mWeapon; }
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* mCameraArm;
@@ -97,6 +99,8 @@ protected:
 	EPlayerState mState = EPlayerState::UnArmed;
 
 	FVector mMoveVector = FVector::ZeroVector;
+
+	FVector mLookInputVec = FVector::ZeroVector;
 
 	float mWalkSpeed = 300.f;
 

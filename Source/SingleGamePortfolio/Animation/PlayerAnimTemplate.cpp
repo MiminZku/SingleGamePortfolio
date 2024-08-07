@@ -41,6 +41,8 @@ void UPlayerAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 		//mWalkRight = mMoveSpeed * FMath::Sin(Direction);
 		mWalkForward = mOwningCharacter->GetMoveVector().X;
 		mWalkRight = mOwningCharacter->GetMoveVector().Y;
+
+		bIsRotating = !mOwningCharacter->GetLookInputVector().IsNearlyZero(0.01);
 	}
 }
 

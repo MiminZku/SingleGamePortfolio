@@ -110,6 +110,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		// Looking
 		EnhancedInputComponent->BindAction(InputData->GetLookInputAction(),
 			ETriggerEvent::Triggered, this, &APlayerCharacter::Look);
+		EnhancedInputComponent->BindAction(InputData->GetLookInputAction(),
+			ETriggerEvent::Completed, this, &APlayerCharacter::StopLook);
 
 		// Jumping
 		EnhancedInputComponent->BindAction(InputData->GetJumpInputAction(),
@@ -170,7 +172,6 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		}
 	}
 }
-
 void APlayerCharacter::StopMove(const FInputActionValue& Value)
 {
 	mMoveVector = FVector::ZeroVector;
@@ -179,14 +180,18 @@ void APlayerCharacter::StopMove(const FInputActionValue& Value)
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	mLookInputVec = Value.Get<FVector>();
 
 	if (Controller != nullptr)
 	{
 		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		AddControllerYawInput(mLookInputVec.X);
+		AddControllerPitchInput(mLookInputVec.Y);
 	}
+}
+void APlayerCharacter::StopLook(const FInputActionValue& Value)
+{
+	mLookInputVec = FVector::ZeroVector;
 }
 
 void APlayerCharacter::Jump(const FInputActionValue& Value)
