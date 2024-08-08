@@ -97,7 +97,7 @@ protected:
 	float mMoveSpeed = 0.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-	bool bShouldMove = true;
+	bool bShouldMove = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsFalling = false;

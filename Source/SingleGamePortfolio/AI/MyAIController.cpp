@@ -28,6 +28,8 @@ void AMyAIController::RunAI()
 	UBlackboardComponent* BlackboardPtr = Blackboard.Get();
 	if (UseBlackboard(mBB, BlackboardPtr))
 	{
+		Blackboard->SetValueAsVector(TEXT("PatrolPivot"), GetPawn()->GetActorLocation());
+
 		bool RunResult = RunBehaviorTree(mBT);
 		ensure(RunResult);
 	}

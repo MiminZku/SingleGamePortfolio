@@ -32,12 +32,14 @@ AGreatSwordPlayer::AGreatSwordPlayer()
 
 void AGreatSwordPlayer::PostInitializeComponents()
 {
-	mAnimInstance = Cast<UPlayerAnimTemplate>(GetMesh()->GetAnimInstance());
-	if (mAnimInstance)
-	{
-		mAnimInstance->SetAnimData(TEXT("Hercules"));
-	}
 	Super::PostInitializeComponents();
+
+	mAnimInstance = GetMesh()->GetAnimInstance();
+	UPlayerAnimTemplate* AnimInstance = Cast<UPlayerAnimTemplate>(mAnimInstance);
+	if (AnimInstance)
+	{
+		AnimInstance->SetAnimData(TEXT("Hercules"));
+	}
 }
 
 void AGreatSwordPlayer::BeginPlay()
