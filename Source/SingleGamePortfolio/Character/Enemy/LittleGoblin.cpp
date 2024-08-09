@@ -38,12 +38,12 @@ void ALittleGoblin::Tick(float DeltaTime)
 
 }
 
+void ALittleGoblin::Angry()
+{
+	Super::Angry();
+}
+
 void ALittleGoblin::Attack()
 {
 	Super::Attack();
-	UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
-	if (AnimInstance)
-	{
-		AnimInstance->PlayMontage(TEXT("Attack"), TEXT("Default"));
-	}
 }

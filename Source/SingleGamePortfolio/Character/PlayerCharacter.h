@@ -117,9 +117,6 @@ protected:
 
 	bool bDamaged = false;
 
-	UPROPERTY(EditAnywhere)
-	bool bDrawDebug = false;
-
 	FName mCurrentAttack = TEXT("Idle");
 
 	UPROPERTY()

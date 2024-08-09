@@ -1,16 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/BTTask_Attack.h"
+#include "AI/BTTask_Angry.h"
 #include "AIController.h"
 #include "Character/Enemy/MonsterBase.h"
 
-UBTTask_Attack::UBTTask_Attack()
+UBTTask_Angry::UBTTask_Angry()
 {
-	NodeName = TEXT("Attack");
+	NodeName = TEXT("Angry");
 }
 
-EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_Angry::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	EBTNodeResult::Type Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
@@ -26,12 +26,12 @@ EBTNodeResult::Type UBTTask_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		return EBTNodeResult::Failed;
 	}
 
-	Monster->OnAttackFinished.BindLambda(
+	Monster->OnAngryFinished.BindLambda(
 		[&]()
 		{
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 	);
-	Monster->Attack();
+	Monster->Angry();
 	return EBTNodeResult::InProgress;
 }

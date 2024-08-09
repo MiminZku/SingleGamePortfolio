@@ -72,6 +72,15 @@ void UMonsterAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 	if (*mMontageMap.Find(TEXT("Attack")) == Montage)
 	{
 		mOwningCharacter->OnAttackFinished.ExecuteIfBound();
+
+		return;
+	}
+	if (*mMontageMap.Find(TEXT("Angry")) == Montage)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan,
+			TEXT("WTF?"));
+		mOwningCharacter->OnAngryFinished.ExecuteIfBound();
+
 		return;
 	}
 }

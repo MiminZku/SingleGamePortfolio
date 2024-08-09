@@ -21,6 +21,8 @@ AMyAIController::AMyAIController()
 	{
 		mBT = BT.Object;
 	}
+
+	
 }
 
 void AMyAIController::RunAI()

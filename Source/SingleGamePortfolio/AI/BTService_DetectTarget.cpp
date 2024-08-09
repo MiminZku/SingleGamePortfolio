@@ -13,11 +13,14 @@ UBTService_DetectTarget::UBTService_DetectTarget()
 {
 	NodeName = TEXT("DetectTarget");
 	Interval = 0.5f;
+	RandomDeviation = 0.f;
 }
 
 void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+
+	if (nullptr != OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target")))	return;
 
 	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (nullptr == ControllingPawn)
@@ -69,21 +72,21 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	if (bDetect)
 	{
 		Monster->SetState(EMonsterState::Trace);
-		Monster->GetCharacterMovement()->MaxWalkSpeed = 400.f;
-		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+		if(Monster->bDrawDebug)
+			DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
 	}
 	else
 	{
 		Monster->SetState(EMonsterState::Patrol);
-		Monster->GetCharacterMovement()->MaxWalkSpeed = 200.f;
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), nullptr);
-		DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+		if (Monster->bDrawDebug)
+			DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 	}
 }
 
 bool UBTService_DetectTarget::IsInFOV(APawn* ControllingPawn, APawn* DetectedPawn)
 {
-	float DetectDegree = 120.f;
+	float DetectDegree = 180.f;
 
 	FVector ForwardVec = ControllingPawn->GetActorForwardVector();
 	FVector VecToTarget = 

@@ -36,6 +36,7 @@ public:
 	void PlayMontage(const FName& Name, const FName& SectionName);
 
 	void SetState(EMonsterState InState) { mCurrentState = InState; }
+	void SetDead(bool IsDead) { bIsDead = IsDead; }
 
 protected:
 
@@ -72,4 +73,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	bool bIsFalling = false;
+
+	UPROPERTY(VisibleAnyWhere, BlueprintReadOnly)
+	bool bIsDead = false;
 };

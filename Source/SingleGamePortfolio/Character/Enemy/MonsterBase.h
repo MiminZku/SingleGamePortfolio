@@ -9,6 +9,7 @@
 #include "MonsterBase.generated.h"
 
 DECLARE_DELEGATE(FMonsterAttackFinished);
+DECLARE_DELEGATE(FMonsterAngryFinished);
 /**
  * 
  */
@@ -19,14 +20,20 @@ class SINGLEGAMEPORTFOLIO_API AMonsterBase : public AAICharacter, public IAttack
 	
 public:
 	AMonsterBase();
+	
+	virtual float TakeDamage(float DamageAmount,
+		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
+		AActor* DamageCauser) override;
 
 	virtual void AttackCollisionCheck(EAttackType AttackType) override;
 	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius,
 		EAttackType AttackType) override;
 
+	virtual void Angry();
 	virtual void Attack();
-
 	virtual void SetState(EMonsterState InState);
+
+	virtual void Die() override;
 
 protected:
 
@@ -36,6 +43,7 @@ private:
 
 public:
 	FMonsterAttackFinished OnAttackFinished;
+	FMonsterAngryFinished OnAngryFinished;
 
 protected:
 	EMonsterState mState;

@@ -27,6 +27,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	
+
+	virtual void Angry() override;
 	virtual void Attack() override;
 
 };

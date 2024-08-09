@@ -6,6 +6,7 @@
 #include "Components/WidgetComponent.h"
 #include "UI/HpBarWidget.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -17,6 +18,14 @@ ACharacterBase::ACharacterBase()
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->bReceivesDecals = false;
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+
+
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationYaw = false;
+	bUseControllerRotationRoll = false;
 
 	// Stat Component
 	mStats = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stats"));

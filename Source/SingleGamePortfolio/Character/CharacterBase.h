@@ -35,7 +35,12 @@ public:
 public:
 	virtual void Die();
 
+public:
+	UPROPERTY(EditAnywhere)
+	bool bDrawDebug = false;
+
 protected:
+
 // Stat Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterStatComponent> mStats;
