@@ -4,14 +4,14 @@
 #include "PlayerCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
-#include "../Input/DefaultInput.h"
+#include "Input/DefaultInput.h"
 #include "InputActionValue.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "../Item/PlayerWeapon.h"
+#include "Item/PlayerWeapon.h"
 #include "Engine/DamageEvents.h"
 #include "CharacterStat/CharacterStatComponent.h"
 
@@ -224,12 +224,17 @@ void APlayerCharacter::StrongAttack(const FInputActionValue& Value)
 
 void APlayerCharacter::Dash(const FInputActionValue& Value)
 {
+	UPlayerAnimTemplate* AnimInstance = Cast<UPlayerAnimTemplate>(mAnimInstance);
+	if (nullptr == AnimInstance)	return;
+
 	if (!bCanDodge)	return;
 	if (mMoveInputVec.IsNearlyZero(0.0001))		return;
 	if (GetCharacterMovement()->IsFalling())	return;
 	bCanDodge = false;
 	bIsDodging = true;
 	bCanJump = false;
+
+
 
 	if (EPlayerState::Armed == mState)
 	{
@@ -243,16 +248,16 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 		switch (Option)
 		{
 		case 0:
-			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("L"));
+			AnimInstance->PlayMontage(TEXT("Dash"), TEXT("L"));
 			break;
 		case 1:
-			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("F"));
+			AnimInstance->PlayMontage(TEXT("Dash"), TEXT("F"));
 			break;
 		case 2:
-			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("R"));
+			AnimInstance->PlayMontage(TEXT("Dash"), TEXT("R"));
 			break;
 		case 3:
-			mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("B"));
+			AnimInstance->PlayMontage(TEXT("Dash"), TEXT("B"));
 			break;
 		default:
 			break;
@@ -260,7 +265,7 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 	}
 	else if (EPlayerState::UnArmed == mState)
 	{
-		mAnimInstance->PlayMontage(TEXT("Dash"), TEXT("Unarm"));
+		AnimInstance->PlayMontage(TEXT("Dash"), TEXT("Unarm"));
 	}
 }
 
@@ -280,7 +285,7 @@ void APlayerCharacter::Arm()
 {
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
-	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
+	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
 	SetAttackEnable(false);	// 검 잡는 모션 나올때까지
 }
 
@@ -288,12 +293,15 @@ void APlayerCharacter::Unarm()
 {
 	SetState(EPlayerState::UnArmed);
 	bUseControllerRotationYaw = false;
-	mAnimInstance->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
+	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
 	mCurrentAttack = TEXT("Idle");
 }
 
 void APlayerCharacter::Attack(bool IsWeak)
 {
+	UPlayerAnimTemplate* AnimInstance = Cast<UPlayerAnimTemplate>(mAnimInstance);
+	if (nullptr == AnimInstance) return;
+
 	if (EPlayerState::UnArmed == mState)
 	{
 		Arm();
@@ -303,7 +311,7 @@ void APlayerCharacter::Attack(bool IsWeak)
 	if (!bCanAttack || bIsDodging)	return;
 	if (GetCharacterMovement()->IsFalling())
 	{
-		mAnimInstance->PlayMontage(TEXT("Attack"), IsWeak ? TEXT("AirWeak") : TEXT("AirStrong"));
+		AnimInstance->PlayMontage(TEXT("Attack"), IsWeak ? TEXT("AirWeak") : TEXT("AirStrong"));
 		bCanAttack = false;
 		bCanJump = false;
 		return;
@@ -315,10 +323,10 @@ void APlayerCharacter::Attack(bool IsWeak)
 	bCanDodge = false;
 	bCanRun = false;
 
-	FName NextAttack = mAnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
+	FName NextAttack = AnimInstance->GetNextAttackSection(mCurrentAttack, IsWeak);
 	if (!NextAttack.Compare(TEXT(""))) return;
 
-	mAnimInstance->PlayMontage(TEXT("Attack"), NextAttack);
+	AnimInstance->PlayMontage(TEXT("Attack"), NextAttack);
 	mCurrentAttack = NextAttack;
 }
 

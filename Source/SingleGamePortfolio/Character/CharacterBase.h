@@ -44,5 +44,5 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UWidgetComponent> mHpBar;
 
-	TObjectPtr<class UPlayerAnimTemplate> mAnimInstance;
+	TObjectPtr<class UAnimInstance> mAnimInstance;
 };

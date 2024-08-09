@@ -3,7 +3,7 @@
 
 #include "PlayerAnimTemplate.h"
 #include "Kismet/GameplayStatics.h"
-#include "../Character/PlayerCharacter.h"
+#include "Character/PlayerCharacter.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -35,8 +35,7 @@ void UPlayerAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 		bIsFalling = Movement->IsFalling();
 		bCanJump = mOwningCharacter->GetJumpEnable();
 		
-		float Direction = CalculateDirection(mVelocity, mOwningCharacter->GetActorRotation());
-
+		//float Direction = CalculateDirection(mVelocity, mOwningCharacter->GetActorRotation());
 		//mWalkForward = mMoveSpeed * FMath::Cos(Direction);
 		//mWalkRight = mMoveSpeed * FMath::Sin(Direction);
 		mWalkForward = mOwningCharacter->GetMoveVector().X;

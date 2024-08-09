@@ -20,8 +20,10 @@ public class SingleGamePortfolio : ModuleRules
 			"Engine",
 			"InputCore",
 			"EnhancedInput",
-			"AIModule",
 			"UMG",
+			"AIModule",
+			"NavigationSystem",
+			"GameplayTasks"
 		});
 	}
 }

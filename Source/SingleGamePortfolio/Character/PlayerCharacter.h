@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Character/CharacterBase.h"
-#include "../Animation/PlayerAnimTemplate.h"
-#include "../Interface/AttackInterface.h"
+#include "Animation/PlayerAnimTemplate.h"
+#include "Interface/AttackInterface.h"
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -76,7 +76,8 @@ public:
 		mState = State;
 		if (IsValid(mAnimInstance))
 		{
-			mAnimInstance->SetState(mState);
+			UPlayerAnimTemplate* AnimInstance = Cast<UPlayerAnimTemplate>(mAnimInstance);
+			if(AnimInstance) AnimInstance->SetState(mState);
 		}
 	}
 	void SetDodgeEnable(bool b) { bCanDodge = b; bIsDodging = !b; }
