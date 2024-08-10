@@ -275,7 +275,10 @@ void APlayerCharacter::Arm()
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
 	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
-	SetAttackEnable(false);	// 검 잡는 모션 나올때까지
+	// 검 잡는 모션 나올때까지
+	SetAttackEnable(false);	
+	SetDodgeEnable(false);
+	SetRunEnable(false);
 }
 
 void APlayerCharacter::Unarm()
@@ -284,6 +287,8 @@ void APlayerCharacter::Unarm()
 	bUseControllerRotationYaw = false;
 	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
 	mCurrentAttack = TEXT("Idle");
+	SetDodgeEnable(false);
+	SetRunEnable(false);
 }
 
 void APlayerCharacter::Attack(bool IsWeak)
@@ -385,10 +390,15 @@ void APlayerCharacter::Die()
 
 void APlayerCharacter::GrabWeapon()
 {
+	SetAttackEnable(true);
+	SetDodgeEnable(true);
+	SetRunEnable(true);
 }
 
 void APlayerCharacter::HolsterWeapon()
 {
+	SetDodgeEnable(true);
+	SetRunEnable(true);
 }
 
 void APlayerCharacter::PickWeaponUp(APlayerWeapon* Weapon)

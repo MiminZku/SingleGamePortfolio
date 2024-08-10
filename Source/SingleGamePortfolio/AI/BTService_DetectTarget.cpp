@@ -20,7 +20,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	if (nullptr != OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target")))	return;
+	if (nullptr != OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target"))) return;
 
 	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (nullptr == ControllingPawn)
@@ -35,7 +35,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		return;
 	}
 
-	float DetectRadius = 400.f;
+	float DetectRadius = 2000.f;
 
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams Param(NAME_None, false, ControllingPawn);
@@ -86,6 +86,7 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 
 bool UBTService_DetectTarget::IsInFOV(APawn* ControllingPawn, APawn* DetectedPawn)
 {
+	// 시야각에 들었는지
 	float DetectDegree = 180.f;
 
 	FVector ForwardVec = ControllingPawn->GetActorForwardVector();
@@ -96,11 +97,39 @@ bool UBTService_DetectTarget::IsInFOV(APawn* ControllingPawn, APawn* DetectedPaw
 
 	float CosTheta = FVector::DotProduct(ForwardVec, VecToTarget);
 	float Angle = FMath::RadiansToDegrees(FMath::Acos(CosTheta));
-	if (Angle <= DetectDegree / 2)
+	if (Angle > DetectDegree / 2)
 	{
-		return true;
+		return false;
 	}
-	return false;
+
+	// 중간에 물체에 가려졌는지
+	UWorld* World = ControllingPawn->GetWorld();
+	FHitResult HitResult;
+	FCollisionQueryParams Param(NAME_None, false, ControllingPawn);
+	
+	bool bCollision = World->LineTraceSingleByChannel(HitResult, 
+		ControllingPawn->GetActorLocation(), DetectedPawn->GetActorLocation(),
+		ECollisionChannel::ECC_Visibility, Param);
+	if (bCollision)
+	{
+		APawn* Pawn = Cast<APawn>(HitResult.GetActor());
+		if (DetectedPawn != Pawn)
+		{
+			DrawDebugLine(World, ControllingPawn->GetActorLocation(), DetectedPawn->GetActorLocation(),
+				FColor::Red, false, 0.1f);
+			return false;
+		}
+	}
+	else
+	{
+		DrawDebugLine(World, ControllingPawn->GetActorLocation(), DetectedPawn->GetActorLocation(),
+			FColor::Red, false, 0.1f);
+		return false;
+	}
+
+	DrawDebugLine(World, ControllingPawn->GetActorLocation(), DetectedPawn->GetActorLocation(),
+		FColor::Green, false, 0.1f);
+	return true;
 }
 
 

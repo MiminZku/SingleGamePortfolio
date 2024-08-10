@@ -15,6 +15,7 @@ AMonsterBase::AMonsterBase()
 
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
+	GetCharacterMovement()->bUseRVOAvoidance = true; // ¸ó½ºÅÍ³¢¸® ±æ °ãÃÆÀ» ¶§ ºñÄÑ°¡°Ô
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 }
@@ -34,7 +35,7 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
 		if (AnimInstance)
 		{
-			AnimInstance->SetState(EMonsterState::Trace);
+			SetState(EMonsterState::Trace);
 			AnimInstance->PlayMontage(TEXT("Hit"), TEXT("Default"));
 		}
 	}
@@ -90,7 +91,7 @@ void AMonsterBase::SetState(EMonsterState InState)
 	switch (mState)
 	{
 	case EMonsterState::Patrol:
-		GetCharacterMovement()->MaxWalkSpeed = 200.f;
+		//GetCharacterMovement()->MaxWalkSpeed = 200.f;
 		break;
 	case EMonsterState::Trace:
 		GetCharacterMovement()->MaxWalkSpeed = 400.f;

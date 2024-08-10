@@ -35,10 +35,10 @@ public:
 
 	virtual void Die() override;
 
+	bool CanAttack() { return bCanAttack; }
+	void SetAttackEnable(bool Enable) { bCanAttack = Enable; }
+
 protected:
-
-
-private:
 
 
 public:
@@ -47,4 +47,7 @@ public:
 
 protected:
 	EMonsterState mState;
+
+private:
+	bool bCanAttack = true;
 };

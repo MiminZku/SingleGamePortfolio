@@ -121,7 +121,6 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 void UPlayerAnimTemplate::AnimNotify_GrabWeapon()
 {
 	if (!mOwningCharacter)	return;
-	mOwningCharacter->SetAttackEnable(true);
 	mOwningCharacter->GrabWeapon();
 }
 

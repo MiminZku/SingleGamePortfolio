@@ -144,8 +144,8 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				if (AttackedCharacter->IsDamaged())	continue;
 				AttackedCharacter->SetDamaged(true);
 				mAttackedCharacters.Add(AttackedCharacter);
-				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
-					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
+				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
+				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
 				HitStop(0.1f, 0.015f);
 
