@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Character/Enemy/MonsterSpawner.h"
 
 
 AMonsterBase::AMonsterBase()
@@ -16,6 +17,7 @@ AMonsterBase::AMonsterBase()
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
 	GetCharacterMovement()->bUseRVOAvoidance = true; // ¸ó½ºÅÍ³¢¸® ±æ °ãÃÆÀ» ¶§ ºñÄÑ°¡°Ô
+	GetCharacterMovement()->AvoidanceConsiderationRadius = 100.f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 }
@@ -24,12 +26,8 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
-	if (Ctrl)
-	{
-		Ctrl->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"),
-			EventInstigator->GetPawn());
-	}
+	DetectedTarget(EventInstigator->GetPawn());
+
 	if (mAnimInstance)
 	{
 		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
@@ -43,12 +41,12 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	return Damage;
 }
 
-void AMonsterBase::AttackCollisionCheck(EAttackType AttackType)
+void AMonsterBase::AttackCollisionCheck()
 {
 
 }
 
-void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius, EAttackType AttackType)
+void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 {
 
 }
@@ -117,5 +115,28 @@ void AMonsterBase::Die()
 		{
 			AnimInstance->SetDead(true);
 		}
+	}
+}
+
+void AMonsterBase::BindSpawner(AMonsterSpawner* Spawner)
+{
+	mSpawner = Spawner;
+	if(IsValid(mSpawner)) 
+		mSpawner->OnDetectTarget.AddUObject(this, &AMonsterBase::RegisterTarget);
+}
+
+void AMonsterBase::DetectedTarget(APawn* Target)
+{
+	if(IsValid(mSpawner)) 
+		mSpawner->DetectedTarget(Target);
+}
+
+void AMonsterBase::RegisterTarget(APawn* Target)
+{
+	SetState(EMonsterState::Trace);
+	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
+	if (Ctrl)
+	{
+		Ctrl->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Target);
 	}
 }

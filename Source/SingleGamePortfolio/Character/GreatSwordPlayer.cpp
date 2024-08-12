@@ -108,9 +108,9 @@ void AGreatSwordPlayer::HolsterWeapon()
 		EMoveComponentAction::Type::Move, Info);
 }
 
-void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
+void AGreatSwordPlayer::AttackCollisionCheck()
 {
-	Super::AttackCollisionCheck(AttackType);
+	Super::AttackCollisionCheck();
 
 	APlayerWeapon* Weapon = GetWeapon();
 	if (!Weapon)	return;
@@ -147,7 +147,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
-				HitStop(0.1f, 0.015f);
+				HitStop(0.15f, 0.01f);
 
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);

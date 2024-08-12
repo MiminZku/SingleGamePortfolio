@@ -31,7 +31,4 @@ public:
 public:
 	UPROPERTY()
 	APlayerCharacter* mOwningCharacter = nullptr;
-
-	UPROPERTY(EditAnywhere)
-	EAttackType AttackType = EAttackType::Default;
 };

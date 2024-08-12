@@ -35,7 +35,7 @@ protected:
 public:
 	virtual void GrabWeapon() override;
 	virtual void HolsterWeapon() override;
-	virtual void AttackCollisionCheck(EAttackType AttackType) override;
+	virtual void AttackCollisionCheck() override;
 
 private:
 

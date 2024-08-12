@@ -56,31 +56,30 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 			APawn* Pawn = Cast<APawn>(OverlapResult.GetActor());
 			if (Pawn && Pawn->GetController()->IsPlayerController())
 			{
+				AMonsterBase* Monster = Cast<AMonsterBase>(ControllingPawn);
 				if (IsInFOV(ControllingPawn, Pawn))
 				{
-					OwnerComp.GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Pawn);
-					bDetect = true;
+					Monster->DetectedTarget(Pawn);
+					if (Monster->bDrawDebug)
+					{
+						DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
+						DrawDebugLine(World, ControllingPawn->GetActorLocation(), Pawn->GetActorLocation(),
+							FColor::Green, false, 0.1f);
+					}
 					break;
+				}
+				else
+				{
+					OwnerComp.GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), nullptr);
+					if (Monster->bDrawDebug)
+					{
+						DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
+						DrawDebugLine(World, ControllingPawn->GetActorLocation(), Pawn->GetActorLocation(),
+							FColor::Red, false, 0.1f);
+					}
 				}
 			}
 		}
-	}
-
-	auto Monster = Cast<AMonsterBase>(ControllingPawn);
-	if (nullptr == Monster)	return;
-
-	if (bDetect)
-	{
-		Monster->SetState(EMonsterState::Trace);
-		if(Monster->bDrawDebug)
-			DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Green, false, 0.2f);
-	}
-	else
-	{
-		Monster->SetState(EMonsterState::Patrol);
-		OwnerComp.GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), nullptr);
-		if (Monster->bDrawDebug)
-			DrawDebugSphere(World, Center, DetectRadius, 16, FColor::Red, false, 0.2f);
 	}
 }
 
@@ -115,20 +114,14 @@ bool UBTService_DetectTarget::IsInFOV(APawn* ControllingPawn, APawn* DetectedPaw
 		APawn* Pawn = Cast<APawn>(HitResult.GetActor());
 		if (DetectedPawn != Pawn)
 		{
-			DrawDebugLine(World, ControllingPawn->GetActorLocation(), DetectedPawn->GetActorLocation(),
-				FColor::Red, false, 0.1f);
 			return false;
 		}
 	}
 	else
 	{
-		DrawDebugLine(World, ControllingPawn->GetActorLocation(), DetectedPawn->GetActorLocation(),
-			FColor::Red, false, 0.1f);
 		return false;
 	}
 
-	DrawDebugLine(World, ControllingPawn->GetActorLocation(), DetectedPawn->GetActorLocation(),
-		FColor::Green, false, 0.1f);
 	return true;
 }
 

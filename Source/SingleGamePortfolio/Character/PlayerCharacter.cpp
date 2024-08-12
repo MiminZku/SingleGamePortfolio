@@ -324,12 +324,11 @@ void APlayerCharacter::Attack(bool IsWeak)
 	mCurrentAttack = NextAttack;
 }
 
-void APlayerCharacter::AttackCollisionCheck(EAttackType AttackType)
+void APlayerCharacter::AttackCollisionCheck()
 {
 }
 
-void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
-	float Radius, EAttackType AttackType)
+void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 {
 	FVector Origin = GetActorLocation() + Offset;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -345,8 +344,8 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset,
 			IAttackInterface* AttackedCharacter = Cast<IAttackInterface>(HitResult.GetActor());
 			if (AttackedCharacter)
 			{
-				if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
-					FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
+				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
+				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 
 				HitStop(0.1f, 0.01f);
 

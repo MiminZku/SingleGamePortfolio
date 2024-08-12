@@ -30,7 +30,7 @@ void UANS_AttackCollisionCheck::NotifyTick(USkeletalMeshComponent* MeshComp,
 
 	if (mOwningCharacter)
 	{
-		mOwningCharacter->AttackCollisionCheck(AttackType);
+		mOwningCharacter->AttackCollisionCheck();
 	}
 }
 

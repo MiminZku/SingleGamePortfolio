@@ -13,6 +13,6 @@ void UAN_AttackCollision::Notify(USkeletalMeshComponent* MeshComp,
 
 	if (AttackCharacter)
 	{
-		AttackCharacter->AttackCollisionCheckOnce(Offset, Radius, AttackType);
+		AttackCharacter->AttackCollisionCheckOnce(Offset, Radius);
 	}
 }

@@ -24,7 +24,4 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float Radius = 0.f;
-
-	UPROPERTY(EditAnywhere)
-	EAttackType AttackType = EAttackType::Default;
 };

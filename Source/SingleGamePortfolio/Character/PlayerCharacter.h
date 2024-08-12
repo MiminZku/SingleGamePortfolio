@@ -52,9 +52,8 @@ protected:
 public:
 	virtual void GrabWeapon();
 	virtual void HolsterWeapon();
-	virtual void AttackCollisionCheck(EAttackType AttackType) override;
-	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius,
-		EAttackType AttackType) override;
+	virtual void AttackCollisionCheck() override;
+	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) override;
 	virtual float TakeDamage(float DamageAmount,
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;

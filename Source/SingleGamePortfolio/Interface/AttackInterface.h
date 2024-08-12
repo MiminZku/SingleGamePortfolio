@@ -13,15 +13,15 @@ class UAttackInterface : public UInterface
 	GENERATED_BODY()
 };
 
-UENUM(BlueprintType)
-enum class EAttackType : uint8
-{
-	Default,
-	Airborn,
-	Knockback,
-	KnockDown,
-	Stun
-};
+//UENUM(BlueprintType)
+//enum class EAttackType : uint8
+//{
+//	Default,
+//	Airborn,
+//	Knockback,
+//	KnockDown,
+//	Stun
+//};
 /**
  * 
  */
@@ -31,10 +31,9 @@ class SINGLEGAMEPORTFOLIO_API IAttackInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void AttackCollisionCheck(EAttackType AttackType) abstract;
+	virtual void AttackCollisionCheck() abstract;
 
-	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius, 
-		EAttackType AttackType) abstract;
+	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) abstract;
 
 	void SetDamaged(bool b) { bDamaged = b; }
 

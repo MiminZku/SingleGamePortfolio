@@ -25,9 +25,8 @@ public:
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
-	virtual void AttackCollisionCheck(EAttackType AttackType) override;
-	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius,
-		EAttackType AttackType) override;
+	virtual void AttackCollisionCheck() override;
+	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) override;
 
 	virtual void Angry();
 	virtual void Attack();
@@ -35,6 +34,10 @@ public:
 
 	virtual void Die() override;
 
+	void BindSpawner(class AMonsterSpawner* Spawner);
+	void DetectedTarget(APawn* Target);
+	void RegisterTarget(APawn* Target);
+	
 	bool CanAttack() { return bCanAttack; }
 	void SetAttackEnable(bool Enable) { bCanAttack = Enable; }
 
@@ -47,6 +50,9 @@ public:
 
 protected:
 	EMonsterState mState;
+
+	UPROPERTY()
+	TObjectPtr<class AMonsterSpawner> mSpawner;
 
 private:
 	bool bCanAttack = true;
