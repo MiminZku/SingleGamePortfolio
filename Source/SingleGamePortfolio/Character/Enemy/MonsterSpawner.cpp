@@ -16,6 +16,7 @@ AMonsterSpawner::AMonsterSpawner()
 	SetRootComponent(mTrigger);
 
 	mMonsterClass = AMonsterBase::StaticClass();
+
 }
 
 
@@ -26,14 +27,18 @@ void AMonsterSpawner::BeginPlay()
 	Super::BeginPlay();
 
 	mTrigger->SetSphereRadius(mSpawnRadius * 2);
-	//mTrigger->OnComponentBeginOverlap.AddDynamic(this , );
+	//mTrigger->OnComponentBeginOverlap.AddDynamic(this, );
 
 	SpawnMonsters();
 }
 
 void AMonsterSpawner::DetectedTarget(TObjectPtr<APawn> Target)
 {
-	OnDetectTarget.Broadcast(Target);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, Target]()
+		{
+			OnDetectTarget.Broadcast(Target);
+		}, 1.f, false);
 }
 
 FVector AMonsterSpawner::GetRandomSpawnLoc()
@@ -78,7 +83,8 @@ void AMonsterSpawner::SpawnMonsters()
 			}
 
 			//AMonsterBase* SpawnMonster = GetWorld()->SpawnActorDeferred<AMonsterBase>(
-			//	mMonsterClass, SpawnTransform);
+			//	mMonsterClass, SpawnTransform, nullptr, nullptr, 
+			//	ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn);
 			//if (SpawnMonster)
 			//{
 			//	mMonsterArray.Add(SpawnMonster);

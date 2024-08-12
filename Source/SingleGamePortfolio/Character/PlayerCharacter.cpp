@@ -222,8 +222,7 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 	bCanDodge = false;
 	bIsDodging = true;
 	bCanJump = false;
-
-
+	SetCollisionEnable(false);
 
 	if (EPlayerState::Armed == mState)
 	{
@@ -385,6 +384,20 @@ void APlayerCharacter::Die()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
+}
+
+void APlayerCharacter::SetCollisionEnable(bool Enable)
+{
+	Super::SetCollisionEnable(Enable);
+	
+	if (Enable)
+	{
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
+	}
+	else
+	{
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
+	}
 }
 
 void APlayerCharacter::GrabWeapon()

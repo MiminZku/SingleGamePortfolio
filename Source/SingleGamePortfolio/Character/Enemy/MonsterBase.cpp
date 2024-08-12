@@ -116,19 +116,20 @@ void AMonsterBase::Die()
 			AnimInstance->SetDead(true);
 		}
 	}
+	GetCharacterMovement()->bUseRVOAvoidance = false;
 }
 
 void AMonsterBase::BindSpawner(AMonsterSpawner* Spawner)
 {
 	mSpawner = Spawner;
-	if(IsValid(mSpawner)) 
+	if (IsValid(mSpawner))
 		mSpawner->OnDetectTarget.AddUObject(this, &AMonsterBase::RegisterTarget);
 }
 
 void AMonsterBase::DetectedTarget(APawn* Target)
 {
-	if(IsValid(mSpawner)) 
-		mSpawner->DetectedTarget(Target);
+	RegisterTarget(Target);
+	mSpawner->DetectedTarget(Target);
 }
 
 void AMonsterBase::RegisterTarget(APawn* Target)

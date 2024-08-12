@@ -32,12 +32,14 @@ public:
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
+	virtual void SetCollisionEnable(bool Enable);
+
 public:
 	virtual void Die();
 
 public:
 	UPROPERTY(EditAnywhere)
-	bool bDrawDebug = false;
+	bool bDrawDebug = true;
 
 protected:
 

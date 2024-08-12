@@ -58,6 +58,7 @@ public:
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
 	virtual void Die() override;
+	virtual void SetCollisionEnable(bool Enable) override;
 
 	void PickWeaponUp(APlayerWeapon* Weapon);
 	void ResetAttackedCharacters();

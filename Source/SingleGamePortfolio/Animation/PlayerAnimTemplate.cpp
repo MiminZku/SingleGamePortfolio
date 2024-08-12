@@ -101,6 +101,7 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 		mOwningCharacter->SetJumpEnable(true);
 		mOwningCharacter->SetRunEnable(true);
+		mOwningCharacter->SetCollisionEnable(true);
 		return;
 	}
 	if (*mMontageMap.Find(TEXT("Attack")) == Montage)

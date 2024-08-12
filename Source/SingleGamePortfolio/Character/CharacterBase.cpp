@@ -93,6 +93,10 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	return Damage;
 }
 
+void ACharacterBase::SetCollisionEnable(bool Enable)
+{
+}
+
 void ACharacterBase::Die()
 {
 	mHpBar->SetHiddenInGame(true);

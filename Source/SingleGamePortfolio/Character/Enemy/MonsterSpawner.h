@@ -50,4 +50,5 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TArray<TObjectPtr<class AMonsterBase>> mMonsterArray;
+
 };
