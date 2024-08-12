@@ -11,7 +11,7 @@
 AMonsterSpawner::AMonsterSpawner()
 {
 	mTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
-	mTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	mTrigger->SetCollisionProfileName(TEXT("Item"));
 	mTrigger->bHiddenInGame = false;
 	SetRootComponent(mTrigger);
 
@@ -27,9 +27,8 @@ void AMonsterSpawner::BeginPlay()
 	Super::BeginPlay();
 
 	mTrigger->SetSphereRadius(mSpawnRadius * 2);
-	//mTrigger->OnComponentBeginOverlap.AddDynamic(this, );
-
-	SpawnMonsters();
+	mTrigger->OnComponentBeginOverlap.AddDynamic(this,
+		&AMonsterSpawner::TriggerBeginOverlap);
 }
 
 void AMonsterSpawner::DetectedTarget(TObjectPtr<APawn> Target)
@@ -53,6 +52,15 @@ FVector AMonsterSpawner::GetRandomSpawnLoc()
 		return RandomPos.Location;
 	}
 	return Origin;
+}
+
+void AMonsterSpawner::TriggerBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
+	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, 
+	bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Blue,
+		TEXT("OnTriggerBegin"));
+	SpawnMonsters();
 }
 
 void AMonsterSpawner::SpawnMonsters()
