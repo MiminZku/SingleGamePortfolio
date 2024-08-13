@@ -54,7 +54,7 @@ void ACharacterBase::PostInitializeComponents()
 	if (HpWidget)
 	{
 		HpWidget->BindHp(mStats);
-		mHpBar->SetVisibility(false);
+		mHpBar->SetHiddenInGame(true);
 	}
 	mStats->OnHpZero.AddUObject(this, &ACharacterBase::Die);
 }
@@ -83,7 +83,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	mHpBar->SetVisibility(true);
+	mHpBar->SetHiddenInGame(false);
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, DamageAmount]()
 		{
@@ -94,6 +94,11 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 
 void ACharacterBase::SetCollisionEnable(bool Enable)
 {
+}
+
+void ACharacterBase::SetHpBarVisible(bool Enable)
+{
+	mHpBar->SetHiddenInGame(!Enable);
 }
 
 void ACharacterBase::Die()

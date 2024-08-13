@@ -28,6 +28,7 @@ public:
 	FORCEINLINE float GetCurrentHp() { return mCurHp; }
 	FORCEINLINE float GetHpRatio() { return mCurHp / mMaxHp; }
 	float ApplyDamage(float InDamage);
+	void Rebirth();
 
 protected:
 	void SetHp(float NewHp);

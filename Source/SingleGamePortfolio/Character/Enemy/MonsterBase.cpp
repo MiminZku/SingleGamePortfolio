@@ -7,7 +7,7 @@
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Character/Enemy/MonsterSpawner.h"
-
+#include "CharacterStat/CharacterStatComponent.h"
 
 AMonsterBase::AMonsterBase()
 {
@@ -20,6 +20,8 @@ AMonsterBase::AMonsterBase()
 	GetCharacterMovement()->AvoidanceConsiderationRadius = 100.f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
+
+	mTarget = nullptr;
 }
 
 float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
@@ -49,6 +51,39 @@ void AMonsterBase::AttackCollisionCheck()
 void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 {
 
+}
+
+void AMonsterBase::Activate()
+{
+	SetActorHiddenInGame(false);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
+	if (Ctrl)
+	{
+		Ctrl->RunAI();
+	}
+	mStats->Rebirth();
+	SetHpBarVisible(false);
+}
+
+void AMonsterBase::Deactivate()
+{
+	SetActorHiddenInGame(true);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
+	if (Ctrl)
+	{
+		Ctrl->StopAI();
+	}
+	if (mAnimInstance)
+	{
+		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
+		if (AnimInstance)
+		{
+			AnimInstance->SetDead(false);
+		}
+	}
+	RegisterTarget(nullptr);
 }
 
 void AMonsterBase::Angry()
@@ -134,6 +169,7 @@ void AMonsterBase::DetectedTarget(APawn* Target)
 
 void AMonsterBase::RegisterTarget(APawn* Target)
 {
+	SetTarget(Target);
 	SetState(EMonsterState::Trace);
 	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
 	if (Ctrl)

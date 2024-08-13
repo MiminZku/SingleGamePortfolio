@@ -34,6 +34,9 @@ public:
 
 	virtual void SetCollisionEnable(bool Enable);
 
+protected:
+	void SetHpBarVisible(bool Enable);
+
 public:
 	virtual void Die();
 

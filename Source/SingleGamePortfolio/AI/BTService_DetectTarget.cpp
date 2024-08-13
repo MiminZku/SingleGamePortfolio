@@ -20,14 +20,16 @@ void UBTService_DetectTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	if (nullptr != OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target"))) return;
+	if (nullptr != OwnerComp.GetBlackboardComponent()->GetValueAsObject(TEXT("Target")))
+	{
+		return;
+	}
 
 	APawn* ControllingPawn = OwnerComp.GetAIOwner()->GetPawn();
 	if (nullptr == ControllingPawn)
 	{
 		return;
 	}
-
 	FVector Center = ControllingPawn->GetActorLocation();
 	UWorld* World = ControllingPawn->GetWorld();
 	if (nullptr == World)

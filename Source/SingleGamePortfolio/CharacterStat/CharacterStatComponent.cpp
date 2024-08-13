@@ -32,6 +32,11 @@ float UCharacterStatComponent::ApplyDamage(float InDamage)
 	return ActualDamage;
 }
 
+void UCharacterStatComponent::Rebirth()
+{
+	SetHp(mMaxHp);
+}
+
 void UCharacterStatComponent::SetHp(float NewHp)
 {
 	mCurHp = FMath::Clamp<float>(NewHp, 0.f, mMaxHp);
