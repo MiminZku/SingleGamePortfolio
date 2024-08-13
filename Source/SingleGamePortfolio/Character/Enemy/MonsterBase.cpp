@@ -8,6 +8,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Character/Enemy/MonsterSpawner.h"
 #include "CharacterStat/CharacterStatComponent.h"
+#include "Engine/DamageEvents.h"
 
 AMonsterBase::AMonsterBase()
 {
@@ -17,7 +18,7 @@ AMonsterBase::AMonsterBase()
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
 	GetCharacterMovement()->bUseRVOAvoidance = true; // ¸ó½ºÅÍ³¢¸® ±æ °ãÃÆÀ» ¶§ ºñÄÑ°¡°Ô
-	GetCharacterMovement()->AvoidanceConsiderationRadius = 100.f;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = 300.f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 
@@ -50,7 +51,34 @@ void AMonsterBase::AttackCollisionCheck()
 
 void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 {
+	FVector Origin = GetActorLocation() + Offset.X * GetActorForwardVector();
+	FCollisionQueryParams Params(NAME_None, false, this);
+	TArray<FHitResult> HitResults;
+	bool Collision = GetWorld()->SweepMultiByChannel(OUT HitResults,
+		Origin, Origin, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel4,
+		FCollisionShape::MakeSphere(Radius), Params);
 
+	if (Collision)
+	{
+		for (const FHitResult& HitResult : HitResults)
+		{
+			IAttackInterface* AttackedCharacter = Cast<IAttackInterface>(HitResult.GetActor());
+			if (AttackedCharacter)
+			{
+				FDamageEvent DmgEvent;
+				HitResult.GetActor()->TakeDamage(5.f, DmgEvent, GetController(), this);
+			}
+		}
+	}
+
+#if ENABLE_DRAW_DEBUG
+	if (bDrawDebug)
+	{
+		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
+
+		DrawDebugSphere(GetWorld(), Origin, Radius, 26, DrawColor, false, 1.f);
+	}
+#endif
 }
 
 void AMonsterBase::Activate()
@@ -105,7 +133,7 @@ void AMonsterBase::Attack()
 		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
 		if (AnimInstance)
 		{
-			AnimInstance->PlayMontage(TEXT("Attack"), TEXT("Default"));
+			AnimInstance->PlayMontage(TEXT("Attack"), FMath::RandRange(0, 1) ? TEXT("1") : TEXT("2"));
 		}
 	}
 }
@@ -152,6 +180,12 @@ void AMonsterBase::Die()
 		}
 	}
 	GetCharacterMovement()->bUseRVOAvoidance = false;
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]()
+		{
+			Deactivate();
+		}, 3.f, false);
 }
 
 void AMonsterBase::BindSpawner(AMonsterSpawner* Spawner)
