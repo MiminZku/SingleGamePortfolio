@@ -22,7 +22,8 @@ void UMonsterAnimTemplate::NativeInitializeAnimation()
 void UMonsterAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
+	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Cyan,
+	//	TEXT("Anim Tick"));
 	if (mOwningCharacter)
 	{
 		UCharacterMovementComponent* Movement = mOwningCharacter->GetCharacterMovement();

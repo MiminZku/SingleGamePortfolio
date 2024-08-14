@@ -18,9 +18,14 @@ AMonsterBase::AMonsterBase()
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
 	GetCharacterMovement()->bUseRVOAvoidance = true; // ¸ó½ºÅÍ³¢¸® ±æ °ãÃÆÀ» ¶§ ºñÄÑ°¡°Ô
-	GetCharacterMovement()->AvoidanceConsiderationRadius = 300.f;
+	GetCharacterMovement()->AvoidanceConsiderationRadius =
+		GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f; 
+	//300.f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
+	
+	GetMesh()->VisibilityBasedAnimTickOption = 
+		EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 
 	mTarget = nullptr;
 }
@@ -84,20 +89,25 @@ void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 void AMonsterBase::Activate()
 {
 	SetActorHiddenInGame(false);
+	SetHpBarVisible(false);
+	SetActorTickEnabled(true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCharacterMovement()->bUseRVOAvoidance = true;
 	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
 	if (Ctrl)
 	{
 		Ctrl->RunAI();
 	}
 	mStats->Rebirth();
-	SetHpBarVisible(false);
 }
 
 void AMonsterBase::Deactivate()
 {
 	SetActorHiddenInGame(true);
+	SetActorLocation(mSpawner->GetActorLocation());
+	SetActorTickEnabled(false);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCharacterMovement()->bUseRVOAvoidance = false;
 	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
 	if (Ctrl)
 	{
@@ -176,6 +186,7 @@ void AMonsterBase::Die()
 		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
 		if (AnimInstance)
 		{
+			AnimInstance->StopAllMontages(0.1f);
 			AnimInstance->SetDead(true);
 		}
 	}
