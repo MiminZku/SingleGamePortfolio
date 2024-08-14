@@ -16,10 +16,11 @@ void UANS_AttackCollisionCheck::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	if (Player)
 	{
 		mOwningCharacter = Player;
-		Player->GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 		APlayerWeapon* PlayerWeapon = mOwningCharacter->GetWeapon();
 		PlayerWeapon->SetPrevCollisionPos
 		((PlayerWeapon->GetCollisonEndPos() + PlayerWeapon->GetCollisionStartPos()) * 0.5f);
+		if(!bMonsterCollisionBlock)
+			mOwningCharacter->GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 	}
 }
 
@@ -43,7 +44,8 @@ void UANS_AttackCollisionCheck::NotifyEnd(USkeletalMeshComponent* MeshComp,
 	if (mOwningCharacter)
 	{
 		mOwningCharacter->ResetAttackedCharacters();
-		mOwningCharacter->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
+		if (!bMonsterCollisionBlock)
+			mOwningCharacter->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
 	}
 
 }

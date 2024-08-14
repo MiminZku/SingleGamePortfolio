@@ -139,8 +139,8 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 	if (Controller)
 	{
-		if (bCanAttack)
-		{
+		//if (bCanAttack)
+		//{
 			// find out which way is forward
 			const FRotator Rotation = Controller->GetControlRotation();
 			const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -154,11 +154,11 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 			// add movement 
 			AddMovementInput(ForwardDirection, mMoveInputVec.X);
 			AddMovementInput(RightDirection, mMoveInputVec.Y);
-		}
-		else
-		{
-			AddControllerYawInput(mMoveInputVec.Y * GetWorld()->DeltaTimeSeconds * 50);
-		}
+		//}
+		//else
+		//{
+		//	AddControllerYawInput(mMoveInputVec.Y * GetWorld()->DeltaTimeSeconds * 50);
+		//}
 	}
 }
 void APlayerCharacter::StopMove(const FInputActionValue& Value)

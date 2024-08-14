@@ -19,7 +19,7 @@ ALittleGoblin::ALittleGoblin()
 		GetMesh()->SetAnimInstanceClass(AnimClass.Class);
 	}
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -80.f));
-	GetMesh()->SetRelativeScale3D(FVector(1.5f, 1.5f, 1.5f));
+	GetMesh()->SetRelativeScale3D(FVector(1.3f, 1.3f, 1.3f));
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(80.f);
 	GetCapsuleComponent()->SetCapsuleRadius(55.f);

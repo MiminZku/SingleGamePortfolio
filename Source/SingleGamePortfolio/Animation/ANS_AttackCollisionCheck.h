@@ -31,4 +31,7 @@ public:
 public:
 	UPROPERTY()
 	APlayerCharacter* mOwningCharacter = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	bool bMonsterCollisionBlock = true;
 };
