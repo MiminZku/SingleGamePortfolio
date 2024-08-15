@@ -11,13 +11,13 @@ ACollectableItem::ACollectableItem()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	mTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
-	SetRootComponent(mTrigger);
-	mTrigger->SetCollisionProfileName(TEXT("Item"));
-	mTrigger->SetSphereRadius(100.f);
+	mCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
+	SetRootComponent(mCollider);
+	mCollider->SetCollisionProfileName(TEXT("Item"));
+	mCollider->SetSphereRadius(100.f);
 
 	mMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
-	mMesh->SetupAttachment(mTrigger);
+	mMesh->SetupAttachment(mCollider);
 	mMesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
@@ -25,7 +25,7 @@ void ACollectableItem::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	mTrigger->OnComponentBeginOverlap.AddDynamic(this, &ACollectableItem::OnPlayerOverlap);
+	mCollider->OnComponentBeginOverlap.AddDynamic(this, &ACollectableItem::OnPlayerOverlap);
 }
 
 // Called when the game starts or when spawned

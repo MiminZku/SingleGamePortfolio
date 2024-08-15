@@ -38,6 +38,6 @@ protected:
 	UStaticMeshComponent* mMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USphereComponent* mTrigger;
+	USphereComponent* mCollider;
 
 };

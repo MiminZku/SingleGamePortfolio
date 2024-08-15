@@ -47,7 +47,7 @@ public:
 
 private:
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class USphereComponent> mTrigger;
+	TObjectPtr<class USphereComponent> mCollider;
 
 	UPROPERTY()
 	TObjectPtr<class AMonsterPool> mMonsterPool;

@@ -13,10 +13,10 @@
 // Sets default values
 AMonsterSpawner::AMonsterSpawner()
 {
-	mTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
-	mTrigger->SetCollisionProfileName(TEXT("Item"));
-	mTrigger->bHiddenInGame = false;
-	SetRootComponent(mTrigger);
+	mCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
+	mCollider->SetCollisionProfileName(TEXT("Item"));
+	mCollider->bHiddenInGame = false;
+	SetRootComponent(mCollider);
 
 	mMonsterClass = AMonsterBase::StaticClass();
 
@@ -27,9 +27,9 @@ void AMonsterSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	mTrigger->SetSphereRadius(mSpawnRadius * 5);
-	mTrigger->OnComponentBeginOverlap.AddDynamic(this, &AMonsterSpawner::TriggerBeginOverlap);
-	mTrigger->OnComponentEndOverlap.AddDynamic(this, &AMonsterSpawner::TriggerEndOverlap);
+	mCollider->SetSphereRadius(mSpawnRadius * 5);
+	mCollider->OnComponentBeginOverlap.AddDynamic(this, &AMonsterSpawner::TriggerBeginOverlap);
+	mCollider->OnComponentEndOverlap.AddDynamic(this, &AMonsterSpawner::TriggerEndOverlap);
 
 	mMonsterPool = GetWorld()->SpawnActor<AMonsterPool>(AMonsterPool::StaticClass());
 	if (mMonsterPool)

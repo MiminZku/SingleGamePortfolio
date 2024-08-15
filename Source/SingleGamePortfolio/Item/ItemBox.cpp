@@ -2,21 +2,24 @@
 
 
 #include "Item/ItemBox.h"
-#include "Components/SphereComponent.h"
-#include "Components/StaticMeshComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "GeometryCollection/GeometryCollectionComponent.h"
 
 // Sets default values
 AItemBox::AItemBox()
 {
-	mTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
-	mMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
+	PrimaryActorTick.bCanEverTick = false;
 	
-	SetRootComponent(mTrigger);
-	mMesh->SetupAttachment(mTrigger);
-
-	mTrigger->SetCollisionProfileName(TEXT("Item"));
-
-	mMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	mGeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("Mesh"));
+	//mGeometryCollection->SetCollisionProfileName(TEXT("ItemBox"));
+	SetRootComponent(mGeometryCollection);
+	mGeometryCollection->SetGenerateOverlapEvents(true);
+	static ConstructorHelpers::FObjectFinder<UGeometryCollection>
+		GC(TEXT("/Script/GeometryCollectionEngine.GeometryCollection'/Game/_ART/Props/Kobo_Dungeon/Meshes/SM-Pottery-03_SM-Pottery-03/BreakablePottery.BreakablePottery'"));
+	if (GC.Succeeded())
+	{
+		mGeometryCollection->SetRestCollection(GC.Object);
+	}
 
 }
 
@@ -24,5 +27,12 @@ AItemBox::AItemBox()
 void AItemBox::BeginPlay()
 {
 	Super::BeginPlay();
+
 	
 }
+
+//void AItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
+//	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+//{
+//
+//}

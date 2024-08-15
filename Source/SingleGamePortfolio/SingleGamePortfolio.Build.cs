@@ -23,7 +23,8 @@ public class SingleGamePortfolio : ModuleRules
 			"UMG",
 			"AIModule",
 			"NavigationSystem",
-			"GameplayTasks"
+			"GameplayTasks",
+			"GeometryCollectionEngine"
 		});
 	}
 }

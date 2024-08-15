@@ -48,7 +48,7 @@ protected:
 	UStaticMeshComponent* mMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USphereComponent* mTrigger;
+	USphereComponent* mCollider;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* mCollisionStartPos = nullptr;

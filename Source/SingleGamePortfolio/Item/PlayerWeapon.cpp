@@ -9,14 +9,14 @@
 APlayerWeapon::APlayerWeapon()
 {
 
-	mTrigger = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
-	SetRootComponent(mTrigger);
-	mTrigger->SetCollisionProfileName(TEXT("Item"));
-	mTrigger->SetSphereRadius(100.f);
+	mCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
+	SetRootComponent(mCollider);
+	mCollider->SetCollisionProfileName(TEXT("Item"));
+	mCollider->SetSphereRadius(100.f);
 
 	mMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
-	mMesh->SetupAttachment(mTrigger);
-	mMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	mMesh->SetupAttachment(mCollider);
+	mMesh->SetCollisionProfileName(TEXT("PlayerWeapon"));
 
 	mCollisionStartPos = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionStartPos"));
 	mCollisionStartPos->SetupAttachment(mMesh);
@@ -31,7 +31,7 @@ APlayerWeapon::APlayerWeapon()
 void APlayerWeapon::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	mTrigger->OnComponentBeginOverlap.AddDynamic(this, &APlayerWeapon::OnPlayerOverlap);
+	mCollider->OnComponentBeginOverlap.AddDynamic(this, &APlayerWeapon::OnPlayerOverlap);
 }
 
 void APlayerWeapon::BeginPlay()
@@ -53,7 +53,7 @@ void APlayerWeapon::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent,
 	{
 		if (!Player->HasWeapon())
 		{
-			mTrigger->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			mMesh->SetRelativeLocation(FVector::ZeroVector);
 			mMesh->SetRelativeRotation(FRotator::ZeroRotator);
 			mMesh->SetRelativeScale3D(FVector::OneVector);
