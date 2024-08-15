@@ -381,7 +381,6 @@ void APlayerCharacter::Die()
 	Super::Die();
 
 	mAnimInstance->StopAllMontages(0.f);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
 }

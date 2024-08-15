@@ -17,10 +17,11 @@ AMonsterBase::AMonsterBase()
 
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
-	GetCharacterMovement()->bUseRVOAvoidance = true; // 몬스터끼리 길 겹쳤을 때 비켜가게
+	
+	// 몬스터끼리 비켜가게
+	GetCharacterMovement()->bUseRVOAvoidance = true; 
 	GetCharacterMovement()->AvoidanceConsiderationRadius =
 		GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f; 
-	//300.f;
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 	
