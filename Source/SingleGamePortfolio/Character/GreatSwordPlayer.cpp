@@ -4,10 +4,11 @@
 #include "GreatSwordPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "../Animation/PlayerAnimTemplate.h"
-#include "../Item/PlayerWeapon.h"
+#include "Animation/PlayerAnimTemplate.h"
+#include "Item/PlayerWeapon.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/DamageEvents.h"
+#include "Item/ItemBox.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
 {
@@ -152,6 +153,14 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);
 			}
+
+			AItemBox* ItemBox = Cast<AItemBox>(HitResult.GetActor());
+			if (ItemBox)
+			{
+				Weapon->CreateFields(HitResult.ImpactPoint);
+				ItemBox->SetColliderEnable(false);
+			}
+
 		}
 	}
 

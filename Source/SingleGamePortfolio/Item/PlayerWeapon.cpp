@@ -16,7 +16,7 @@ APlayerWeapon::APlayerWeapon()
 
 	mMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Weapon"));
 	mMesh->SetupAttachment(mCollider);
-	mMesh->SetCollisionProfileName(TEXT("PlayerWeapon"));
+	mMesh->SetCollisionProfileName(TEXT("NoCollision"));
 
 	mCollisionStartPos = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionStartPos"));
 	mCollisionStartPos->SetupAttachment(mMesh);

@@ -23,10 +23,6 @@
 			"TargetAllowList": [
 				"Editor"
 			]
-		},
-		{
-			"Name": "DidItHit",
-			"Enabled": true
 		}
 	]
 }
