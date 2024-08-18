@@ -14,6 +14,7 @@ AItemBox::AItemBox()
 	SetRootComponent(mCollider);
 	mCollider->SetCollisionProfileName(TEXT("ItemBox"));
 	mCollider->SetBoxExtent(FVector(100.f));
+	mCollider->SetCanEverAffectNavigation(false);
 
 	mGeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("Mesh"));
 	mGeometryCollection->SetupAttachment(mCollider);
