@@ -29,7 +29,7 @@ public:
 	virtual void AttackCollisionCheck() override;
 	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) override;
 
-	virtual void GetHit(const FVector& ImpactPoint) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 
 	virtual void Activate();
 	virtual void Deactivate();

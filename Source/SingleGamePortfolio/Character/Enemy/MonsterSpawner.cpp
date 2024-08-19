@@ -27,7 +27,7 @@ void AMonsterSpawner::BeginPlay()
 {
 	Super::BeginPlay();
 
-	mCollider->SetSphereRadius(mSpawnRadius * 5);
+	mCollider->SetSphereRadius(mSpawnRadius * 4);
 	mCollider->OnComponentBeginOverlap.AddDynamic(this, &AMonsterSpawner::TriggerBeginOverlap);
 	mCollider->OnComponentEndOverlap.AddDynamic(this, &AMonsterSpawner::TriggerEndOverlap);
 

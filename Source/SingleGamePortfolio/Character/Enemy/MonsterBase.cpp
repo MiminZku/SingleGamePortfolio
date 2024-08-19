@@ -90,13 +90,14 @@ void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 #endif
 }
 
-void AMonsterBase::GetHit(const FVector& ImpactPoint)
+void AMonsterBase::GetHit_Implementation(const FVector& ImpactPoint)
 {
 
 }
 
 void AMonsterBase::Activate()
 {
+	RegisterTarget(nullptr);
 	SetState(EMonsterState::Patrol);
 	SetActorHiddenInGame(false);
 	SetHpBarVisible(false);
@@ -131,7 +132,6 @@ void AMonsterBase::Deactivate()
 			AnimInstance->SetDead(false);
 		}
 	}
-	RegisterTarget(nullptr);
 }
 
 void AMonsterBase::Angry()

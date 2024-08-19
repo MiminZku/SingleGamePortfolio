@@ -154,7 +154,7 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);
 
-				HitInterface->GetHit(HitResult.ImpactPoint);				
+				HitInterface->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
 
 				AItemBox* ItemBox = Cast<AItemBox>(HitResult.GetActor());
 				if (ItemBox)

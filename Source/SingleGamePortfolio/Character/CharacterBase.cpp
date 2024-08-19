@@ -43,7 +43,7 @@ ACharacterBase::ACharacterBase()
 		mHpBar->SetWidgetSpace(EWidgetSpace::Screen);
 		mHpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	 }
-}
+}  
 
 void ACharacterBase::PostInitializeComponents()
 {

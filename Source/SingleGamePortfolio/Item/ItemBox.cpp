@@ -14,7 +14,7 @@ AItemBox::AItemBox()
 	mCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
 	SetRootComponent(mCollider);
 	mCollider->SetCollisionProfileName(TEXT("ItemBox"));
-	mCollider->SetBoxExtent(FVector(100.f));
+	mCollider->SetBoxExtent(FVector(90.f));
 	mCollider->SetCanEverAffectNavigation(false);
 
 	mGeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("Mesh"));
@@ -28,7 +28,7 @@ AItemBox::AItemBox()
 		mGeometryCollection->SetRestCollection(GC.Object);
 	}
 	mGeometryCollection->SetRelativeScale3D(FVector(3.f));
-	mGeometryCollection->SetRelativeLocation(FVector(0.f, 0.f, -100.f));
+	mGeometryCollection->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
 }
 
 // Called when the game starts or when spawned
@@ -38,13 +38,13 @@ void AItemBox::BeginPlay()
 
 }
 
-void AItemBox::GetHit(const FVector& ImpactPoint)
+void AItemBox::GetHit_Implementation(const FVector& ImpactPoint)
 {
 	mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle,
-		[this]()
-		{
-			Destroy();
-		}, 5.f, false);
+	//FTimerHandle TimerHandle;
+	//GetWorld()->GetTimerManager().SetTimer(TimerHandle,
+	//	[this]()
+	//	{
+	//		Destroy();
+	//	}, 5.f, false);
 }
