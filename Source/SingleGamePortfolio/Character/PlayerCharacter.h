@@ -122,7 +122,7 @@ protected:
 	UPROPERTY()
 	APlayerWeapon* mWeapon = nullptr;
 
-	TArray<IAttackInterface*> mAttackedCharacters;
+	TArray<class IHitInterface*> mHitInterfaces;
 
 private:
 	struct FEnhancedInputActionValueBinding* mMoveActionBinding;

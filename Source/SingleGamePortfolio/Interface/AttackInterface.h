@@ -34,11 +34,4 @@ public:
 	virtual void AttackCollisionCheck() abstract;
 
 	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) abstract;
-
-	void SetDamaged(bool b) { bDamaged = b; }
-
-	bool IsDamaged() { return bDamaged; }
-
-private:
-	bool bDamaged = false;
 };

@@ -9,6 +9,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Engine/DamageEvents.h"
 #include "Item/ItemBox.h"
+#include "Interface/HitInterface.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
 {
@@ -139,28 +140,35 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			IAttackInterface* AttackedCharacter = Cast<IAttackInterface>(HitResult.GetActor());
-			if (AttackedCharacter)
+			IHitInterface* HitInterface = Cast<IHitInterface>(HitResult.GetActor());
+			if (HitInterface)
 			{
-				if (AttackedCharacter->IsDamaged())	continue;
-				AttackedCharacter->SetDamaged(true);
-				mAttackedCharacters.Add(AttackedCharacter);
+				if (HitInterface->IsDamaged())	continue;
+				HitInterface->SetDamaged(true);
+				mHitInterfaces.Add(HitInterface);
 				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
-				HitStop(0.15f, 0.01f);
+				HitStop(0.1f, 0.01f);
 
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);
-			}
 
-			AItemBox* ItemBox = Cast<AItemBox>(HitResult.GetActor());
-			if (ItemBox)
-			{
-				Weapon->CreateFields(HitResult.ImpactPoint);
-				ItemBox->SetColliderEnable(false);
-			}
+				HitInterface->GetHit(HitResult.ImpactPoint);				
 
+				AItemBox* ItemBox = Cast<AItemBox>(HitResult.GetActor());
+				if (ItemBox)
+				{
+					Weapon->CreateFields(HitResult.ImpactPoint);
+					FTimerHandle TimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle,
+						[Weapon, HitResult]()
+						{
+							Weapon->CreateFields(HitResult.ImpactPoint);
+						},
+						0.01f, false);
+				}
+			}
 		}
 	}
 

@@ -4,6 +4,7 @@
 #include "Item/ItemBox.h"
 #include "Components/BoxComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Field/FieldSystemActor.h"
 
 // Sets default values
 AItemBox::AItemBox()
@@ -18,6 +19,7 @@ AItemBox::AItemBox()
 
 	mGeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("Mesh"));
 	mGeometryCollection->SetupAttachment(mCollider);
+	mGeometryCollection->SetCollisionProfileName(TEXT("Destructible"));
 	mGeometryCollection->SetGenerateOverlapEvents(true);
 	static ConstructorHelpers::FObjectFinder<UGeometryCollection>
 		GC(TEXT("/Script/GeometryCollectionEngine.GeometryCollection'/Game/_ART/Props/Kobo_Dungeon/Meshes/BreakableMeshes/GC_SM-Pottery-04.GC_SM-Pottery-04'"));
@@ -34,21 +36,15 @@ void AItemBox::BeginPlay()
 {
 	Super::BeginPlay();
 
-	mCollider->OnComponentBeginOverlap.AddDynamic(this, &AItemBox::OnOverlapBegin);
 }
 
-void AItemBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, 
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AItemBox::GetHit(const FVector& ImpactPoint)
 {
-	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan, TEXT("BoxOverlap"));
 	mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-}
-
-void AItemBox::SetColliderEnable(bool Enable)
-{
-	if (false)
-	{
-		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan, TEXT("SetColliderEnable"));
-		mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle,
+		[this]()
+		{
+			Destroy();
+		}, 5.f, false);
 }

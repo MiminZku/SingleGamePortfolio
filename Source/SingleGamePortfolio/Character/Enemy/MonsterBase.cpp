@@ -36,6 +36,9 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	DetectedTarget(EventInstigator->GetPawn());
+	
+	FVector LaunchVec = GetActorLocation() - EventInstigator->GetPawn()->GetActorLocation();
+	LaunchCharacter(LaunchVec * 10.f, false, false);
 
 	if (mAnimInstance)
 	{
@@ -87,8 +90,14 @@ void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 #endif
 }
 
+void AMonsterBase::GetHit(const FVector& ImpactPoint)
+{
+
+}
+
 void AMonsterBase::Activate()
 {
+	SetState(EMonsterState::Patrol);
 	SetActorHiddenInGame(false);
 	SetHpBarVisible(false);
 	SetActorTickEnabled(true);
@@ -163,7 +172,7 @@ void AMonsterBase::SetState(EMonsterState InState)
 	switch (mState)
 	{
 	case EMonsterState::Patrol:
-		//GetCharacterMovement()->MaxWalkSpeed = 200.f;
+		GetCharacterMovement()->MaxWalkSpeed = 200.f;
 		break;
 	case EMonsterState::Trace:
 		GetCharacterMovement()->MaxWalkSpeed = 400.f;

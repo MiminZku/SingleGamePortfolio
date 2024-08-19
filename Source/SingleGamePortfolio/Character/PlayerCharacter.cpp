@@ -14,6 +14,8 @@
 #include "Item/PlayerWeapon.h"
 #include "Engine/DamageEvents.h"
 #include "CharacterStat/CharacterStatComponent.h"
+#include "Interface/AttackInterface.h"
+#include "Interface/HitInterface.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -340,7 +342,7 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			IAttackInterface* AttackedCharacter = Cast<IAttackInterface>(HitResult.GetActor());
+			IHitInterface* AttackedCharacter = Cast<IHitInterface>(HitResult.GetActor());
 			if (AttackedCharacter)
 			{
 				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
@@ -423,11 +425,11 @@ void APlayerCharacter::PickWeaponUp(APlayerWeapon* Weapon)
 
 void APlayerCharacter::ResetAttackedCharacters()
 {
-	for (IAttackInterface* AttackedCharacter : mAttackedCharacters)
+	for (IHitInterface* AttackedCharacter : mHitInterfaces)
 	{
 		AttackedCharacter->SetDamaged(false);
 	}
-	mAttackedCharacters.Empty();
+	mHitInterfaces.Empty();
 }
 
 void APlayerCharacter::HitStop(float NewTimeDilation, float Duration)

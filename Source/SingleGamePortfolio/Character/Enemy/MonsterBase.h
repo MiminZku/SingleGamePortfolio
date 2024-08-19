@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/AICharacter.h"
 #include "Interface/AttackInterface.h"
+#include "Interface/HitInterface.h"
 #include "Animation/MonsterAnimTemplate.h"
 #include "MonsterBase.generated.h"
 
@@ -14,7 +15,7 @@ DECLARE_DELEGATE(FMonsterAngryFinished);
  * 
  */
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API AMonsterBase : public AAICharacter, public IAttackInterface
+class SINGLEGAMEPORTFOLIO_API AMonsterBase : public AAICharacter, public IAttackInterface, public IHitInterface
 {
 	GENERATED_BODY()
 	
@@ -27,6 +28,8 @@ public:
 
 	virtual void AttackCollisionCheck() override;
 	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) override;
+
+	virtual void GetHit(const FVector& ImpactPoint) override;
 
 	virtual void Activate();
 	virtual void Deactivate();
