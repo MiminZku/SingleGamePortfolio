@@ -2,7 +2,7 @@
 
 
 #include "Item/ItemBox.h"
-#include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Field/FieldSystemActor.h"
 #include "Item/Item.h"
@@ -12,10 +12,11 @@ AItemBox::AItemBox()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	
-	mCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Collider"));
+	mCollider = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Collider"));
 	SetRootComponent(mCollider);
 	mCollider->SetCollisionProfileName(TEXT("ItemBox"));
-	mCollider->SetBoxExtent(FVector(90.f));
+	mCollider->SetCapsuleHalfHeight(90.f);
+	mCollider->SetCapsuleRadius(90.f);
 	mCollider->SetCanEverAffectNavigation(false);
 
 	mGeometryCollection = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("Mesh"));
@@ -30,6 +31,7 @@ AItemBox::AItemBox()
 	}
 	mGeometryCollection->SetRelativeScale3D(FVector(3.f));
 	mGeometryCollection->SetRelativeLocation(FVector(0.f, 0.f, -90.f));
+	mGeometryCollection->SetRenderCustomDepth(true);
 }
 
 // Called when the game starts or when spawned

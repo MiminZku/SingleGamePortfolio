@@ -27,7 +27,7 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UBoxComponent> mCollider;
+	TObjectPtr<class UCapsuleComponent> mCollider;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UGeometryCollectionComponent> mGeometryCollection;

@@ -20,6 +20,7 @@ AItem::AItem()
 	mMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	mMesh->SetupAttachment(mCollider);
 	mMesh->SetCollisionProfileName(TEXT("NoCollision"));
+	mMesh->SetRenderCustomDepth(true);
 }
 
 void AItem::PostInitializeComponents()

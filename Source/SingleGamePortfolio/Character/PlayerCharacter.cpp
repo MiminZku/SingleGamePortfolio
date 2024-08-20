@@ -18,6 +18,7 @@
 #include "Interface/HitInterface.h"
 #include "UI/HpBarWidget.h"
 #include "Components/WidgetComponent.h"
+#include "Item/ItemBox.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -348,16 +349,42 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			IHitInterface* AttackedCharacter = Cast<IHitInterface>(HitResult.GetActor());
-			if (AttackedCharacter)
+			IHitInterface* AttackedActor = Cast<IHitInterface>(HitResult.GetActor());
+			if (AttackedActor)
 			{
 				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
+
+				AttackedActor->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
 
 				HitStop(0.1f, 0.01f);
 
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(30.f, DmgEvent, GetController(), mWeapon);
+
+				ACharacter* Character = Cast<ACharacter>(HitResult.GetActor());
+				if (Character)
+				{
+					FVector LaunchVec = HitResult.ImpactPoint - GetActorLocation();
+					LaunchVec.Normalize();
+					LaunchVec += FVector(0.f, 0.f, 100.f);
+					LaunchVec *= 10.f;
+
+					Character->LaunchCharacter(LaunchVec, false, false);
+				}
+
+				AItemBox* ItemBox = Cast<AItemBox>(HitResult.GetActor());
+				if (ItemBox)
+				{
+					mWeapon->CreateFields(HitResult.ImpactPoint);
+					FTimerHandle TimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(TimerHandle,
+						[this, HitResult]()
+						{
+							mWeapon->CreateFields(HitResult.ImpactPoint);
+						},
+						0.01f, false);
+				}
 			}
 		}
 	}

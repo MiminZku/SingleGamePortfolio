@@ -18,6 +18,7 @@ ACharacterBase::ACharacterBase()
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->bReceivesDecals = false;
+	GetMesh()->SetRenderCustomDepth(true);
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
@@ -104,6 +105,7 @@ void ACharacterBase::SetHpBarVisible(bool Enable)
 void ACharacterBase::Die()
 {
 	mHpBar->SetHiddenInGame(true);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
+	GetCapsuleComponent()->UpdateCollisionProfile();
 }
 

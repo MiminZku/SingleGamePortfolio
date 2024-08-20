@@ -108,7 +108,7 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 	{
 		if (bInterrupted)
 		{
-			//mOwningCharacter->SetJumpEnable(true);
+			mOwningCharacter->SetJumpEnable(true);
 		}
 		else
 		{
