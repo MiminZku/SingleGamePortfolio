@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Item.h"
 #include "PlayerWeapon.generated.h"
 
 class USphereComponent;
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API APlayerWeapon : public AActor
+class SINGLEGAMEPORTFOLIO_API APlayerWeapon : public AItem
 {
 	GENERATED_BODY()
 
@@ -23,17 +23,13 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void CreateFields(const FVector& FieldLocation);
 
 protected:
-	UFUNCTION()
-	virtual void OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	virtual void OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-		const FHitResult& SweepResult);
+		const FHitResult& SweepResult) override;
 
 public:
 	UStaticMeshComponent* GetMesh() { return mMesh; }
@@ -47,12 +43,6 @@ public:
 	void SetPrevCollisionPos(const FVector& Vec) {	mPrevCollisionPos = Vec; }
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UStaticMeshComponent* mMesh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	USphereComponent* mCollider;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* mCollisionStartPos = nullptr;
 

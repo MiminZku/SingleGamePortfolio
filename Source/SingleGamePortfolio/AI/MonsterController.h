@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
-#include "MyAIController.generated.h"
+#include "MonsterController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API AMyAIController : public AAIController
+class SINGLEGAMEPORTFOLIO_API AMonsterController : public AAIController
 {
 	GENERATED_BODY()
 	
 public:
-	AMyAIController();
+	AMonsterController();
 
 	void RunAI();
 	void StopAI();

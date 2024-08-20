@@ -2,7 +2,7 @@
 
 
 #include "Character/Enemy/MonsterBase.h"
-#include "AI/MyAIController.h"
+#include "AI/MonsterController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -12,7 +12,7 @@
 
 AMonsterBase::AMonsterBase()
 {
-	AIControllerClass = AMyAIController::StaticClass();
+	AIControllerClass = AMonsterController::StaticClass();
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
@@ -104,7 +104,7 @@ void AMonsterBase::Activate()
 	SetActorTickEnabled(true);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCharacterMovement()->bUseRVOAvoidance = true;
-	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
+	AMonsterController* Ctrl = Cast<AMonsterController>(GetController());
 	if (Ctrl)
 	{
 		Ctrl->RunAI();
@@ -119,7 +119,7 @@ void AMonsterBase::Deactivate()
 	SetActorTickEnabled(false);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->bUseRVOAvoidance = false;
-	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
+	AMonsterController* Ctrl = Cast<AMonsterController>(GetController());
 	if (Ctrl)
 	{
 		Ctrl->StopAI();
@@ -186,7 +186,7 @@ void AMonsterBase::Die()
 {
 	Super::Die();
 
-	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
+	AMonsterController* Ctrl = Cast<AMonsterController>(GetController());
 	if (Ctrl)
 	{
 		Ctrl->StopAI();
@@ -226,7 +226,7 @@ void AMonsterBase::RegisterTarget(APawn* Target)
 {
 	SetTarget(Target);
 	SetState(EMonsterState::Trace);
-	AMyAIController* Ctrl = Cast<AMyAIController>(GetController());
+	AMonsterController* Ctrl = Cast<AMonsterController>(GetController());
 	if (Ctrl)
 	{
 		Ctrl->GetBlackboardComponent()->SetValueAsObject(TEXT("Target"), Target);

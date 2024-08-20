@@ -16,6 +16,8 @@
 #include "CharacterStat/CharacterStatComponent.h"
 #include "Interface/AttackInterface.h"
 #include "Interface/HitInterface.h"
+#include "UI/HpBarWidget.h"
+#include "Components/WidgetComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -46,6 +48,12 @@ APlayerCharacter::APlayerCharacter()
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
 }
 
+void APlayerCharacter::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+}
+
 // Called when the game starts or when spawned
 void APlayerCharacter::BeginPlay()
 {
@@ -58,8 +66,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 0.1f, FColor::Black,
-	//	GetVelocity().ToString());
 
 	// ∏ÿ√ﬂ∏È ¥ŸΩ√ ∞»±‚
 	if (GetVelocity().IsNearlyZero(0.01))
@@ -374,6 +380,8 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	UHpBarWidget* HpWidget = Cast<UHpBarWidget>(mHpBar->GetUserWidgetObject());
+	HpWidget->SetProgressBarColor(FLinearColor::Green);
 
 	return Damage;
 }

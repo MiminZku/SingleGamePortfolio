@@ -23,10 +23,15 @@ protected:
 public:	
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 
+	void SpawnItem(const FVector& SpawnLoc);
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UBoxComponent> mCollider;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UGeometryCollectionComponent> mGeometryCollection;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class AItem> mItemClass;
 };

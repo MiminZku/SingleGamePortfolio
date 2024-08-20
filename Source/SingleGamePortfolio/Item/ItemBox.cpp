@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Field/FieldSystemActor.h"
+#include "Item/Item.h"
 
 // Sets default values
 AItemBox::AItemBox()
@@ -46,5 +47,24 @@ void AItemBox::GetHit_Implementation(const FVector& ImpactPoint)
 	//	[this]()
 	//	{
 	//		Destroy();
-	//	}, 5.f, false);
+	//	}, 3.f, false);
+	SpawnItem(GetActorLocation());
+}
+
+void AItemBox::SpawnItem(const FVector& SpawnLoc)
+{
+	FActorSpawnParameters Params;
+	Params.SpawnCollisionHandlingOverride =
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+	if (IsValid(mItemClass))
+	{
+		AItem* Item = GetWorld()->SpawnActor<AItem>
+			(mItemClass, GetActorTransform(), Params);
+		if (Item)
+		{
+			// TO DO..
+
+		}
+	}
 }

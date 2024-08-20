@@ -29,10 +29,15 @@ void UHpBarWidget::UpdateHpBar()
 	{
 		if (mCurrentStatComp.IsValid())
 		{
-			//mHpBar->SetPercent(NewCurrentHp / mMaxHp);
 			mHpBar->SetPercent(mCurrentStatComp->GetHpRatio());
-			//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black,
-			//	TEXT("UpdateHpBar"));
 		}
+	}
+}
+
+void UHpBarWidget::SetProgressBarColor(FLinearColor NewColor)
+{
+	if (mHpBar)
+	{
+		mHpBar->SetFillColorAndOpacity(NewColor);
 	}
 }

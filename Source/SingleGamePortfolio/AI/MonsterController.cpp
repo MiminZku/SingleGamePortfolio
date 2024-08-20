@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "AI/MyAIController.h"
+#include "AI/MonsterController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardData.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-AMyAIController::AMyAIController()
+AMonsterController::AMonsterController()
 {
 	static ConstructorHelpers::FObjectFinder<UBlackboardData>
 		BB(TEXT("/Script/AIModule.BlackboardData'/Game/_Programming/AI/BB_Monster.BB_Monster'"));
@@ -23,7 +23,7 @@ AMyAIController::AMyAIController()
 	}
 }
 
-void AMyAIController::RunAI()
+void AMonsterController::RunAI()
 {
 	UBlackboardComponent* BlackboardPtr = Blackboard.Get();
 	if (UseBlackboard(mBB, BlackboardPtr))
@@ -35,7 +35,7 @@ void AMyAIController::RunAI()
 	}
 }
 
-void AMyAIController::StopAI()
+void AMonsterController::StopAI()
 {
 	UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(BrainComponent);
 	if (BTComp)
@@ -44,7 +44,7 @@ void AMyAIController::StopAI()
 	}
 }
 
-void AMyAIController::OnPossess(APawn* InPawn)
+void AMonsterController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 

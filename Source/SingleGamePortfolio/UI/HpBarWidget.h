@@ -23,6 +23,8 @@ protected:
 public:
 	void BindHp(class UCharacterStatComponent* StatComp);
 	void UpdateHpBar();
+	
+	void SetProgressBarColor(FLinearColor NewColor);
 
 protected:
 	TWeakObjectPtr<class UCharacterStatComponent> mCurrentStatComp;

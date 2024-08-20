@@ -1,15 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "CollectableItem.h"
+#include "Item.h"
 #include "Components/SphereComponent.h"
-#include "CollectableItem.h"
+#include "Character/PlayerCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
-ACollectableItem::ACollectableItem()
+AItem::AItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	mCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
 	SetRootComponent(mCollider);
@@ -21,31 +22,35 @@ ACollectableItem::ACollectableItem()
 	mMesh->SetCollisionProfileName(TEXT("NoCollision"));
 }
 
-void ACollectableItem::PostInitializeComponents()
+void AItem::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	mCollider->OnComponentBeginOverlap.AddDynamic(this, &ACollectableItem::OnPlayerOverlap);
+	mCollider->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnOverlapBegin);
 }
 
-// Called when the game starts or when spawned
-void ACollectableItem::BeginPlay()
+void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
 }
 
-// Called every frame
-void ACollectableItem::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void ACollectableItem::OnPlayerOverlap(UPrimitiveComponent* OverlappedComponent, 
+void AItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
 {
-
+	APlayerCharacter* Player = Cast<APlayerCharacter>(OtherActor);
+	if (Player)
+	{
+		if (IsValid(mPickupSound))
+		{
+			UGameplayStatics::PlaySoundAtLocation(
+				this,
+				mPickupSound,
+				GetActorLocation()
+			);
+		}
+		Destroy();
+	}
 }
 

@@ -9,7 +9,7 @@ ASingleGamePortfolioGameMode::ASingleGamePortfolioGameMode()
 {
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn>
-		PlayerPawnBPClass(TEXT("/Script/Engine.Blueprint'/Game/_Programming/Character/Hercules/BP_Hercules.BP_Hercules_C'"));
+		PlayerPawnBPClass(TEXT("/Game/_Programming/Blueprints/BP_Hercules.BP_Hercules_C"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
