@@ -102,6 +102,7 @@ void AMonsterBase::Activate()
 	SetActorHiddenInGame(false);
 	SetHpBarVisible(false);
 	SetActorTickEnabled(true);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCharacterMovement()->bUseRVOAvoidance = true;
 	AMonsterController* Ctrl = Cast<AMonsterController>(GetController());

@@ -106,6 +106,5 @@ void ACharacterBase::Die()
 {
 	mHpBar->SetHiddenInGame(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
-	GetCapsuleComponent()->UpdateCollisionProfile();
 }
 
