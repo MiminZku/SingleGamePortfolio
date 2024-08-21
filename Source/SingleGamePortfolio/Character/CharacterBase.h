@@ -34,11 +34,13 @@ public:
 
 	virtual void SetCollisionEnable(bool Enable);
 
-protected:
-	void SetHpBarVisible(bool Enable);
+	virtual void Die();
 
 public:
-	virtual void Die();
+	TObjectPtr<class UCharacterStatComponent> GetStatComponent() { return mStats; }
+
+protected:
+	void SetHpBarVisible(bool Enable);
 
 public:
 	UPROPERTY(EditAnywhere)

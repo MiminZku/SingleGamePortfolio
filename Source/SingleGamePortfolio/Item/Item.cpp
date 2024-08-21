@@ -5,6 +5,7 @@
 #include "Components/SphereComponent.h"
 #include "Character/PlayerCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "CharacterStat/CharacterStatComponent.h"
 
 // Sets default values
 AItem::AItem()
@@ -51,6 +52,7 @@ void AItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 				GetActorLocation()
 			);
 		}
+		Player->GetStatComponent()->SetHpMax();
 		Destroy();
 	}
 }

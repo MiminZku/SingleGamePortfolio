@@ -29,6 +29,7 @@ public:
 	
 	FORCEINLINE float GetHpRatio() { return mCurHp / mMaxHp; }
 	
+	FORCEINLINE void SetHpMax() { SetHp(mMaxHp); }
 
 	
 	float ApplyDamage(float InDamage);

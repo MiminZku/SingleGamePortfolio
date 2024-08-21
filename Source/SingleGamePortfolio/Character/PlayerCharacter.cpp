@@ -478,5 +478,5 @@ void APlayerCharacter::HitStop(float NewTimeDilation, float Duration)
 		{
 			// 원래 시간 왜곡 값으로 되돌리기
 			GetWorld()->GetWorldSettings()->SetTimeDilation(1.f);
-		}, Duration, false); // false는 반복하지 않도록 설정
+		}, NewTimeDilation * Duration, false); // false는 반복하지 않도록 설정
 }
