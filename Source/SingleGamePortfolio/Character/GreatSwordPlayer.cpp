@@ -149,7 +149,7 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
 				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
-				HitStop(0.1f, 0.1f);
+				HitStop(0.1f, 0.05f);
 
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);
