@@ -280,17 +280,18 @@ void APlayerCharacter::ArmUnarm(const FInputActionValue& Value)
 
 void APlayerCharacter::Arm()
 {
+	if (bIsDodging) return;
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
 	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
-	// 검 잡는 모션 나올때까지
-	SetAttackEnable(false);	
+	SetAttackEnable(false); // 애니메이션에서 검 잡기 전까지는 공격 못하게
 	SetDodgeEnable(false);
 	SetRunEnable(false);
 }
 
 void APlayerCharacter::Unarm()
 {
+	if (bIsDodging) return;
 	SetState(EPlayerState::UnArmed);
 	bUseControllerRotationYaw = false;
 	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Unarm"));
@@ -401,6 +402,26 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 	}
 #endif
 
+}
+
+void APlayerCharacter::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	FVector ForwardVec = GetActorForwardVector();
+	FVector VecToImpactPoint = ImpactPoint - GetActorLocation();
+
+	// 앞 뒤 판단
+	float DotRes = FVector::DotProduct(ForwardVec, VecToImpactPoint);
+	if (DotRes < 0)	// 뒤에서 공격 받았을 때
+	{
+		Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("Hit"), TEXT("Back"));
+		return;
+	}
+
+	// 좌 우 판단
+	FVector CrossRes = FVector::CrossProduct(ForwardVec, VecToImpactPoint);
+
+	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("Hit"), 
+		(CrossRes.Z > 0) ? TEXT("Right") : TEXT("Left"));
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)

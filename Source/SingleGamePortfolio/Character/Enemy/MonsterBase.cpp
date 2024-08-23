@@ -71,9 +71,10 @@ void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
-			IAttackInterface* AttackedCharacter = Cast<IAttackInterface>(HitResult.GetActor());
+			IHitInterface* AttackedCharacter = Cast<IHitInterface>(HitResult.GetActor());
 			if (AttackedCharacter)
 			{
+				AttackedCharacter->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(5.f, DmgEvent, GetController(), this);
 			}

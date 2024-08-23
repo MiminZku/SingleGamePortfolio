@@ -14,6 +14,3 @@ class ASingleGamePortfolioGameMode : public AGameModeBase
 public:
 	ASingleGamePortfolioGameMode();
 };
-
-
-

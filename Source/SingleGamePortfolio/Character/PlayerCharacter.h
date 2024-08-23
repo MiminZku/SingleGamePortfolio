@@ -6,6 +6,7 @@
 #include "Character/CharacterBase.h"
 #include "Animation/PlayerAnimTemplate.h"
 #include "Interface/AttackInterface.h"
+#include "Interface/HitInterface.h"
 #include "PlayerCharacter.generated.h"
 
 class USpringArmComponent;
@@ -15,7 +16,7 @@ struct FInputActionValue;
 class APlayerWeapon;
 
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API APlayerCharacter : public ACharacterBase, public IAttackInterface
+class SINGLEGAMEPORTFOLIO_API APlayerCharacter : public ACharacterBase, public IAttackInterface, public IHitInterface
 {
 	GENERATED_BODY()
 
@@ -56,6 +57,7 @@ public:
 	virtual void HolsterWeapon();
 	virtual void AttackCollisionCheck() override;
 	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) override;
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 	virtual float TakeDamage(float DamageAmount,
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
