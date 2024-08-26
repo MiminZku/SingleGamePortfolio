@@ -38,7 +38,9 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	DetectedTarget(EventInstigator->GetPawn());
 	
 	FVector LaunchVec = GetActorLocation() - EventInstigator->GetPawn()->GetActorLocation();
-	LaunchCharacter(LaunchVec * 10.f, false, false);
+	float Dist = LaunchVec.Length();
+	Dist = 100 / Dist;
+	LaunchCharacter(LaunchVec * 10.f * Dist, false, false);
 
 	if (mAnimInstance)
 	{

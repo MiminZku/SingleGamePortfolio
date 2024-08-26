@@ -117,6 +117,15 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 		}
 		return;
 	}
+	if (*mMontageMap.Find(TEXT("Hit")) == Montage)
+	{
+		mOwningCharacter->SetAttackEnable(true);
+		mOwningCharacter->SetDodgeEnable(true);
+		mOwningCharacter->SetJumpEnable(true);
+		mOwningCharacter->SetRunEnable(true);
+		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
+		return;
+	}
 }
 
 void UPlayerAnimTemplate::AnimNotify_GrabWeapon()

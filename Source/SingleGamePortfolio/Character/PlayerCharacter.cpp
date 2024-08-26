@@ -367,9 +367,11 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 				if (Character)
 				{
 					FVector LaunchVec = HitResult.ImpactPoint - GetActorLocation();
+					float Dist = LaunchVec.Length();
+					LaunchVec.Z = 0;
 					LaunchVec.Normalize();
 					LaunchVec += FVector(0.f, 0.f, 100.f);
-					LaunchVec *= 10.f;
+					LaunchVec = LaunchVec * 1000.f / Dist;
 
 					Character->LaunchCharacter(LaunchVec, false, false);
 				}
@@ -422,6 +424,7 @@ void APlayerCharacter::GetHit_Implementation(const FVector& ImpactPoint)
 
 	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("Hit"), 
 		(CrossRes.Z > 0) ? TEXT("Right") : TEXT("Left"));
+
 }
 
 float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
