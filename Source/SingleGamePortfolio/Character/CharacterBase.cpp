@@ -14,7 +14,6 @@ ACharacterBase::ACharacterBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-
 	GetMesh()->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetMesh()->bReceivesDecals = false;
@@ -31,31 +30,31 @@ ACharacterBase::ACharacterBase()
 	mStats = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stats"));
 
 	// Widget Component
-	mHpBar = CreateDefaultSubobject<UWidgetComponent>(TEXT("HpBar"));
-	mHpBar->SetupAttachment(GetMesh());
-	mHpBar->SetRelativeLocation(FVector(0.f, 0.f, 170.f));
+	mHpBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HpBar"));
+	mHpBarWidget->SetupAttachment(RootComponent);
+	mHpBarWidget->SetRelativeLocation(FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
 
 	const static ConstructorHelpers::FClassFinder<UUserWidget>
 		HpBar(TEXT("/Game/_Programming/UI/WBP_HpBar.WBP_HpBar_C"));
 	if (HpBar.Class)
 	{
-		mHpBar->SetWidgetClass(HpBar.Class);
-		mHpBar->SetDrawSize(FVector2D(150.f, 15.f));
-		mHpBar->SetWidgetSpace(EWidgetSpace::Screen);
-		mHpBar->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	 }
+		mHpBarWidget->SetWidgetClass(HpBar.Class);
+		mHpBarWidget->SetDrawSize(FVector2D(150.f, 15.f));
+		mHpBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		mHpBarWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }  
 
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	mHpBar->InitWidget();
-	UHpBarWidget* HpWidget = Cast<UHpBarWidget>(mHpBar->GetUserWidgetObject());
-	if (HpWidget)
+	mHpBarWidget->InitWidget();
+	UHpBarWidget* HpBar = Cast<UHpBarWidget>(mHpBarWidget->GetUserWidgetObject());
+	if (HpBar)
 	{
-		HpWidget->BindHp(mStats);
-		mHpBar->SetHiddenInGame(true);
+		HpBar->BindHp(mStats);
+		mHpBarWidget->SetHiddenInGame(true);
 	}
 	mStats->OnHpZero.AddUObject(this, &ACharacterBase::Die);
 }
@@ -64,7 +63,7 @@ void ACharacterBase::PostInitializeComponents()
 void ACharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -84,7 +83,7 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	mHpBar->SetHiddenInGame(false);
+	mHpBarWidget->SetHiddenInGame(false);
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, DamageAmount]()
 		{
@@ -99,12 +98,12 @@ void ACharacterBase::SetCollisionEnable(bool Enable)
 
 void ACharacterBase::SetHpBarVisible(bool Enable)
 {
-	mHpBar->SetHiddenInGame(!Enable);
+	mHpBarWidget->SetHiddenInGame(!Enable);
 }
 
 void ACharacterBase::Die()
 {
-	mHpBar->SetHiddenInGame(true);
+	mHpBarWidget->SetHiddenInGame(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 }
 

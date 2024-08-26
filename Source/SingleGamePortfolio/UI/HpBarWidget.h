@@ -30,7 +30,7 @@ protected:
 	TWeakObjectPtr<class UCharacterStatComponent> mCurrentStatComp;
 
 	UPROPERTY()
-	TObjectPtr<class UProgressBar> mHpBar;
+	TObjectPtr<class UProgressBar> mHpBarWidget;
 
 private:
 };

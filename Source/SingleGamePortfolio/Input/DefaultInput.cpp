@@ -79,4 +79,12 @@ UDefaultInput::UDefaultInput()
 			mArmUnarmAction = Asset.Object;
 		}
 	}
+	{
+		static ConstructorHelpers::FObjectFinder<UInputAction>
+			Asset(TEXT("/Script/EnhancedInput.InputAction'/Game/_Programming/Input/DefaultInput/IA_LockOnTarget.IA_LockOnTarget'"));
+		if (Asset.Succeeded())
+		{
+			mLockOnAction = Asset.Object;
+		}
+	}
 }

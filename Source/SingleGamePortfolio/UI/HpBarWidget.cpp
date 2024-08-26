@@ -13,8 +13,8 @@ UHpBarWidget::UHpBarWidget(const FObjectInitializer& ObjectInitializer) :
 void UHpBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	mHpBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("PB_HpBar")));
-	ensure(mHpBar);
+	mHpBarWidget = Cast<UProgressBar>(GetWidgetFromName(TEXT("PB_HpBar")));
+	ensure(mHpBarWidget);
 }
 
 void UHpBarWidget::BindHp(UCharacterStatComponent* StatComp)
@@ -25,19 +25,19 @@ void UHpBarWidget::BindHp(UCharacterStatComponent* StatComp)
 
 void UHpBarWidget::UpdateHpBar()
 {
-	if (mHpBar)
+	if (mHpBarWidget)
 	{
 		if (mCurrentStatComp.IsValid())
 		{
-			mHpBar->SetPercent(mCurrentStatComp->GetHpRatio());
+			mHpBarWidget->SetPercent(mCurrentStatComp->GetHpRatio());
 		}
 	}
 }
 
 void UHpBarWidget::SetProgressBarColor(FLinearColor NewColor)
 {
-	if (mHpBar)
+	if (mHpBarWidget)
 	{
-		mHpBar->SetFillColorAndOpacity(NewColor);
+		mHpBarWidget->SetFillColorAndOpacity(NewColor);
 	}
 }

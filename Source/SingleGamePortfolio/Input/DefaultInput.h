@@ -27,16 +27,28 @@ public:
 	UInputAction* GetStrongAttackInpuAction() const { return mStrongAttackAction; }
 	UInputAction* GetDashInputAction() const { return mDashAction; }
 	UInputAction* GetArmUnarmAction() const { return mArmUnarmAction; }
+	UInputAction* GetLockOnAction() const { return mLockOnAction; }
 
 private:
+	UPROPERTY()
 	UInputMappingContext* mMappingContext = nullptr;
 
+	UPROPERTY()
 	UInputAction* mMoveAction = nullptr;
+	UPROPERTY()
 	UInputAction* mLookAction = nullptr;
+	UPROPERTY()
 	UInputAction* mJumpAction = nullptr;
+	UPROPERTY()
 	UInputAction* mRunAction = nullptr;
+	UPROPERTY()
 	UInputAction* mWeakAttackAction = nullptr;
+	UPROPERTY()
 	UInputAction* mStrongAttackAction = nullptr;
+	UPROPERTY()
 	UInputAction* mDashAction = nullptr;
+	UPROPERTY()
 	UInputAction* mArmUnarmAction = nullptr;
+	UPROPERTY()
+	UInputAction* mLockOnAction = nullptr;
 };

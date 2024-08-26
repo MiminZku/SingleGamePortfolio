@@ -90,14 +90,13 @@ void AMonsterSpawner::SpawnMonsters()
 
 	for (int i = 0; i < MonsterNum; ++i)
 	{
-		float RandomYaw = FMath::RandRange(0.f, 360.f);
-		FVector SpawnLoc = GetRandomSpawnLoc();
-
 		AMonsterBase* SpawnMonster = mMonsterPool->GetMonster();
-		SpawnLoc += 
-			FVector(0.f, 0.f, SpawnMonster->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 		if (SpawnMonster)
 		{
+			float RandomYaw = FMath::RandRange(0.f, 360.f);
+			FVector SpawnLoc = GetRandomSpawnLoc();
+			SpawnLoc += 
+				FVector(0.f, 0.f, SpawnMonster->GetCapsuleComponent()->GetScaledCapsuleHalfHeight());
 			FTransform SpawnTransform;
 			SpawnTransform.SetLocation(SpawnLoc);
 			SpawnTransform.SetRotation(FRotator(0.f, RandomYaw, 0.f).Quaternion());

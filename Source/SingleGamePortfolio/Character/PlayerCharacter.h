@@ -51,6 +51,7 @@ protected:
 	virtual void Arm();
 	virtual void Unarm();
 	virtual void Attack(bool IsWeak);
+	void LockOn(const FInputActionValue& Value);
 
 public:
 	virtual void GrabWeapon();
@@ -74,6 +75,7 @@ public:
 	FVector GetMoveVector() { return mMoveInputVec; }
 	FVector GetLookInputVector() { return mLookInputVec; }
 	APlayerWeapon* GetWeapon() { return mWeapon; }
+	TObjectPtr<ACharacter> GetTarget() { return mTarget; }
 
 	void SetState(EPlayerState State)
 	{
@@ -91,6 +93,11 @@ public:
 	void SetCurrnetAttack(const FName& String) { mCurrentAttack = String; }
 	void SetHasWeapon(bool b) { bHasWeapon = b; }
 	void SetDamaged(bool Enable) { bDamaged = Enable; }
+	void SetTarget(TObjectPtr<ACharacter> InTarget) {
+		mTarget = InTarget;
+		if (IsValid(mTarget)) 
+			if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan, mTarget->GetName());
+	}
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -126,7 +133,14 @@ protected:
 	UPROPERTY()
 	APlayerWeapon* mWeapon = nullptr;
 
+	UPROPERTY()
 	TArray<class IHitInterface*> mHitInterfaces;
+
+	UPROPERTY()
+	TObjectPtr<ACharacter> mTarget;
+
+	UPROPERTY()
+	TObjectPtr<class UWidgetComponent> mTargetWidget;
 
 private:
 	struct FEnhancedInputActionValueBinding* mMoveActionBinding;

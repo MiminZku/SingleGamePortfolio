@@ -47,12 +47,28 @@ APlayerCharacter::APlayerCharacter()
 	mCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
+
+	SetTarget(nullptr);
+
+	mTargetWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("Target"));
+	mTargetWidget->SetupAttachment(RootComponent);
+	const static ConstructorHelpers::FClassFinder<UUserWidget>
+		TargetUI(TEXT("/Game/_Programming/UI/WBP_Target.WBP_Target_C"));
+	if (TargetUI.Class)
+	{
+		mTargetWidget->SetWidgetClass(TargetUI.Class);
+		mTargetWidget->SetDrawSize(FVector2D(50.f, 100.f));
+		mTargetWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		mTargetWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	mTargetWidget->InitWidget();
+	mTargetWidget->SetHiddenInGame(true);
 }
 
 // Called when the game starts or when spawned
@@ -72,6 +88,15 @@ void APlayerCharacter::Tick(float DeltaTime)
 	if (GetVelocity().IsNearlyZero(0.01))
 	{
 		GetCharacterMovement()->MaxWalkSpeed = mWalkSpeed;
+	}
+
+	if (IsValid(mTarget))
+	{
+		if(Controller)
+			Controller->SetControlRotation(
+				FMath::RInterpTo(GetControlRotation(), 
+				(mTarget->GetActorLocation() - (GetActorLocation() + FVector::UpVector * 200.f)).Rotation(),
+				DeltaTime, 50.f));
 	}
 }
 
@@ -134,6 +159,10 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		// Arm, Unarm
 		EnhancedInputComponent->BindAction(InputData->GetArmUnarmAction(),
 			ETriggerEvent::Started, this, &APlayerCharacter::ArmUnarm);
+
+		// Camera Lock On Target
+		EnhancedInputComponent->BindAction(InputData->GetLockOnAction(),
+			ETriggerEvent::Started, this, &APlayerCharacter::LockOn);
 	}
 	else
 	{
@@ -151,18 +180,18 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		//if (bCanAttack)
 		//{
 			// find out which way is forward
-			const FRotator Rotation = Controller->GetControlRotation();
-			const FRotator YawRotation(0, Rotation.Yaw, 0);
+		const FRotator Rotation = Controller->GetControlRotation();
+		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-			// get forward vector
-			const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		// get forward vector
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 
-			// get right vector 
-			const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+		// get right vector 
+		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-			// add movement 
-			AddMovementInput(ForwardDirection, mMoveInputVec.X);
-			AddMovementInput(RightDirection, mMoveInputVec.Y);
+		// add movement 
+		AddMovementInput(ForwardDirection, mMoveInputVec.X);
+		AddMovementInput(RightDirection, mMoveInputVec.Y);
 		//}
 		//else
 		//{
@@ -180,7 +209,7 @@ void APlayerCharacter::Look(const FInputActionValue& Value)
 	// input is a Vector2D
 	mLookInputVec = Value.Get<FVector>();
 
-	if (Controller != nullptr)
+	if (Controller)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(mLookInputVec.X);
@@ -238,7 +267,7 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 		//FVector Vec = mMoveActionBinding->GetValue().Get<FVector>();
 		//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Black, Vec.ToString());
 
-		FVector DirWannaGo = 
+		FVector DirWannaGo =
 			GetActorForwardVector() * mMoveInputVec.X + GetActorRightVector() * mMoveInputVec.Y;
 		float Direction = mAnimInstance->CalculateDirection(DirWannaGo, GetActorRotation());
 		int32 Option = FMath::Floor(int(Direction + 45 + 90 + 360) % 360 / 90);
@@ -284,7 +313,8 @@ void APlayerCharacter::Arm()
 	SetState(EPlayerState::Armed);
 	bUseControllerRotationYaw = true;
 	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
-	SetAttackEnable(false); // 애니메이션에서 검 잡기 전까지는 공격 못하게
+	// 애니메이션에서 검 잡기 전까지
+	SetAttackEnable(false); 
 	SetDodgeEnable(false);
 	SetRunEnable(false);
 }
@@ -333,6 +363,59 @@ void APlayerCharacter::Attack(bool IsWeak)
 	mCurrentAttack = NextAttack;
 }
 
+void APlayerCharacter::LockOn(const FInputActionValue& Value)
+{
+	if (IsValid(mTarget))
+	{
+		SetTarget(nullptr);
+		mTargetWidget->SetupAttachment(RootComponent);
+		mTargetWidget->SetHiddenInGame(true);
+		return;
+	}
+	FVector Origin = GetActorLocation();
+	FCollisionQueryParams Params(NAME_None, false, this);
+	TArray<FHitResult> HitResults;
+	float Radius = 1000.f;
+	bool bCollision = GetWorld()->SweepMultiByChannel(OUT HitResults,
+		Origin, Origin, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeSphere(Radius), Params);
+	float TargetScore = std::numeric_limits<float>::min();
+	ACharacter* Result = nullptr;
+	if (bCollision)
+	{
+		for (const FHitResult& HitResult : HitResults)
+		{
+			ACharacter* Target = Cast<ACharacter>(HitResult.GetActor());
+			if (Target)
+			{
+				FVector VecToTarget = Target->GetActorLocation() - GetActorLocation();
+				float DistToTarget = VecToTarget.SquaredLength();
+				VecToTarget.Normalize();
+				float DotValue = FVector::DotProduct(GetBaseAimRotation().Vector(), VecToTarget);
+				float Score = DotValue / DistToTarget;
+				if (Score > TargetScore)
+				{
+					TargetScore = Score;
+					Result = Target;
+				}
+			}
+		}
+		SetTarget(Result);
+		if (Result)
+		{
+			mTargetWidget->SetHiddenInGame(false);
+			FAttachmentTransformRules Rules(EAttachmentRule::SnapToTarget, false);
+			mTargetWidget->AttachToComponent(Result->GetCapsuleComponent(), Rules);
+			mTargetWidget->SetRelativeLocation(FVector(0.f, 0.f, 50.f + Result->GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+		}
+	}
+
+#if ENABLE_DRAW_DEBUG
+	FColor DrawColor = bCollision ? FColor::Green : FColor::Red;
+	DrawDebugSphere(GetWorld(), Origin, Radius, 26, DrawColor, false, 1.f);
+#endif
+}
+
 void APlayerCharacter::AttackCollisionCheck()
 {
 }
@@ -342,11 +425,11 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 	FVector Origin = GetActorLocation() + Offset;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	TArray<FHitResult> HitResults;
-	bool Collision = GetWorld()->SweepMultiByChannel(OUT HitResults,
+	bool bCollision = GetWorld()->SweepMultiByChannel(OUT HitResults,
 		Origin, Origin, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel3,
 		FCollisionShape::MakeSphere(Radius), Params);
 
-	if (Collision)
+	if (bCollision)
 	{
 		for (const FHitResult& HitResult : HitResults)
 		{
@@ -395,7 +478,7 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 #if ENABLE_DRAW_DEBUG
 	if (bDrawDebug)
 	{
-		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
+		FColor DrawColor = bCollision ? FColor::Green : FColor::Red;
 
 		DrawDebugSphere(GetWorld(), Origin, Radius, 26, DrawColor, false, 1.f);
 		//DrawDebugCapsule(GetWorld(), Origin, CapsuleHalfHeight,
@@ -422,7 +505,7 @@ void APlayerCharacter::GetHit_Implementation(const FVector& ImpactPoint)
 	// 좌 우 판단
 	FVector CrossRes = FVector::CrossProduct(ForwardVec, VecToImpactPoint);
 
-	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("Hit"), 
+	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("Hit"),
 		(CrossRes.Z > 0) ? TEXT("Right") : TEXT("Left"));
 
 }
@@ -431,7 +514,7 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	UHpBarWidget* HpWidget = Cast<UHpBarWidget>(mHpBar->GetUserWidgetObject());
+	UHpBarWidget* HpWidget = Cast<UHpBarWidget>(mHpBarWidget->GetUserWidgetObject());
 	HpWidget->SetProgressBarColor(FLinearColor::Green);
 
 	return Damage;
@@ -449,7 +532,7 @@ void APlayerCharacter::Die()
 void APlayerCharacter::SetCollisionEnable(bool Enable)
 {
 	Super::SetCollisionEnable(Enable);
-	
+
 	if (Enable)
 	{
 		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
