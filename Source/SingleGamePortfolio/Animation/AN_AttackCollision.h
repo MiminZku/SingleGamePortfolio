@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "../Interface/AttackInterface.h"
+#include "Interface/AttackInterface.h"
 #include "AN_AttackCollision.generated.h"
 
 /**
@@ -24,4 +24,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	float Radius = 0.f;
+
+	UPROPERTY(EditAnywhere)
+	float Coefficient = 1.f;
+
+	UPROPERTY(EditAnywhere)
+	EAttackType AttackType = EAttackType::Default;
 };

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "../MyGameInstance.h"
+#include "MyGameInstance.h"
 #include "PlayerAnimTemplate.generated.h"
 
 class APlayerCharacter;

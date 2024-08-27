@@ -83,9 +83,10 @@ void ACharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
 	mHpBarWidget->SetHiddenInGame(false);
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, DamageAmount]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, DamageAmount]()
 		{
 			mStats->ApplyDamage(DamageAmount);
 		}, 0.1f, false);
@@ -96,14 +97,13 @@ void ACharacterBase::SetCollisionEnable(bool Enable)
 {
 }
 
-void ACharacterBase::SetHpBarVisible(bool Enable)
-{
-	mHpBarWidget->SetHiddenInGame(!Enable);
-}
-
 void ACharacterBase::Die()
 {
 	mHpBarWidget->SetHiddenInGame(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
 }
 
+void ACharacterBase::SetHpBarVisible(bool Enable)
+{
+	mHpBarWidget->SetHiddenInGame(!Enable);
+}

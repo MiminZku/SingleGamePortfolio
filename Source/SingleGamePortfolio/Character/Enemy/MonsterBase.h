@@ -26,8 +26,8 @@ public:
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
-	virtual void AttackCollisionCheck() override;
-	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) override;
+	virtual void AttackCollisionCheck(EAttackType AttackType) override;
+	virtual void AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient) override;
 
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 

@@ -23,8 +23,12 @@ public class SingleGamePortfolio : ModuleRules
 			"UMG",
 			"AIModule",
 			"NavigationSystem",
+			// Fracture
 			"GameplayTasks",
-			"GeometryCollectionEngine"
-		});
+			"GeometryCollectionEngine",
+			// MotionWarping
+            "MotionWarping",
+            "AnimGraphRuntime"
+        });
 	}
 }

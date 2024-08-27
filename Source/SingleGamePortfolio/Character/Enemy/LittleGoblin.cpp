@@ -3,6 +3,7 @@
 
 #include "Character/Enemy/LittleGoblin.h"
 #include "Components/CapsuleComponent.h"
+#include "CharacterStat/CharacterStatComponent.h"
 
 ALittleGoblin::ALittleGoblin()
 {
@@ -35,6 +36,7 @@ void ALittleGoblin::PostInitializeComponents()
 	{
 		AnimInstance->SetAnimData(TEXT("LittleGoblin"));
 	}
+	mStats->SetStats(1);
 }
 
 void ALittleGoblin::BeginPlay()

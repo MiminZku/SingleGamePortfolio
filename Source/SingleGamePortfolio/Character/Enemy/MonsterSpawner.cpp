@@ -19,7 +19,6 @@ AMonsterSpawner::AMonsterSpawner()
 	SetRootComponent(mCollider);
 
 	mMonsterClass = AMonsterBase::StaticClass();
-
 }
 
 // Called when the game starts or when spawned

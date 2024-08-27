@@ -56,8 +56,8 @@ protected:
 public:
 	virtual void GrabWeapon();
 	virtual void HolsterWeapon();
-	virtual void AttackCollisionCheck() override;
-	virtual void AttackCollisionCheckOnce(FVector Offset, float Radius) override;
+	virtual void AttackCollisionCheck(EAttackType AttackType) override;
+	virtual void AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient) override;
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
 	virtual float TakeDamage(float DamageAmount,
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
@@ -141,6 +141,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UWidgetComponent> mTargetWidget;
+
+	UPROPERTY()
+	TObjectPtr<class UMotionWarpingComponent> mMotionWarping;
 
 private:
 	struct FEnhancedInputActionValueBinding* mMoveActionBinding;

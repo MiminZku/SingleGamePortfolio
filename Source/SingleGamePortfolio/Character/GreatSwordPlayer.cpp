@@ -10,6 +10,7 @@
 #include "Engine/DamageEvents.h"
 #include "Item/ItemBox.h"
 #include "Interface/HitInterface.h"
+#include "CharacterStat/CharacterStatComponent.h"
 
 AGreatSwordPlayer::AGreatSwordPlayer()
 {
@@ -42,6 +43,7 @@ void AGreatSwordPlayer::PostInitializeComponents()
 	{
 		AnimInstance->SetAnimData(TEXT("Hercules"));
 	}
+	mStats->SetStats(1);
 }
 
 void AGreatSwordPlayer::BeginPlay()
@@ -110,9 +112,9 @@ void AGreatSwordPlayer::HolsterWeapon()
 		EMoveComponentAction::Type::Move, Info);
 }
 
-void AGreatSwordPlayer::AttackCollisionCheck()
+void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 {
-	Super::AttackCollisionCheck();
+	Super::AttackCollisionCheck(AttackType);
 
 	APlayerWeapon* Weapon = GetWeapon();
 	if (!Weapon)	return;
@@ -146,13 +148,11 @@ void AGreatSwordPlayer::AttackCollisionCheck()
 				if (HitInterface->IsDamaged())	continue;
 				HitInterface->SetDamaged(true);
 				mHitInterfaces.Add(HitInterface);
-				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
-				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
 				
 				HitStop(0.2f, 0.05f);
 
 				FDamageEvent DmgEvent;
-				HitResult.GetActor()->TakeDamage(10.f, DmgEvent, GetController(), mWeapon);
+				HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), mWeapon);
 
 				HitInterface->Execute_GetHit(HitResult.GetActor(), GetActorLocation());
 

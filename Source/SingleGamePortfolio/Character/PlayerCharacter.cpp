@@ -19,6 +19,7 @@
 #include "UI/HpBarWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Item/ItemBox.h"
+#include "MotionWarpingComponent.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -61,12 +62,15 @@ APlayerCharacter::APlayerCharacter()
 		mTargetWidget->SetWidgetSpace(EWidgetSpace::Screen);
 		mTargetWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+
+	mMotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
+
 }
 
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
+	
 	mTargetWidget->InitWidget();
 	mTargetWidget->SetHiddenInGame(true);
 }
@@ -96,7 +100,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 			Controller->SetControlRotation(
 				FMath::RInterpTo(GetControlRotation(), 
 				(mTarget->GetActorLocation() - (GetActorLocation() + FVector::UpVector * 200.f)).Rotation(),
-				DeltaTime, 50.f));
+				DeltaTime, 10.f));
 	}
 }
 
@@ -206,6 +210,8 @@ void APlayerCharacter::StopMove(const FInputActionValue& Value)
 
 void APlayerCharacter::Look(const FInputActionValue& Value)
 {
+	if (IsValid(mTarget)) return;	// when lock on target
+
 	// input is a Vector2D
 	mLookInputVec = Value.Get<FVector>();
 
@@ -416,11 +422,15 @@ void APlayerCharacter::LockOn(const FInputActionValue& Value)
 #endif
 }
 
-void APlayerCharacter::AttackCollisionCheck()
+void APlayerCharacter::AttackCollisionCheck(EAttackType AttackType)
 {
+	if (!IsValid(mTarget))	return;
+	FTransform TargetTransform((mTarget->GetActorLocation() - GetActorLocation()).Rotation(), mTarget->GetActorLocation(), FVector(1.f));
+	FMotionWarpingTarget MotionWarpingTarget(TEXT("Attack"), TargetTransform);
+	mMotionWarping->AddOrUpdateWarpTarget(MotionWarpingTarget);
 }
 
-void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
+void APlayerCharacter::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient)
 {
 	FVector Origin = GetActorLocation() + Offset;
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -436,15 +446,12 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 			IHitInterface* AttackedActor = Cast<IHitInterface>(HitResult.GetActor());
 			if (AttackedActor)
 			{
-				//if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Green,
-				//	FString::Printf(TEXT("%s"), *HitResult.GetActor()->GetName()));
-
 				AttackedActor->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
 
 				HitStop(0.1f, 0.01f);
 
 				FDamageEvent DmgEvent;
-				HitResult.GetActor()->TakeDamage(30.f, DmgEvent, GetController(), mWeapon);
+				HitResult.GetActor()->TakeDamage(mStats->GetAtk() * Coefficient, DmgEvent, GetController(), this);
 
 				ACharacter* Character = Cast<ACharacter>(HitResult.GetActor());
 				if (Character)
@@ -491,6 +498,8 @@ void APlayerCharacter::AttackCollisionCheckOnce(FVector Offset, float Radius)
 
 void APlayerCharacter::GetHit_Implementation(const FVector& ImpactPoint)
 {
+	bCanJump = false;
+
 	FVector ForwardVec = GetActorForwardVector();
 	FVector VecToImpactPoint = ImpactPoint - GetActorLocation();
 

@@ -55,12 +55,12 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	return Damage;
 }
 
-void AMonsterBase::AttackCollisionCheck()
+void AMonsterBase::AttackCollisionCheck(EAttackType AttackType)
 {
 
 }
 
-void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
+void AMonsterBase::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient)
 {
 	FVector Origin = GetActorLocation() + Offset.X * GetActorForwardVector();
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -78,7 +78,7 @@ void AMonsterBase::AttackCollisionCheckOnce(FVector Offset, float Radius)
 			{
 				AttackedCharacter->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
 				FDamageEvent DmgEvent;
-				HitResult.GetActor()->TakeDamage(5.f, DmgEvent, GetController(), this);
+				HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), this);
 			}
 		}
 	}
@@ -113,7 +113,7 @@ void AMonsterBase::Activate()
 	{
 		Ctrl->RunAI();
 	}
-	mStats->Rebirth();
+	mStats->SetHpMax();
 }
 
 void AMonsterBase::Deactivate()

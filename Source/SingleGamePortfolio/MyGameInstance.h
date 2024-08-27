@@ -51,6 +51,27 @@ struct FMonsterAnimData : public FTableRowBase
 	TMap<FName, UAnimMontage*> mMontageMap;
 };
 
+USTRUCT(BlueprintType)
+struct FCharacterStatData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxHp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxMp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Atk;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Def;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxExp;
+};
+
 UCLASS()
 class SINGLEGAMEPORTFOLIO_API UMyGameInstance : public UGameInstance
 {
@@ -64,6 +85,7 @@ public:
 
 	FPlayerAnimData* GetPlayerAnimData(const FName& CharacterName) const;
 	FMonsterAnimData* GetMonsterAnimData(const FName& MonsterName) const;
+	FCharacterStatData* GetCharacterStatData(const FName& Level) const;
 
 private:
 	UPROPERTY()
@@ -71,4 +93,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<UDataTable> mMonsterAnims;
+
+	UPROPERTY()
+	TObjectPtr<UDataTable> mCharactetStats;
 };

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotifyState.h"
-#include "../Interface/AttackInterface.h"
+#include "Interface/AttackInterface.h"
 #include "ANS_AttackCollisionCheck.generated.h"
 
 
@@ -34,4 +34,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bMonsterCollisionBlock = true;
+
+	UPROPERTY(EditAnywhere)
+	EAttackType AttackType = EAttackType::Default;
 };

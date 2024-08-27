@@ -119,9 +119,10 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 	}
 	if (*mMontageMap.Find(TEXT("Hit")) == Montage)
 	{
+		if(!bInterrupted)
+			mOwningCharacter->SetJumpEnable(true);
 		mOwningCharacter->SetAttackEnable(true);
 		mOwningCharacter->SetDodgeEnable(true);
-		mOwningCharacter->SetJumpEnable(true);
 		mOwningCharacter->SetRunEnable(true);
 		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 		return;
