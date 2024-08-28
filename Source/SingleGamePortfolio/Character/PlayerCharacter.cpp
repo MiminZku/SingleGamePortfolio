@@ -16,10 +16,11 @@
 #include "CharacterStat/CharacterStatComponent.h"
 #include "Interface/AttackInterface.h"
 #include "Interface/HitInterface.h"
-#include "UI/HpBarWidget.h"
+#include "UI/ProgressBarWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Item/ItemBox.h"
 #include "MotionWarpingComponent.h"
+#include "UI/HUDWidget.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -63,7 +64,7 @@ APlayerCharacter::APlayerCharacter()
 		mTargetWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
-	mMotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
+	//mMotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
 
 }
 
@@ -73,6 +74,8 @@ void APlayerCharacter::PostInitializeComponents()
 	
 	mTargetWidget->InitWidget();
 	mTargetWidget->SetHiddenInGame(true);
+
+	mStats->OnLevelUp.AddUObject(this, &APlayerCharacter::LevelUp);
 }
 
 // Called when the game starts or when spawned
@@ -87,6 +90,7 @@ void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	mStats->RecoverMp(DeltaTime * 5.f);
 
 	// 멈추면 다시 걷기
 	if (GetVelocity().IsNearlyZero(0.01))
@@ -373,9 +377,7 @@ void APlayerCharacter::LockOn(const FInputActionValue& Value)
 {
 	if (IsValid(mTarget))
 	{
-		SetTarget(nullptr);
-		mTargetWidget->SetupAttachment(RootComponent);
-		mTargetWidget->SetHiddenInGame(true);
+		LockOff();
 		return;
 	}
 	FVector Origin = GetActorLocation();
@@ -424,14 +426,16 @@ void APlayerCharacter::LockOn(const FInputActionValue& Value)
 
 void APlayerCharacter::AttackCollisionCheck(EAttackType AttackType)
 {
-	if (!IsValid(mTarget))	return;
-	FTransform TargetTransform((mTarget->GetActorLocation() - GetActorLocation()).Rotation(), mTarget->GetActorLocation(), FVector(1.f));
-	FMotionWarpingTarget MotionWarpingTarget(TEXT("Attack"), TargetTransform);
-	mMotionWarping->AddOrUpdateWarpTarget(MotionWarpingTarget);
+	//if (!IsValid(mTarget))	return;
+	//FTransform TargetTransform((mTarget->GetActorLocation() - GetActorLocation()).Rotation(), mTarget->GetActorLocation(), FVector(1.f));
+	//FMotionWarpingTarget MotionWarpingTarget(TEXT("Attack"), TargetTransform);
+	//mMotionWarping->AddOrUpdateWarpTarget(MotionWarpingTarget);
 }
 
 void APlayerCharacter::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient)
 {
+	mStats->UseMp(30.f);
+
 	FVector Origin = GetActorLocation() + Offset;
 	FCollisionQueryParams Params(NAME_None, false, this);
 	TArray<FHitResult> HitResults;
@@ -523,9 +527,6 @@ float APlayerCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	UHpBarWidget* HpWidget = Cast<UHpBarWidget>(mHpBarWidget->GetUserWidgetObject());
-	HpWidget->SetProgressBarColor(FLinearColor::Green);
-
 	return Damage;
 }
 
@@ -595,4 +596,24 @@ void APlayerCharacter::HitStop(float NewTimeDilation, float Duration)
 			// 원래 시간 왜곡 값으로 되돌리기
 			GetWorld()->GetWorldSettings()->SetTimeDilation(1.f);
 		}, NewTimeDilation * Duration, false); // false는 반복하지 않도록 설정
+}
+
+void APlayerCharacter::LockOff()
+{
+	SetTarget(nullptr);
+	mTargetWidget->SetupAttachment(RootComponent);
+	mTargetWidget->SetHiddenInGame(true);
+}
+
+void APlayerCharacter::SetupHUDWidget(UHUDWidget* InHUDWidget)
+{
+	if (InHUDWidget)
+	{
+		InHUDWidget->BindStats(mStats);
+	}
+}
+
+void APlayerCharacter::LevelUp()
+{
+
 }

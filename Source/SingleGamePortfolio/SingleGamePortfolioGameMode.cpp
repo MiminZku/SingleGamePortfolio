@@ -4,6 +4,7 @@
 #include "SingleGamePortfolioCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Character/GreatSwordPlayer.h"
+#include "Character/MyPlayerController.h"
 
 ASingleGamePortfolioGameMode::ASingleGamePortfolioGameMode()
 {
@@ -16,4 +17,6 @@ ASingleGamePortfolioGameMode::ASingleGamePortfolioGameMode()
 	}
 
 	//DefaultPawnClass = AGreatSwordPlayer::StaticClass();
+
+	PlayerControllerClass = AMyPlayerController::StaticClass();
 }

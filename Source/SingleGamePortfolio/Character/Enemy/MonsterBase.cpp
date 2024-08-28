@@ -9,6 +9,9 @@
 #include "Character/Enemy/MonsterSpawner.h"
 #include "CharacterStat/CharacterStatComponent.h"
 #include "Engine/DamageEvents.h"
+#include "UI/ProgressBarWidget.h"
+#include "Components/WidgetComponent.h"
+#include "Character/PlayerCharacter.h"
 
 AMonsterBase::AMonsterBase()
 {
@@ -29,11 +32,41 @@ AMonsterBase::AMonsterBase()
 		EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 
 	mTarget = nullptr;
+
+	// Widget Component
+	mHpBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HpBar"));
+	mHpBarWidget->SetupAttachment(RootComponent);
+	mHpBarWidget->SetRelativeLocation(FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
+
+	const static ConstructorHelpers::FClassFinder<UUserWidget>
+		HpBar(TEXT("/Game/_Programming/UI/WBP_HpBar.WBP_HpBar_C"));
+	if (HpBar.Class)
+	{
+		mHpBarWidget->SetWidgetClass(HpBar.Class);
+		mHpBarWidget->SetDrawSize(FVector2D(150.f, 15.f));
+		mHpBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
+		mHpBarWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+}
+
+void AMonsterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	mHpBarWidget->InitWidget();
+	UProgressBarWidget* HpBar = Cast<UProgressBarWidget>(mHpBarWidget->GetUserWidgetObject());
+	if (HpBar)
+	{
+		HpBar->BindStat(mStats, TEXT("Hp"));
+		mHpBarWidget->SetHiddenInGame(true);
+	}
 }
 
 float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	mHpBarWidget->SetHiddenInGame(false);
 
 	DetectedTarget(EventInstigator->GetPawn());
 	
@@ -103,7 +136,7 @@ void AMonsterBase::Activate()
 	RegisterTarget(nullptr);
 	SetState(EMonsterState::Patrol);
 	SetActorHiddenInGame(false);
-	SetHpBarVisible(false);
+	mHpBarWidget->SetHiddenInGame(true);
 	SetActorTickEnabled(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -113,7 +146,7 @@ void AMonsterBase::Activate()
 	{
 		Ctrl->RunAI();
 	}
-	mStats->SetHpMax();
+	mStats->RecoverHp(mStats->GetMaxHp());
 }
 
 void AMonsterBase::Deactivate()
@@ -190,6 +223,8 @@ void AMonsterBase::Die()
 {
 	Super::Die();
 
+	mHpBarWidget->SetHiddenInGame(true);
+
 	AMonsterController* Ctrl = Cast<AMonsterController>(GetController());
 	if (Ctrl)
 	{
@@ -211,6 +246,14 @@ void AMonsterBase::Die()
 		{
 			Deactivate();
 		}, 3.f, false);
+
+	APlayerCharacter* Player = Cast<APlayerCharacter>(mTarget);
+	if (Player)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan,
+			FString::Printf(TEXT("+ %.0f exp"), mStats->GetDropExp()));
+		Player->GetStatComponent()->ExpUp(mStats->GetDropExp());
+	}
 }
 
 void AMonsterBase::BindSpawner(AMonsterSpawner* Spawner)

@@ -4,25 +4,25 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "HpBarWidget.generated.h"
+#include "ProgressBarWidget.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API UHpBarWidget : public UUserWidget
+class SINGLEGAMEPORTFOLIO_API UProgressBarWidget : public UUserWidget
 {
 	GENERATED_BODY()
 	
 public:
-	UHpBarWidget(const FObjectInitializer& ObjectInitializer);
+	UProgressBarWidget(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	virtual void NativeConstruct() override;
 
 public:
-	void BindHp(class UCharacterStatComponent* StatComp);
-	void UpdateHpBar();
+	void BindStat(class UCharacterStatComponent* StatComp, const FName& StatName);
+	void UpdateProgressBar();
 	
 	void SetProgressBarColor(FLinearColor NewColor);
 
@@ -30,7 +30,8 @@ protected:
 	TWeakObjectPtr<class UCharacterStatComponent> mCurrentStatComp;
 
 	UPROPERTY()
-	TObjectPtr<class UProgressBar> mHpBarWidget;
+	TObjectPtr<class UProgressBar> mProgressBarWidget;
 
 private:
+	FName mBindStatName;
 };

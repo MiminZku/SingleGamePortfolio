@@ -39,23 +39,16 @@ public:
 public:
 	TObjectPtr<class UCharacterStatComponent> GetStatComponent() { return mStats; }
 
-protected:
-	void SetHpBarVisible(bool Enable);
-
 public:
 	UPROPERTY(EditAnywhere)
 	bool bDrawDebug = true;
 
 protected:
+	UPROPERTY()
+	TObjectPtr<class UAnimInstance> mAnimInstance;
 
 // Stat Section
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCharacterStatComponent> mStats;
 
-// UI WIdget Section
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<class UWidgetComponent> mHpBarWidget;
-
-	UPROPERTY()
-	TObjectPtr<class UAnimInstance> mAnimInstance;
 };

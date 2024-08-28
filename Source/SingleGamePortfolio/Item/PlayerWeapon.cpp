@@ -49,6 +49,7 @@ void APlayerWeapon::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 	{
 		if (!Player->HasWeapon())
 		{
+			SetHoveringEnable(false);
 			mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			mMesh->SetRelativeLocation(FVector::ZeroVector);
 			mMesh->SetRelativeRotation(FRotator::ZeroRotator);

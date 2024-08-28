@@ -3,8 +3,6 @@
 
 #include "Character/CharacterBase.h"
 #include "CharacterStat/CharacterStatComponent.h"
-#include "Components/WidgetComponent.h"
-#include "UI/HpBarWidget.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -29,33 +27,12 @@ ACharacterBase::ACharacterBase()
 	// Stat Component
 	mStats = CreateDefaultSubobject<UCharacterStatComponent>(TEXT("Stats"));
 
-	// Widget Component
-	mHpBarWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HpBar"));
-	mHpBarWidget->SetupAttachment(RootComponent);
-	mHpBarWidget->SetRelativeLocation(FVector(0.f, 0.f, GetCapsuleComponent()->GetScaledCapsuleHalfHeight()));
-
-	const static ConstructorHelpers::FClassFinder<UUserWidget>
-		HpBar(TEXT("/Game/_Programming/UI/WBP_HpBar.WBP_HpBar_C"));
-	if (HpBar.Class)
-	{
-		mHpBarWidget->SetWidgetClass(HpBar.Class);
-		mHpBarWidget->SetDrawSize(FVector2D(150.f, 15.f));
-		mHpBarWidget->SetWidgetSpace(EWidgetSpace::Screen);
-		mHpBarWidget->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
 }  
 
 void ACharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	mHpBarWidget->InitWidget();
-	UHpBarWidget* HpBar = Cast<UHpBarWidget>(mHpBarWidget->GetUserWidgetObject());
-	if (HpBar)
-	{
-		HpBar->BindHp(mStats);
-		mHpBarWidget->SetHiddenInGame(true);
-	}
 	mStats->OnHpZero.AddUObject(this, &ACharacterBase::Die);
 }
 
@@ -84,7 +61,6 @@ float ACharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	mHpBarWidget->SetHiddenInGame(false);
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&, DamageAmount]()
 		{
@@ -99,11 +75,5 @@ void ACharacterBase::SetCollisionEnable(bool Enable)
 
 void ACharacterBase::Die()
 {
-	mHpBarWidget->SetHiddenInGame(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
-}
-
-void ACharacterBase::SetHpBarVisible(bool Enable)
-{
-	mHpBarWidget->SetHiddenInGame(!Enable);
 }

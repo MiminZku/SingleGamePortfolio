@@ -21,7 +21,11 @@ class SINGLEGAMEPORTFOLIO_API AMonsterBase : public AAICharacter, public IAttack
 	
 public:
 	AMonsterBase();
-	
+
+protected:
+	virtual void PostInitializeComponents() override;
+
+public:	
 	virtual float TakeDamage(float DamageAmount,
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
@@ -53,9 +57,6 @@ public:
 	bool HasTarget() { return nullptr != mTarget; }
 	void SetTarget(TObjectPtr<APawn> Target) { mTarget = Target; }
 
-protected:
-
-
 public:
 	FMonsterAttackFinished OnAttackFinished;
 	FMonsterAngryFinished OnAngryFinished;
@@ -68,6 +69,13 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<APawn> mTarget;
+
+	// UI WIdget Section
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Widget, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UWidgetComponent> mHpBarWidget;
+
+	UPROPERTY()
+	TObjectPtr<class AActor> mExp;
 
 private:
 	bool bCanAttack = true;

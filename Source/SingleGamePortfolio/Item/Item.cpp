@@ -11,7 +11,7 @@
 AItem::AItem()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	mCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Trigger"));
 	SetRootComponent(mCollider);
@@ -37,6 +37,19 @@ void AItem::BeginPlay()
 
 }
 
+void AItem::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	mTime += DeltaTime;
+
+	if (bHovering)
+	{
+		mMesh->SetRelativeLocation(FVector(0.f, 0.f, 20 * FMath::Sin(mTime * 3.f)));
+		AddActorLocalRotation(FRotator(0.f, DeltaTime * 50.f, 0.f));
+	}
+}
+
 void AItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent, 
 	AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
 	bool bFromSweep, const FHitResult& SweepResult)
@@ -52,7 +65,7 @@ void AItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 				GetActorLocation()
 			);
 		}
-		Player->GetStatComponent()->SetHpMax();
+		Player->GetStatComponent()->RecoverHp(50.f);
 		Destroy();
 	}
 }

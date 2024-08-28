@@ -68,7 +68,7 @@ public:
 	void PickWeaponUp(APlayerWeapon* Weapon);
 	void ResetAttackedCharacters();
 	void HitStop(float NewTimeDilation, float Duration);
-;
+	void LockOff();
 
 	bool HasWeapon() const { return bHasWeapon; }
 	bool GetJumpEnable() { return bCanJump; }
@@ -98,6 +98,9 @@ public:
 		if (IsValid(mTarget)) 
 			if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan, mTarget->GetName());
 	}
+
+	void SetupHUDWidget(class UHUDWidget* InHUDWidget);
+	void LevelUp();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -142,8 +145,8 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class UWidgetComponent> mTargetWidget;
 
-	UPROPERTY()
-	TObjectPtr<class UMotionWarpingComponent> mMotionWarping;
+	//UPROPERTY()
+	//TObjectPtr<class UMotionWarpingComponent> mMotionWarping;
 
 private:
 	struct FEnhancedInputActionValueBinding* mMoveActionBinding;

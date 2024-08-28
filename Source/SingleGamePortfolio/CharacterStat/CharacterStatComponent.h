@@ -23,10 +23,13 @@ public:
 	UCharacterStatComponent();
 
 protected:
+	virtual void InitializeComponent() override;
+
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:
+	FORCEINLINE uint16 GetLevel() { return mCurLevel; }
 	FORCEINLINE float GetMaxHp() { return mMaxHp; }
 	FORCEINLINE float GetCurrentHp() { return mCurHp; }
 	FORCEINLINE float GetMaxMp() { return mMaxMp; }
@@ -35,12 +38,18 @@ public:
 	FORCEINLINE float GetDef() { return mDef; }
 	FORCEINLINE float GetMaxExp() { return mMaxExp; }
 	FORCEINLINE float GetCurrentExp() { return mCurExp; }
-	
-	FORCEINLINE void SetHpMax() { SetHp(mMaxHp); }
+	FORCEINLINE float GetDropExp() { return mDropExp; }
 
-	FORCEINLINE float GetHpRatio() { return mCurHp / mMaxHp; }
-	FORCEINLINE float GetMpRatio() { return mCurMp / mMaxMp; }
-	FORCEINLINE float GetExpRatio() { return mCurExp / mMaxExp; }
+	FORCEINLINE float GetStatRatio(const FName& StatName)
+	{
+		if (TEXT("Hp") == StatName) return mCurHp / mMaxHp;
+		if (TEXT("Mp") == StatName) return  mCurMp / mMaxMp;
+		if (TEXT("Exp") == StatName) return mCurExp / mMaxExp;
+		return 0.f;
+	}
+	//FORCEINLINE float GetHpRatio() { return mCurHp / mMaxHp; }
+	//FORCEINLINE float GetMpRatio() { return mCurMp / mMaxMp; }
+	//FORCEINLINE float GetExpRatio() { return mCurExp / mMaxExp; }
 
 	void SetStats(int32 Level);
 	
@@ -91,4 +100,7 @@ protected:
 
 	UPROPERTY(Transient, VisibleInstanceOnly, Category = Stat)
 	float mCurExp;
+
+	UPROPERTY(VisibleInstanceOnly, Category = Stat)
+	float mDropExp;
 };

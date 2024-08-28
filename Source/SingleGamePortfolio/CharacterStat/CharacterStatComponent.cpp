@@ -8,15 +8,22 @@
 // Sets default values for this component's properties
 UCharacterStatComponent::UCharacterStatComponent()
 {
+	bWantsInitializeComponent = true;
 	//mMaxHp = 100.f;
 	//SetHp(mMaxHp);
+}
+
+void UCharacterStatComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
 }
 
 // Called when the game starts
 void UCharacterStatComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 }
 
 void UCharacterStatComponent::SetStats(int32 Level)
@@ -36,7 +43,8 @@ void UCharacterStatComponent::SetStats(int32 Level)
 			mAtk = StatData->Atk;
 			mDef = StatData->Def;
 			mMaxExp = StatData->MaxExp;
-			mCurExp = 0;
+			SetExp(0.f);
+			mDropExp = StatData->DropExp;
 		}
 	}
 }

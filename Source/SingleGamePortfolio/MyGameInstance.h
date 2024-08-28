@@ -70,6 +70,9 @@ struct FCharacterStatData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float MaxExp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float DropExp;
 };
 
 UCLASS()
