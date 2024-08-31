@@ -53,6 +53,8 @@ ASkeletonMonster::ASkeletonMonster()
 	{
 		mArrowClass = ArrowBP.Class;
 	}
+
+	SetAttackRange(800.f);
 }
 
 void ASkeletonMonster::PostInitializeComponents()
@@ -66,15 +68,29 @@ void ASkeletonMonster::PostInitializeComponents()
 		AnimInstance->SetAnimData(TEXT("Skeleton"));
 	}
 	mStats->SetStats(2);
-	
-	SetAttackRange(800.f);
+
+	mArrowPool.Reserve(3);
 }
 
 void ASkeletonMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	for (int i = 0; i < 3; ++i)
+	{
+		if (IsValid(mArrowClass))
+		{
+			FActorSpawnParameters Params;
+			Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			auto Arrow = GetWorld()->SpawnActor<ASkeletonArrow>(mArrowClass, GetActorTransform(), Params);
+			if (Arrow)
+			{
+				Arrow->SetOwner(this);
+				Arrow->SetActorHiddenInGame(true);
+				mArrowPool.Add(Arrow);
+			}
+		}
+	}
 }
 
 void ASkeletonMonster::Tick(float DeltaTime)
@@ -87,8 +103,7 @@ void ASkeletonMonster::AttackCollisionCheckOnce(EAttackType AttackType, FVector 
 {
 	Super::AttackCollisionCheckOnce(AttackType, Offset, Radius, Coefficient);
 
-	mArrow->DetachAllSceneComponents(mBowMesh, FDetachmentTransformRules::KeepWorldTransform);
-	mArrow->Launch();
+	LaunchArrow();
 }
 
 void ASkeletonMonster::Angry()
@@ -103,16 +118,26 @@ void ASkeletonMonster::Attack()
 
 	mBowMesh->GetAnimInstance()->Montage_Play(mBowAnimMontage);
 
-	FActorSpawnParameters Params;
-	if (IsValid(mArrowClass))
-	{
-		mArrow = GetWorld()->SpawnActor<ASkeletonArrow>
-			(mArrowClass, GetActorTransform(), Params);
-		if (mArrow)
-		{
-			mArrow->SetOwner(this);
-			mArrow->AttachToComponent(mBowMesh, FAttachmentTransformRules::SnapToTargetIncludingScale,
-				TEXT("ArrowSocket"));
-		}
-	}
+	ReloadArrow();
+}
+
+void ASkeletonMonster::Activate()
+{
+	Super::Activate();
+	mCurrentArrowIdx = 0;
+}
+
+void ASkeletonMonster::ReloadArrow()
+{
+	mArrowPool[mCurrentArrowIdx]->SetActorHiddenInGame(false);
+	mArrowPool[mCurrentArrowIdx]->GetMesh()->SetSimulatePhysics(false);
+	mArrowPool[mCurrentArrowIdx]->AttachToComponent(mBowMesh,
+		FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("ArrowSocket"));
+}
+
+void ASkeletonMonster::LaunchArrow()
+{
+	mArrowPool[mCurrentArrowIdx]->DetachAllSceneComponents(mBowMesh, FDetachmentTransformRules::KeepWorldTransform);
+	mArrowPool[mCurrentArrowIdx]->Launch();
+	mCurrentArrowIdx = (mCurrentArrowIdx + 1) % 3;
 }

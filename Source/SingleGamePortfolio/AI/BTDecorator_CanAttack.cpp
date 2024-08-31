@@ -37,7 +37,8 @@ bool UBTDecorator_CanAttack::CalculateRawConditionValue(UBehaviorTreeComponent& 
     float DistanceToTarget = ControllingPawn->GetDistanceTo(Target);
     float AttackRange = Monster->GetAttackRange();
     float FinalAttackRange = 
-        Monster->GetCapsuleComponent()->GetScaledCapsuleRadius() + AttackRange;
+        Monster->GetCapsuleComponent()->GetScaledCapsuleRadius() + AttackRange
+        + Cast<ACharacter>(Target)->GetCapsuleComponent()->GetScaledCapsuleRadius();
 
     return (DistanceToTarget <= FinalAttackRange);
 }

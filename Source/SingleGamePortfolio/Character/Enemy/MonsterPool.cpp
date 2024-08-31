@@ -32,8 +32,7 @@ void AMonsterPool::SpawnMonsters(TObjectPtr<AMonsterSpawner> MonsterSpawner)
 	for (int i = 0; i < mMonsterNum; ++i)
 	{
 		FActorSpawnParameters Params;
-		Params.SpawnCollisionHandlingOverride =
-			ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
 		if (IsValid(mMonsterClass))
 		{

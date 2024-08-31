@@ -31,6 +31,8 @@ public:
 
 	void Launch();
 
+	TObjectPtr<UStaticMeshComponent> GetMesh() { return mArrowMesh; }
+
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> mArrowMesh;

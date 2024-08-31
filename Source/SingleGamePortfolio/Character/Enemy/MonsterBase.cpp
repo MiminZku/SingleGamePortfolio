@@ -162,7 +162,7 @@ void AMonsterBase::Attack()
 		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
 		if (AnimInstance)
 		{
-			AnimInstance->PlayMontage(TEXT("Attack"), TEXT("Default"));
+			AnimInstance->PlayMontage(TEXT("Attack"), TEXT("Attack"));
 		}
 	}
 }

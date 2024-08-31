@@ -92,7 +92,6 @@ public:
 	void SetRunEnable(bool Enable) { bCanRun = Enable; }
 	void SetCurrnetAttack(const FName& String) { mCurrentAttack = String; }
 	void SetHasWeapon(bool b) { bHasWeapon = b; }
-	void SetDamaged(bool Enable) { bDamaged = Enable; }
 	void SetTarget(TObjectPtr<ACharacter> InTarget) { mTarget = InTarget; }
 
 	void SetupHUDWidget(class UHUDWidget* InHUDWidget);
@@ -124,8 +123,6 @@ protected:
 	bool bCanRun = true;
 
 	bool bHasWeapon = false;
-
-	bool bDamaged = false;
 
 	FName mCurrentAttack = TEXT("Idle");
 

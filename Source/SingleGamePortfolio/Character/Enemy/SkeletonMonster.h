@@ -32,6 +32,12 @@ public:
 	virtual void Angry() override;
 	virtual void Attack() override;
 
+	virtual void Activate() override;
+
+protected:
+	void ReloadArrow();
+	void LaunchArrow();
+
 protected:
 	UPROPERTY()
 	TObjectPtr<USkeletalMeshComponent> mBowMesh;
@@ -43,8 +49,7 @@ protected:
 	TSubclassOf<class ASkeletonArrow> mArrowClass;
 
 	UPROPERTY()
-	TObjectPtr<class ASkeletonArrow> mArrow;
-
-	UPROPERTY()
 	TArray<TObjectPtr<class ASkeletonArrow>> mArrowPool;
+
+	uint8 mCurrentArrowIdx = 0;
 };

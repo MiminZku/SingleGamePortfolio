@@ -71,9 +71,13 @@ void ALittleGoblin::AttackCollisionCheckOnce(EAttackType AttackType, FVector Off
 			IHitInterface* AttackedCharacter = Cast<IHitInterface>(HitResult.GetActor());
 			if (AttackedCharacter)
 			{
-				AttackedCharacter->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
-				FDamageEvent DmgEvent;
-				HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), this);
+				if (!AttackedCharacter->IsDamaged())
+				{
+					AttackedCharacter->GetHit_Implementation(HitResult.ImpactPoint);
+
+					FDamageEvent DmgEvent;
+					HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), this);
+				}
 			}
 		}
 	}

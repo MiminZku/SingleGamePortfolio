@@ -102,6 +102,7 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 		mOwningCharacter->SetJumpEnable(true);
 		mOwningCharacter->SetRunEnable(true);
 		mOwningCharacter->SetCollisionEnable(true);
+		mOwningCharacter->SetDamaged(false);
 		return;
 	}
 	if (*mMontageMap.Find(TEXT("Attack")) == Montage)
@@ -119,11 +120,14 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 	}
 	if (*mMontageMap.Find(TEXT("Hit")) == Montage)
 	{
-		if(!bInterrupted)
+		if (!bInterrupted)
+		{
 			mOwningCharacter->SetJumpEnable(true);
-		mOwningCharacter->SetAttackEnable(true);
+			mOwningCharacter->SetDamaged(false);
+			mOwningCharacter->SetAttackEnable(true);
+			mOwningCharacter->SetRunEnable(true);
+		}
 		mOwningCharacter->SetDodgeEnable(true);
-		mOwningCharacter->SetRunEnable(true);
 		mOwningCharacter->SetCurrnetAttack(TEXT("Idle"));
 		return;
 	}

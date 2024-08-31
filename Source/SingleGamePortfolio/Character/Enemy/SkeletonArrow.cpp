@@ -27,9 +27,9 @@ ASkeletonArrow::ASkeletonArrow()
 
 	mCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collider"));
 	mCollider->SetupAttachment(mArrowMesh);
-	mCollider->SetCollisionProfileName(TEXT("Item"));
-	mCollider->SetSphereRadius(5.f);
-	mCollider->SetRelativeLocation(FVector(40.f, 0.f, 0.f));
+	mCollider->SetCollisionProfileName(TEXT("DetectPawn"));
+	mCollider->SetSphereRadius(10.f);
+	mCollider->SetRelativeLocation(FVector(35.f, 0.f, 0.f));
 
 }
 
@@ -44,30 +44,36 @@ void ASkeletonArrow::BeginPlay()
 void ASkeletonArrow::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	IHitInterface* HitActor = Cast<IHitInterface>(OtherActor);
+	IHitInterface* HitActor = Cast<IHitInterface>(SweepResult.GetActor());
 	if (HitActor)
 	{
-		HitActor->Execute_GetHit(OtherActor, SweepResult.ImpactPoint);
-
-		FDamageEvent DmgEvent;
-		OtherActor->TakeDamage(mOwner->GetStatComponent()->GetAtk(), DmgEvent, mOwner->GetController(), this);
-
-
-#if ENABLE_DRAW_DEBUG
-		if (mOwner->bDrawDebug)
+		if (!HitActor->IsDamaged())
 		{
-			DrawDebugSphere(GetWorld(), SweepResult.ImpactPoint, mCollider->GetScaledSphereRadius(), 8,
-				FColor::Green, false, 1.f);
+			HitActor->GetHit_Implementation(mCollider->GetComponentLocation());
+
+			FDamageEvent DmgEvent;
+			OtherActor->TakeDamage(mOwner->GetStatComponent()->GetAtk(), DmgEvent, mOwner->GetController(), this);
+
+	#if ENABLE_DRAW_DEBUG
+			DrawDebugSphere(GetWorld(), mCollider->GetComponentLocation(), mCollider->GetScaledSphereRadius(), 8,
+					FColor::Green, false, 1.f);
+	#endif
 		}
-#endif
 	}
 
-	Destroy();
+	//Destroy();
+	SetActorHiddenInGame(true);
 }
 
 void ASkeletonArrow::Launch()
 {
-	SetLifeSpan(3.f);
 	mArrowMesh->SetSimulatePhysics(true);
-	mArrowMesh->AddImpulse(GetActorForwardVector() * 2000.f, NAME_None, true);
+	mArrowMesh->AddImpulse(GetActorForwardVector() * 1500.f, NAME_None, true);
+	//SetLifeSpan(3.f);
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle,
+		[&]()
+		{
+			SetActorHiddenInGame(true);
+		}, 3.f, false);
 }

@@ -520,7 +520,10 @@ void APlayerCharacter::AttackCollisionCheckOnce(EAttackType AttackType, FVector 
 
 void APlayerCharacter::GetHit_Implementation(const FVector& ImpactPoint)
 {
+	SetDamaged(true);
+	GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
 	bCanJump = false;
+	bCanAttack = false;
 
 	FVector ForwardVec = GetActorForwardVector();
 	FVector VecToImpactPoint = ImpactPoint - GetActorLocation();
