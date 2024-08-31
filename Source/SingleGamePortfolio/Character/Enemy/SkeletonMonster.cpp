@@ -4,6 +4,7 @@
 #include "Character/Enemy/SkeletonMonster.h"
 #include "Components/CapsuleComponent.h"
 #include "CharacterStat/CharacterStatComponent.h"
+#include "Character/Enemy/SkeletonArrow.h"
 
 ASkeletonMonster::ASkeletonMonster()
 {
@@ -21,8 +22,12 @@ ASkeletonMonster::ASkeletonMonster()
 	}
 	GetMesh()->SetRelativeLocation(FVector(0.f, 0.f, -85.f));
 
+	GetCapsuleComponent()->SetCapsuleHalfHeight(85.f);
+	GetCapsuleComponent()->SetCapsuleRadius(25.f);
+
 	mBowMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Bow"));
 	mBowMesh->SetupAttachment(GetMesh(), TEXT("SKT_Bow"));
+	mBowMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh>
 		WeaponSKM(TEXT("/Script/Engine.SkeletalMesh'/Game/_ART/Character/UndeadPack/SkeletonEnemy/Mesh/Weapon/Bow/SK_Bow.SK_Bow'"));
 	if (WeaponSKM.Succeeded())
@@ -42,8 +47,12 @@ ASkeletonMonster::ASkeletonMonster()
 		mBowAnimMontage = WeaponMontage.Object;
 	}
 
-	GetCapsuleComponent()->SetCapsuleHalfHeight(85.f);
-	GetCapsuleComponent()->SetCapsuleRadius(25.f);
+	static ConstructorHelpers::FClassFinder<ASkeletonArrow>
+		ArrowBP(TEXT("/Game/_Programming/Blueprints/Characters/BP_SkeletonArrow.BP_SkeletonArrow_C"));
+	if (ArrowBP.Succeeded())
+	{
+		mArrowClass = ArrowBP.Class;
+	}
 }
 
 void ASkeletonMonster::PostInitializeComponents()
@@ -65,12 +74,21 @@ void ASkeletonMonster::BeginPlay()
 {
 	Super::BeginPlay();
 
+
 }
 
 void ASkeletonMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+void ASkeletonMonster::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient)
+{
+	Super::AttackCollisionCheckOnce(AttackType, Offset, Radius, Coefficient);
+
+	mArrow->DetachAllSceneComponents(mBowMesh, FDetachmentTransformRules::KeepWorldTransform);
+	mArrow->Launch();
 }
 
 void ASkeletonMonster::Angry()
@@ -82,7 +100,19 @@ void ASkeletonMonster::Angry()
 void ASkeletonMonster::Attack()
 {
 	Super::Attack();
+
 	mBowMesh->GetAnimInstance()->Montage_Play(mBowAnimMontage);
 
-
+	FActorSpawnParameters Params;
+	if (IsValid(mArrowClass))
+	{
+		mArrow = GetWorld()->SpawnActor<ASkeletonArrow>
+			(mArrowClass, GetActorTransform(), Params);
+		if (mArrow)
+		{
+			mArrow->SetOwner(this);
+			mArrow->AttachToComponent(mBowMesh, FAttachmentTransformRules::SnapToTargetIncludingScale,
+				TEXT("ArrowSocket"));
+		}
+	}
 }

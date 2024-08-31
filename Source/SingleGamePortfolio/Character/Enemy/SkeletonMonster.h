@@ -27,6 +27,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient) override;
 
 	virtual void Angry() override;
 	virtual void Attack() override;
@@ -39,5 +40,11 @@ protected:
 	TObjectPtr<UAnimMontage> mBowAnimMontage;
 
 	UPROPERTY()
-	TSubclassOf<AActor> mArrowClass;
+	TSubclassOf<class ASkeletonArrow> mArrowClass;
+
+	UPROPERTY()
+	TObjectPtr<class ASkeletonArrow> mArrow;
+
+	UPROPERTY()
+	TArray<TObjectPtr<class ASkeletonArrow>> mArrowPool;
 };

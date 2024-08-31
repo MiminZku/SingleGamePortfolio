@@ -2,12 +2,34 @@
 
 
 #include "Character/Enemy/SkeletonArrow.h"
+#include "Components/SphereComponent.h"
+#include "Interface/HitInterface.h"
+#include "Engine/DamageEvents.h"
+#include "MonsterBase.h"
+#include "CharacterStat/CharacterStatComponent.h"
 
 // Sets default values
 ASkeletonArrow::ASkeletonArrow()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = false;
+
+	mArrowMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Arrow"));
+	SetRootComponent(mArrowMesh);
+	mArrowMesh->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+	mArrowMesh->SetCollisionProfileName(TEXT("PhysicsActor"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh>
+		SM(TEXT("/Script/Engine.StaticMesh'/Game/_ART/Character/UndeadPack/SkeletonEnemy/Mesh/Weapon/Bow/Arrow/SM_Arrow.SM_Arrow'"));
+	if (SM.Succeeded())
+	{
+		mArrowMesh->SetStaticMesh(SM.Object);
+	}
+
+	mCollider = CreateDefaultSubobject<USphereComponent>(TEXT("Sphere Collider"));
+	mCollider->SetupAttachment(mArrowMesh);
+	mCollider->SetCollisionProfileName(TEXT("Item"));
+	mCollider->SetSphereRadius(5.f);
+	mCollider->SetRelativeLocation(FVector(40.f, 0.f, 0.f));
 
 }
 
@@ -16,12 +38,36 @@ void ASkeletonArrow::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	mCollider->OnComponentBeginOverlap.AddDynamic(this, &ASkeletonArrow::OnHit);
 }
 
-// Called every frame
-void ASkeletonArrow::Tick(float DeltaTime)
+void ASkeletonArrow::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::Tick(DeltaTime);
+	IHitInterface* HitActor = Cast<IHitInterface>(OtherActor);
+	if (HitActor)
+	{
+		HitActor->Execute_GetHit(OtherActor, SweepResult.ImpactPoint);
 
+		FDamageEvent DmgEvent;
+		OtherActor->TakeDamage(mOwner->GetStatComponent()->GetAtk(), DmgEvent, mOwner->GetController(), this);
+
+
+#if ENABLE_DRAW_DEBUG
+		if (mOwner->bDrawDebug)
+		{
+			DrawDebugSphere(GetWorld(), SweepResult.ImpactPoint, mCollider->GetScaledSphereRadius(), 8,
+				FColor::Green, false, 1.f);
+		}
+#endif
+	}
+
+	Destroy();
 }
 
+void ASkeletonArrow::Launch()
+{
+	SetLifeSpan(3.f);
+	mArrowMesh->SetSimulatePhysics(true);
+	mArrowMesh->AddImpulse(GetActorForwardVector() * 2000.f, NAME_None, true);
+}
