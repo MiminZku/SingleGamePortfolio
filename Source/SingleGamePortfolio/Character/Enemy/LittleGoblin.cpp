@@ -4,6 +4,7 @@
 #include "Character/Enemy/LittleGoblin.h"
 #include "Components/CapsuleComponent.h"
 #include "CharacterStat/CharacterStatComponent.h"
+#include "Engine/DamageEvents.h"
 
 ALittleGoblin::ALittleGoblin()
 {
@@ -13,6 +14,7 @@ ALittleGoblin::ALittleGoblin()
 	{
 		GetMesh()->SetSkeletalMesh(SKM.Object);
 	}
+
 	static ConstructorHelpers::FClassFinder<UAnimInstance>
 		AnimClass(TEXT("/Game/_Programming/Character/Enemy/LittleGoblin/ABP_LittleGoblin.ABP_LittleGoblin_C"));
 	if (AnimClass.Succeeded())
@@ -51,6 +53,41 @@ void ALittleGoblin::Tick(float DeltaTime)
 
 }
 
+void ALittleGoblin::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient)
+{
+	Super::AttackCollisionCheckOnce(AttackType, Offset, Radius, Coefficient);
+
+	FVector Origin = GetActorLocation() + Offset.X * GetActorForwardVector();
+	FCollisionQueryParams Params(NAME_None, false, this);
+	TArray<FHitResult> HitResults;
+	bool Collision = GetWorld()->SweepMultiByChannel(OUT HitResults,
+		Origin, Origin, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel4,
+		FCollisionShape::MakeSphere(Radius), Params);
+
+	if (Collision)
+	{
+		for (const FHitResult& HitResult : HitResults)
+		{
+			IHitInterface* AttackedCharacter = Cast<IHitInterface>(HitResult.GetActor());
+			if (AttackedCharacter)
+			{
+				AttackedCharacter->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
+				FDamageEvent DmgEvent;
+				HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), this);
+			}
+		}
+	}
+
+#if ENABLE_DRAW_DEBUG
+	if (bDrawDebug)
+	{
+		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
+
+		DrawDebugSphere(GetWorld(), Origin, Radius, 26, DrawColor, false, 1.f);
+	}
+#endif
+}
+
 void ALittleGoblin::Angry()
 {
 	Super::Angry();
@@ -58,5 +95,12 @@ void ALittleGoblin::Angry()
 
 void ALittleGoblin::Attack()
 {
-	Super::Attack();
+	if (mAnimInstance)
+	{
+		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
+		if (AnimInstance)
+		{
+			AnimInstance->PlayMontage(TEXT("Attack"), FMath::RandRange(0, 1) ? TEXT("1") : TEXT("2"));
+		}
+	}
 }

@@ -65,7 +65,7 @@ APlayerCharacter::APlayerCharacter()
 	}
 
 	//mMotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
-
+	bDrawDebug = false;
 }
 
 void APlayerCharacter::PostInitializeComponents()

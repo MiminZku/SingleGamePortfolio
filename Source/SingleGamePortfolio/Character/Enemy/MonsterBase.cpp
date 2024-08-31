@@ -8,7 +8,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Character/Enemy/MonsterSpawner.h"
 #include "CharacterStat/CharacterStatComponent.h"
-#include "Engine/DamageEvents.h"
 #include "UI/ProgressBarWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Character/PlayerCharacter.h"
@@ -96,35 +95,7 @@ void AMonsterBase::AttackCollisionCheck(EAttackType AttackType)
 
 void AMonsterBase::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient)
 {
-	FVector Origin = GetActorLocation() + Offset.X * GetActorForwardVector();
-	FCollisionQueryParams Params(NAME_None, false, this);
-	TArray<FHitResult> HitResults;
-	bool Collision = GetWorld()->SweepMultiByChannel(OUT HitResults,
-		Origin, Origin, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel4,
-		FCollisionShape::MakeSphere(Radius), Params);
 
-	if (Collision)
-	{
-		for (const FHitResult& HitResult : HitResults)
-		{
-			IHitInterface* AttackedCharacter = Cast<IHitInterface>(HitResult.GetActor());
-			if (AttackedCharacter)
-			{
-				AttackedCharacter->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
-				FDamageEvent DmgEvent;
-				HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), this);
-			}
-		}
-	}
-
-#if ENABLE_DRAW_DEBUG
-	if (bDrawDebug)
-	{
-		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
-
-		DrawDebugSphere(GetWorld(), Origin, Radius, 26, DrawColor, false, 1.f);
-	}
-#endif
 }
 
 void AMonsterBase::GetHit_Implementation(const FVector& ImpactPoint)
@@ -191,7 +162,7 @@ void AMonsterBase::Attack()
 		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
 		if (AnimInstance)
 		{
-			AnimInstance->PlayMontage(TEXT("Attack"), FMath::RandRange(0, 1) ? TEXT("1") : TEXT("2"));
+			AnimInstance->PlayMontage(TEXT("Attack"), TEXT("Default"));
 		}
 	}
 }

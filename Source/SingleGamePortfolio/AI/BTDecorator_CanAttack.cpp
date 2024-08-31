@@ -4,7 +4,8 @@
 #include "AI/BTDecorator_CanAttack.h"
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
-
+#include "Character/Enemy/MonsterBase.h"
+#include "Components/CapsuleComponent.h"
 
 UBTDecorator_CanAttack::UBTDecorator_CanAttack()
 {
@@ -27,10 +28,16 @@ bool UBTDecorator_CanAttack::CalculateRawConditionValue(UBehaviorTreeComponent& 
         return false;
     }
 
+    AMonsterBase* Monster = Cast<AMonsterBase>(ControllingPawn);
+    if (nullptr == Monster)
+    {
+        return false;
+    }
+
     float DistanceToTarget = ControllingPawn->GetDistanceTo(Target);
-    float AttackRange = 50.f;
-    float AttackRadius = 50.f;  // 공격 구체 반지름
-    float FinalAttackRange = AttackRange + AttackRadius * 2;
+    float AttackRange = Monster->GetAttackRange();
+    float FinalAttackRange = 
+        Monster->GetCapsuleComponent()->GetScaledCapsuleRadius() + AttackRange;
 
     return (DistanceToTarget <= FinalAttackRange);
 }

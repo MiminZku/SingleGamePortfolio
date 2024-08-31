@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "Character/Enemy/MonsterBase.h"
-#include "LittleGoblin.generated.h"
+#include "SkeletonMonster.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class SINGLEGAMEPORTFOLIO_API ALittleGoblin : public AMonsterBase
+class SINGLEGAMEPORTFOLIO_API ASkeletonMonster : public AMonsterBase
 {
 	GENERATED_BODY()
 
 public:
-	ALittleGoblin();
+	ASkeletonMonster();
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -27,9 +27,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	virtual void AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient) override;
 
 	virtual void Angry() override;
 	virtual void Attack() override;
 
+protected:
+	UPROPERTY()
+	TObjectPtr<USkeletalMeshComponent> mBowMesh;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> mBowAnimMontage;
+
+	UPROPERTY()
+	TSubclassOf<AActor> mArrowClass;
 };

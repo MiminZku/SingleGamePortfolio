@@ -57,6 +57,12 @@ public:
 	bool HasTarget() { return nullptr != mTarget; }
 	void SetTarget(TObjectPtr<APawn> Target) { mTarget = Target; }
 
+	float GetAttackRange() { return mAttackRange; }
+	void SetAttackRange(float InValue) { mAttackRange = InValue; }
+
+	float GetAttackRadius() { return mAttackRadius; }
+	void SetAttackRadius(float InValue) { mAttackRadius = InValue; }
+
 public:
 	FMonsterAttackFinished OnAttackFinished;
 	FMonsterAngryFinished OnAngryFinished;
@@ -81,4 +87,8 @@ private:
 	bool bCanAttack = true;
 
 	bool bIsActive = false;
+
+	float mAttackRange = 50.f;
+
+	float mAttackRadius = 50.f;
 };
