@@ -27,10 +27,17 @@ public:
 	void SetProgressBarColor(FLinearColor NewColor);
 
 protected:
+	UPROPERTY()
 	TWeakObjectPtr<class UCharacterStatComponent> mCurrentStatComp;
 
 	UPROPERTY()
-	TObjectPtr<class UProgressBar> mProgressBarWidget;
+	TObjectPtr<class UProgressBar> mProgressBar;
+
+	UPROPERTY()
+	TObjectPtr<class UTextBlock> mCurValueText;
+
+	UPROPERTY()
+	TObjectPtr<class UTextBlock> mMaxValueText;
 
 private:
 	FName mBindStatName;

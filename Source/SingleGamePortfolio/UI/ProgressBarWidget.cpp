@@ -4,17 +4,26 @@
 #include "UI/ProgressBarWidget.h"
 #include "Components/ProgressBar.h"
 #include "CharacterStat/CharacterStatComponent.h"
+#include "Components/TextBlock.h"
 
 UProgressBarWidget::UProgressBarWidget(const FObjectInitializer& ObjectInitializer) :
 	Super(ObjectInitializer)
 {
+
 }
 
 void UProgressBarWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	mProgressBarWidget = Cast<UProgressBar>(GetWidgetFromName(TEXT("ProgressBar")));
-	ensure(mProgressBarWidget);
+
+	mProgressBar = Cast<UProgressBar>(GetWidgetFromName(TEXT("ProgressBar")));
+	ensure(mProgressBar);
+
+	mCurValueText = Cast<UTextBlock>(GetWidgetFromName(TEXT("CurValue")));
+	ensure(mCurValueText);
+
+	mMaxValueText = Cast<UTextBlock>(GetWidgetFromName(TEXT("MaxValue")));
+	ensure(mMaxValueText);
 }
 
 void UProgressBarWidget::BindStat(UCharacterStatComponent* StatComp, const FName& StatName)
@@ -28,19 +37,23 @@ void UProgressBarWidget::BindStat(UCharacterStatComponent* StatComp, const FName
 
 void UProgressBarWidget::UpdateProgressBar()
 {
-	if (mProgressBarWidget)
+	if (mProgressBar)
 	{
 		if (mCurrentStatComp.IsValid())
 		{
-			mProgressBarWidget->SetPercent(mCurrentStatComp->GetStatRatio(mBindStatName));
+			mProgressBar->SetPercent(mCurrentStatComp->GetStatRatio(mBindStatName));
+			mCurValueText->SetText(FText::FromString(
+				FString::Printf(TEXT("%.f"), mCurrentStatComp->GetCurrentStat(mBindStatName))));
+			mMaxValueText->SetText(FText::FromString(
+				FString::Printf(TEXT("%.f"), mCurrentStatComp->GetMaxStat(mBindStatName))));
 		}
 	}
 }
 
 void UProgressBarWidget::SetProgressBarColor(FLinearColor NewColor)
 {
-	if (mProgressBarWidget)
+	if (mProgressBar)
 	{
-		mProgressBarWidget->SetFillColorAndOpacity(NewColor);
+		mProgressBar->SetFillColorAndOpacity(NewColor);
 	}
 }

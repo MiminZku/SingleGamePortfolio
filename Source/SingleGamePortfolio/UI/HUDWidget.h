@@ -19,11 +19,16 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
-	
+
 public:
 	void BindStats(class UCharacterStatComponent* StatComp);
+	UFUNCTION()
+	void UpdateLevelText();
 
 protected:
+	UPROPERTY()
+	TObjectPtr<class UTextBlock> mLevelText;
+	
 	UPROPERTY()
 	TObjectPtr<class UProgressBarWidget> mHpBar;
 

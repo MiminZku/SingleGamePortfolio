@@ -93,9 +93,13 @@ void APlayerCharacter::Tick(float DeltaTime)
 	mStats->RecoverMp(DeltaTime * 5.f);
 
 	// ¸ØÃß¸é ´Ù½Ã °È±â
-	if (GetVelocity().IsNearlyZero(0.01))
+	if (GetVelocity().IsNearlyZero(0.01) || mStats->GetCurrentStat(TEXT("Mp")) < 0.1f)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = mWalkSpeed;
+	}
+	if (GetCharacterMovement()->MaxWalkSpeed > mWalkSpeed)
+	{
+		mStats->UseMp(DeltaTime * 10.f);
 	}
 
 	if (IsValid(mTarget))
@@ -171,6 +175,8 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		// Camera Lock On Target
 		EnhancedInputComponent->BindAction(InputData->GetLockOnAction(),
 			ETriggerEvent::Started, this, &APlayerCharacter::LockOn);
+		EnhancedInputComponent->BindAction(InputData->GetLockOnAction(),
+			ETriggerEvent::Completed, this, &APlayerCharacter::LockOn);
 	}
 	else
 	{
@@ -267,10 +273,19 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 	if (!bCanDodge)	return;
 	if (mMoveInputVec.IsNearlyZero(0.0001))		return;
 	if (GetCharacterMovement()->IsFalling())	return;
+	if (mStats->GetCurrentStat(TEXT("Mp")) < 20.f)
+	{
+		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red,
+			TEXT("Not enough Mp!"));
+		return;
+	}
+
+	mStats->UseMp(20.f);
 	bCanDodge = false;
 	bIsDodging = true;
 	bCanJump = false;
 	SetCollisionEnable(false);
+	
 
 	if (EPlayerState::Armed == mState)
 	{
@@ -397,7 +412,7 @@ void APlayerCharacter::LockOn(const FInputActionValue& Value)
 			if (Target)
 			{
 				FVector VecToTarget = Target->GetActorLocation() - GetActorLocation();
-				float DistToTarget = VecToTarget.SquaredLength();
+				float DistToTarget = VecToTarget.Length();
 				VecToTarget.Normalize();
 				float DotValue = FVector::DotProduct(GetBaseAimRotation().Vector(), VecToTarget);
 				float Score = DotValue / DistToTarget;
@@ -408,6 +423,8 @@ void APlayerCharacter::LockOn(const FInputActionValue& Value)
 				}
 			}
 		}
+		//if (IsValid(mTarget))
+		//	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan, Result->GetName());
 		SetTarget(Result);
 		if (Result)
 		{
@@ -601,7 +618,8 @@ void APlayerCharacter::HitStop(float NewTimeDilation, float Duration)
 void APlayerCharacter::LockOff()
 {
 	SetTarget(nullptr);
-	mTargetWidget->SetupAttachment(RootComponent);
+	FAttachmentTransformRules Rules(EAttachmentRule::SnapToTarget, false);
+	mTargetWidget->AttachToComponent(RootComponent, Rules);
 	mTargetWidget->SetHiddenInGame(true);
 }
 
@@ -615,5 +633,5 @@ void APlayerCharacter::SetupHUDWidget(UHUDWidget* InHUDWidget)
 
 void APlayerCharacter::LevelUp()
 {
-
+	
 }

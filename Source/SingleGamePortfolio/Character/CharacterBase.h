@@ -41,7 +41,7 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere)
-	bool bDrawDebug = true;
+	bool bDrawDebug = false;
 
 protected:
 	UPROPERTY()

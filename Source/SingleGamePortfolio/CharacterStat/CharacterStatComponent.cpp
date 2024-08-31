@@ -63,21 +63,6 @@ void UCharacterStatComponent::RecoverHp(float InValue)
 	SetHp(mCurHp + InValue);
 }
 
-void UCharacterStatComponent::UseMp(float InValue)
-{
-	SetMp(mCurMp - InValue);
-}
-
-void UCharacterStatComponent::RecoverMp(float InValue)
-{
-	SetMp(mCurMp + InValue);
-}
-
-void UCharacterStatComponent::ExpUp(float InValue)
-{
-	SetExp(mCurExp + InValue);
-}
-
 void UCharacterStatComponent::SetHp(float NewHp)
 {
 	mCurHp = FMath::Clamp<float>(NewHp, 0.f, mMaxHp);
@@ -88,10 +73,25 @@ void UCharacterStatComponent::SetHp(float NewHp)
 	}
 }
 
+void UCharacterStatComponent::UseMp(float InValue)
+{
+	SetMp(mCurMp - InValue);
+}
+
+void UCharacterStatComponent::RecoverMp(float InValue)
+{
+	SetMp(mCurMp + InValue);
+}
+
 void UCharacterStatComponent::SetMp(float NewMp)
 {
 	mCurMp = FMath::Clamp<float>(NewMp, 0.f, mMaxMp);
 	OnMpChanged.Broadcast();
+}
+
+void UCharacterStatComponent::ExpUp(float InValue)
+{
+	SetExp(mCurExp + InValue);
 }
 
 void UCharacterStatComponent::SetExp(float NewExp)
@@ -100,7 +100,7 @@ void UCharacterStatComponent::SetExp(float NewExp)
 	OnExpChanged.Broadcast();
 	if (mCurExp >= mMaxExp)
 	{
-		OnLevelUp.Broadcast();
 		SetStats(mCurLevel + 1);
+		OnLevelUp.Broadcast();
 	}
 }

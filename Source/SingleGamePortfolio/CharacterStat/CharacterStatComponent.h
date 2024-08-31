@@ -30,14 +30,14 @@ protected:
 
 public:
 	FORCEINLINE uint16 GetLevel() { return mCurLevel; }
-	FORCEINLINE float GetMaxHp() { return mMaxHp; }
-	FORCEINLINE float GetCurrentHp() { return mCurHp; }
-	FORCEINLINE float GetMaxMp() { return mMaxMp; }
-	FORCEINLINE float GetCurrentMp() { return mCurMp; }
+	//FORCEINLINE float GetMaxHp() { return mMaxHp; }
+	//FORCEINLINE float GetCurrentHp() { return mCurHp; }
+	//FORCEINLINE float GetMaxMp() { return mMaxMp; }
+	//FORCEINLINE float GetCurrentMp() { return mCurMp; }
+	//FORCEINLINE float GetMaxExp() { return mMaxExp; }
+	//FORCEINLINE float GetCurrentExp() { return mCurExp; }
 	FORCEINLINE float GetAtk() { return mAtk; }
 	FORCEINLINE float GetDef() { return mDef; }
-	FORCEINLINE float GetMaxExp() { return mMaxExp; }
-	FORCEINLINE float GetCurrentExp() { return mCurExp; }
 	FORCEINLINE float GetDropExp() { return mDropExp; }
 
 	FORCEINLINE float GetStatRatio(const FName& StatName)
@@ -50,6 +50,20 @@ public:
 	//FORCEINLINE float GetHpRatio() { return mCurHp / mMaxHp; }
 	//FORCEINLINE float GetMpRatio() { return mCurMp / mMaxMp; }
 	//FORCEINLINE float GetExpRatio() { return mCurExp / mMaxExp; }
+	FORCEINLINE float GetCurrentStat(const FName& StatName)
+	{
+		if (TEXT("Hp") == StatName) return mCurHp;
+		if (TEXT("Mp") == StatName) return  mCurMp;
+		if (TEXT("Exp") == StatName) return mCurExp;
+		return 0.f;
+	}
+	FORCEINLINE float GetMaxStat(const FName& StatName)
+	{
+		if (TEXT("Hp") == StatName) return mMaxHp;
+		if (TEXT("Mp") == StatName) return  mMaxMp;
+		if (TEXT("Exp") == StatName) return mMaxExp;
+		return 0.f;
+	}
 
 	void SetStats(int32 Level);
 	

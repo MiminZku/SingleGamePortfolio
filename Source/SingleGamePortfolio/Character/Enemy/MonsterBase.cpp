@@ -58,6 +58,7 @@ void AMonsterBase::PostInitializeComponents()
 	if (HpBar)
 	{
 		HpBar->BindStat(mStats, TEXT("Hp"));
+		HpBar->UpdateProgressBar();
 		mHpBarWidget->SetHiddenInGame(true);
 	}
 }
@@ -146,7 +147,7 @@ void AMonsterBase::Activate()
 	{
 		Ctrl->RunAI();
 	}
-	mStats->RecoverHp(mStats->GetMaxHp());
+	mStats->RecoverHp(mStats->GetMaxStat(TEXT("Hp")));
 }
 
 void AMonsterBase::Deactivate()
@@ -253,6 +254,7 @@ void AMonsterBase::Die()
 		if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Cyan,
 			FString::Printf(TEXT("+ %.0f exp"), mStats->GetDropExp()));
 		Player->GetStatComponent()->ExpUp(mStats->GetDropExp());
+		Player->LockOff();
 	}
 }
 

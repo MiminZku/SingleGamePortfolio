@@ -93,11 +93,7 @@ public:
 	void SetCurrnetAttack(const FName& String) { mCurrentAttack = String; }
 	void SetHasWeapon(bool b) { bHasWeapon = b; }
 	void SetDamaged(bool Enable) { bDamaged = Enable; }
-	void SetTarget(TObjectPtr<ACharacter> InTarget) {
-		mTarget = InTarget;
-		if (IsValid(mTarget)) 
-			if(GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan, mTarget->GetName());
-	}
+	void SetTarget(TObjectPtr<ACharacter> InTarget) { mTarget = InTarget; }
 
 	void SetupHUDWidget(class UHUDWidget* InHUDWidget);
 	void LevelUp();
