@@ -45,7 +45,6 @@ private:
 	UFUNCTION()
 	void MontageEnd(UAnimMontage* Montage, bool bInterrupted);
 
-
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	class AMonsterBase* mOwningCharacter;

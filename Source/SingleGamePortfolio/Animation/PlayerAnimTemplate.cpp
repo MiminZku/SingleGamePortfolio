@@ -73,6 +73,7 @@ void UPlayerAnimTemplate::PlayMontage(const FName& Name, const FName& SectionNam
 	UAnimMontage** Montage = mMontageMap.Find(Name);
 	//if (Montage_IsPlaying(*Montage) && 
 	//	!SectionName.Compare(Montage_GetCurrentSection()))	return;
+	
 	if (Montage)
 	{
 		Montage_Play(*Montage);
@@ -107,6 +108,7 @@ void UPlayerAnimTemplate::MontageEnd(UAnimMontage* Montage, bool bInterrupted)
 	}
 	if (*mMontageMap.Find(TEXT("Attack")) == Montage)
 	{
+		mOwningCharacter->SetDamaged(false);
 		if (bInterrupted)
 		{
 			mOwningCharacter->SetJumpEnable(true);

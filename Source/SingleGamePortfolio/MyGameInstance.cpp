@@ -35,7 +35,7 @@ void UMyGameInstance::Init()
 {
 	Super::Init();
 
-
+	
 }
 
 FPlayerAnimData* UMyGameInstance::GetPlayerAnimData(const FName& CharacterName) const
