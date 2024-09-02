@@ -4,6 +4,7 @@
 #include "Character/Enemy/StelaeKnight.h"
 #include "Components/CapsuleComponent.h"
 #include "AI/BossMonsterController.h"
+#include "CharacterStat/CharacterStatComponent.h"
 
 AStelaeKnight::AStelaeKnight()
 {
@@ -42,5 +43,14 @@ void AStelaeKnight::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	mStats->SetStats(5);
+}
 
+float AStelaeKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+
+
+	return Damage;
 }

@@ -52,6 +52,7 @@ protected:
 	virtual void Unarm();
 	virtual void Attack(bool IsWeak);
 	void LockOn(const FInputActionValue& Value);
+	void LockOff(const FInputActionValue& Value);
 
 public:
 	virtual void GrabWeapon();

@@ -22,8 +22,7 @@ AMonsterBase::AMonsterBase()
 	
 	// 몬스터끼리 비켜가게
 	GetCharacterMovement()->bUseRVOAvoidance = true; 
-	GetCharacterMovement()->AvoidanceConsiderationRadius =
-		GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f; 
+	GetCharacterMovement()->AvoidanceConsiderationRadius = GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f; 
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 	
@@ -68,7 +67,7 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	mHpBarWidget->SetHiddenInGame(false);
 
-	DetectedTarget(EventInstigator->GetPawn());
+	if(IsValid(mSpawner)) DetectedTarget(EventInstigator->GetPawn());
 	
 	FVector LaunchVec = GetActorLocation() - EventInstigator->GetPawn()->GetActorLocation();
 	float Dist = LaunchVec.Length();
@@ -124,7 +123,7 @@ void AMonsterBase::Activate()
 void AMonsterBase::Deactivate()
 {
 	SetActorHiddenInGame(true);
-	SetActorLocation(mSpawner->GetActorLocation());
+	if(IsValid(mSpawner)) SetActorLocation(mSpawner->GetActorLocation());
 	SetActorTickEnabled(false);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->bUseRVOAvoidance = false;

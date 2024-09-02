@@ -64,7 +64,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	int32 mMonsterMaxNum = 8;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	TArray<TObjectPtr<class AMonsterBase>> mMonsterArray;
 
 };

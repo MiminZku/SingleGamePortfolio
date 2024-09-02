@@ -18,12 +18,13 @@ void AMyPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FInputModeGameOnly GameOnlyInputMode;
-	SetInputMode(GameOnlyInputMode);
+	//FInputModeGameOnly GameOnlyInputMode;
+	//SetInputMode(GameOnlyInputMode);
 
 	mHUDWidget = CreateWidget<UHUDWidget>(this, mHUDWidgetClass);
 	if (mHUDWidget)
 	{
 		mHUDWidget->AddToViewport();
 	}
+
 }

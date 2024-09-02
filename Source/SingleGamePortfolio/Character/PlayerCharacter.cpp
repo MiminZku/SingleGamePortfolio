@@ -21,6 +21,7 @@
 #include "Item/ItemBox.h"
 #include "MotionWarpingComponent.h"
 #include "UI/HUDWidget.h"
+//#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 APlayerCharacter::APlayerCharacter()
@@ -65,13 +66,13 @@ APlayerCharacter::APlayerCharacter()
 	}
 
 	//mMotionWarping = CreateDefaultSubobject<UMotionWarpingComponent>(TEXT("MotionWarping"));
-	
+
 }
 
 void APlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	
+
 	mTargetWidget->InitWidget();
 	mTargetWidget->SetHiddenInGame(true);
 
@@ -84,6 +85,18 @@ void APlayerCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	bDrawDebug = false;
+
+	// 커서 이미지 변경 테스트 코드
+	//auto* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	//if (PlayerController)
+	//{
+	//	PlayerController->SetMouseCursorWidget(EMouseCursor::Default, mTargetWidget->GetUserWidgetObject());
+
+	//	// Doesn't work
+	//	//PlayerController->SetMouseCursorWidget(EMouseCursor::GrabHand, mTargetWidget->GetUserWidgetObject());
+	//	//PlayerController->CurrentMouseCursor = EMouseCursor::GrabHand;
+	//	//PlayerController->DefaultMouseCursor = EMouseCursor::GrabHand;
+	//}
 }
 
 // Called every frame
@@ -105,11 +118,11 @@ void APlayerCharacter::Tick(float DeltaTime)
 
 	if (IsValid(mTarget))
 	{
-		if(Controller)
+		if (Controller)
 			Controller->SetControlRotation(
-				FMath::RInterpTo(GetControlRotation(), 
-				(mTarget->GetActorLocation() - (GetActorLocation() + FVector::UpVector * 200.f)).Rotation(),
-				DeltaTime, 10.f));
+				FMath::RInterpTo(GetControlRotation(),
+					(mTarget->GetActorLocation() - (GetActorLocation() + FVector::UpVector * 200.f)).Rotation(),
+					DeltaTime, 10.f));
 	}
 }
 
@@ -192,9 +205,7 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 	if (Controller)
 	{
-		//if (bCanAttack)
-		//{
-			// find out which way is forward
+		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
@@ -207,11 +218,6 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 		// add movement 
 		AddMovementInput(ForwardDirection, mMoveInputVec.X);
 		AddMovementInput(RightDirection, mMoveInputVec.Y);
-		//}
-		//else
-		//{
-		//	AddControllerYawInput(mMoveInputVec.Y * GetWorld()->DeltaTimeSeconds * 50);
-		//}
 	}
 }
 void APlayerCharacter::StopMove(const FInputActionValue& Value)
@@ -286,7 +292,7 @@ void APlayerCharacter::Dash(const FInputActionValue& Value)
 	bIsDodging = true;
 	bCanJump = false;
 	SetCollisionEnable(false);
-	
+
 
 	if (EPlayerState::Armed == mState)
 	{
@@ -340,7 +346,7 @@ void APlayerCharacter::Arm()
 	bUseControllerRotationYaw = true;
 	Cast<UPlayerAnimTemplate>(mAnimInstance)->PlayMontage(TEXT("ArmUnarm"), TEXT("Arm"));
 	// 애니메이션에서 검 잡기 전까지
-	SetAttackEnable(false); 
+	SetAttackEnable(false);
 	SetDodgeEnable(false);
 	SetRunEnable(false);
 }
@@ -391,15 +397,10 @@ void APlayerCharacter::Attack(bool IsWeak)
 
 void APlayerCharacter::LockOn(const FInputActionValue& Value)
 {
-	if (IsValid(mTarget))
-	{
-		LockOff();
-		return;
-	}
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, false, this);
 	TArray<FHitResult> HitResults;
-	float Radius = 1000.f;
+	float Radius = 1500.f;
 	bool bCollision = GetWorld()->SweepMultiByChannel(OUT HitResults,
 		Origin, Origin, FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel3,
 		FCollisionShape::MakeSphere(Radius), Params);
@@ -440,6 +441,14 @@ void APlayerCharacter::LockOn(const FInputActionValue& Value)
 	FColor DrawColor = bCollision ? FColor::Green : FColor::Red;
 	DrawDebugSphere(GetWorld(), Origin, Radius, 26, DrawColor, false, 1.f);
 #endif
+}
+
+void APlayerCharacter::LockOff(const FInputActionValue& Value)
+{
+	if (IsValid(mTarget))
+	{
+		LockOff();
+	}
 }
 
 void APlayerCharacter::AttackCollisionCheck(EAttackType AttackType)
@@ -637,5 +646,5 @@ void APlayerCharacter::SetupHUDWidget(UHUDWidget* InHUDWidget)
 
 void APlayerCharacter::LevelUp()
 {
-	
+
 }

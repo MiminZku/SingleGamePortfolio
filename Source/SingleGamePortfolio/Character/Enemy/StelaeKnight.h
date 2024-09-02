@@ -17,11 +17,13 @@ class SINGLEGAMEPORTFOLIO_API AStelaeKnight : public AMonsterBase
 public:
 	AStelaeKnight();
 
-public:
-
-
 protected:
 	virtual void PostInitializeComponents() override;
+
+public:
+	virtual float TakeDamage(float DamageAmount,
+		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
+		AActor* DamageCauser) override;
 
 
 protected:
