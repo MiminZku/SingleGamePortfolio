@@ -52,7 +52,7 @@ void UCharacterStatComponent::SetStats(int32 Level)
 float UCharacterStatComponent::ApplyDamage(float InDamage)
 {
 	const float PrevHp = mCurHp;
-	const float ActualDamage = FMath::Clamp<float>(InDamage - mDef, 0, InDamage);
+	const float ActualDamage = FMath::Clamp<float>(InDamage - mDef, 1, InDamage);
 
 	SetHp(PrevHp - ActualDamage);
 	return ActualDamage;

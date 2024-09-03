@@ -28,11 +28,11 @@ public:
 
 public:
 	virtual void NativeInitializeAnimation() override;
+	virtual void NativeBeginPlay() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 	//virtual void NativeThreadSafeUpdateAnimation(float DeltaSeconds);
 	//virtual void NativePostEvaluateAnimation();
 	//virtual void NativeUninitializeAnimation();
-	virtual void NativeBeginPlay() override;
 
 public:
 	void ChangeState(EPlayerState State)

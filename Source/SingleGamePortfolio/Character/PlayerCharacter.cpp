@@ -121,7 +121,10 @@ void APlayerCharacter::Tick(float DeltaTime)
 		if (Controller)
 			Controller->SetControlRotation(
 				FMath::RInterpTo(GetControlRotation(),
-					(mTarget->GetActorLocation() - (GetActorLocation() + FVector::UpVector * 200.f)).Rotation(),
+					(mTarget->GetActorLocation() - 
+						(GetActorLocation() + 
+							FVector::UpVector * (0.5f * FVector::Dist(mTarget->GetActorLocation(), GetActorLocation())))
+						).Rotation(),
 					DeltaTime, 10.f));
 	}
 }
@@ -188,9 +191,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		// Camera Lock On Target
 		EnhancedInputComponent->BindAction(InputData->GetLockOnAction(),
-			ETriggerEvent::Started, this, &APlayerCharacter::LockOn);
+			ETriggerEvent::Started, this, &APlayerCharacter::LockOnAction);
 		EnhancedInputComponent->BindAction(InputData->GetLockOnAction(),
-			ETriggerEvent::Completed, this, &APlayerCharacter::LockOn);
+			ETriggerEvent::Completed, this, &APlayerCharacter::LockOffAction);
 	}
 	else
 	{
@@ -395,7 +398,7 @@ void APlayerCharacter::Attack(bool IsWeak)
 	mCurrentAttack = NextAttack;
 }
 
-void APlayerCharacter::LockOn(const FInputActionValue& Value)
+void APlayerCharacter::LockOnAction(const FInputActionValue& Value)
 {
 	FVector Origin = GetActorLocation();
 	FCollisionQueryParams Params(NAME_None, false, this);
@@ -443,7 +446,7 @@ void APlayerCharacter::LockOn(const FInputActionValue& Value)
 #endif
 }
 
-void APlayerCharacter::LockOff(const FInputActionValue& Value)
+void APlayerCharacter::LockOffAction(const FInputActionValue& Value)
 {
 	if (IsValid(mTarget))
 	{

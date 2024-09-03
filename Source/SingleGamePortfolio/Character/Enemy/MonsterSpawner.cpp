@@ -69,6 +69,7 @@ void AMonsterSpawner::TriggerBeginOverlap(UPrimitiveComponent* OverlappedCompone
 	if (Cast<APlayerCharacter>(OtherActor))
 	{
 		SpawnMonsters();
+		OnTargetOverlap.Broadcast(Cast<APawn>(OtherActor));
 	}
 }
 

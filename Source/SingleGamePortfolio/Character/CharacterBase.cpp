@@ -19,6 +19,8 @@ ACharacterBase::ACharacterBase()
 
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 720.0f, 0.0f);
+	GetCharacterMovement()->bUseRVOAvoidance = true;
+	GetCharacterMovement()->AvoidanceConsiderationRadius = GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;

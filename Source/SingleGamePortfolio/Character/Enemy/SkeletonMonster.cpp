@@ -61,7 +61,6 @@ void ASkeletonMonster::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	mAnimInstance = GetMesh()->GetAnimInstance();
 	UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
 	if (AnimInstance)
 	{

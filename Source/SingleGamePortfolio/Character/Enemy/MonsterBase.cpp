@@ -21,8 +21,8 @@ AMonsterBase::AMonsterBase()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
 	
 	// 몬스터끼리 비켜가게
-	GetCharacterMovement()->bUseRVOAvoidance = true; 
-	GetCharacterMovement()->AvoidanceConsiderationRadius = GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f; 
+	//GetCharacterMovement()->bUseRVOAvoidance = true; 
+	//GetCharacterMovement()->AvoidanceConsiderationRadius = GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f; 
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
 	
@@ -51,6 +51,8 @@ void AMonsterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	mAnimInstance = GetMesh()->GetAnimInstance();
+
 	mHpBarWidget->InitWidget();
 	UProgressBarWidget* HpBar = Cast<UProgressBarWidget>(mHpBarWidget->GetUserWidgetObject());
 	if (HpBar)
@@ -68,11 +70,6 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 	mHpBarWidget->SetHiddenInGame(false);
 
 	if(IsValid(mSpawner)) DetectedTarget(EventInstigator->GetPawn());
-	
-	FVector LaunchVec = GetActorLocation() - EventInstigator->GetPawn()->GetActorLocation();
-	float Dist = LaunchVec.Length();
-	Dist = 100 / Dist;
-	LaunchCharacter(LaunchVec * 10.f * Dist, false, false);
 
 	if (mAnimInstance)
 	{
@@ -99,7 +96,10 @@ void AMonsterBase::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offs
 
 void AMonsterBase::GetHit_Implementation(const FVector& ImpactPoint)
 {
-
+	FVector LaunchVec = GetActorLocation() - ImpactPoint;
+	float Dist = LaunchVec.Length();
+	Dist = 100 / Dist;
+	LaunchCharacter(LaunchVec * 10.f * Dist, false, false);
 }
 
 void AMonsterBase::Activate()
@@ -168,6 +168,8 @@ void AMonsterBase::Attack()
 
 void AMonsterBase::SetState(EMonsterState InState)
 {
+	if (bIsBoss) return;
+
 	mState = InState;
 	if (mAnimInstance)
 	{
@@ -233,6 +235,11 @@ void AMonsterBase::BindSpawner(AMonsterSpawner* Spawner)
 	mSpawner = Spawner;
 	if (IsValid(mSpawner))
 		mSpawner->OnDetectTarget.AddUObject(this, &AMonsterBase::RegisterTarget);
+
+	if (bIsBoss)
+	{
+		mSpawner->OnTargetOverlap.AddUObject(this, &AMonsterBase::RegisterTarget);
+	}	
 }
 
 void AMonsterBase::DetectedTarget(APawn* Target)

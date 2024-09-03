@@ -18,6 +18,13 @@ void UPlayerAnimTemplate::NativeInitializeAnimation()
 	mOwningCharacter = Cast<APlayerCharacter>(TryGetPawnOwner());
 }
 
+void UPlayerAnimTemplate::NativeBeginPlay()
+{
+	Super::NativeBeginPlay();
+
+	OnMontageEnded.AddDynamic(this, &UPlayerAnimTemplate::MontageEnd);
+}
+
 void UPlayerAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
@@ -43,13 +50,6 @@ void UPlayerAnimTemplate::NativeUpdateAnimation(float DeltaSeconds)
 
 		bIsRotating = !mOwningCharacter->GetLookInputVector().IsNearlyZero(0.1);
 	}
-}
-
-void UPlayerAnimTemplate::NativeBeginPlay()
-{
-	Super::NativeBeginPlay();
-
-	OnMontageEnded.AddDynamic(this, &UPlayerAnimTemplate::MontageEnd);
 }
 
 void UPlayerAnimTemplate::SetAnimData(const FName& Name)

@@ -55,13 +55,16 @@ public:
 	void SetActive(bool Active) { bIsActive = Active; }
 
 	bool HasTarget() { return nullptr != mTarget; }
-	void SetTarget(TObjectPtr<APawn> Target) { mTarget = Target; }
+	APawn* GetTarget() { return mTarget; }
+	void SetTarget(APawn* Target) { mTarget = Target; }
 
 	float GetAttackRange() { return mAttackRange; }
 	void SetAttackRange(float InValue) { mAttackRange = InValue; }
 
 	float GetAttackRadius() { return mAttackRadius; }
 	void SetAttackRadius(float InValue) { mAttackRadius = InValue; }
+
+	bool IsBoss() { return bIsBoss; }
 
 public:
 	FMonsterAttackFinished OnAttackFinished;
@@ -83,6 +86,8 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class AActor> mExp;
 
+	bool bIsBoss = false;
+
 private:
 	bool bCanAttack = true;
 
@@ -91,4 +96,5 @@ private:
 	float mAttackRange = 50.f;
 
 	float mAttackRadius = 50.f;
+
 };

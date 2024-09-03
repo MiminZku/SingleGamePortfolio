@@ -7,6 +7,7 @@
 #include "MonsterSpawner.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnDetectTargetDelegate, APawn*);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnTargetOverlap, APawn*);
 
 UCLASS()
 class SINGLEGAMEPORTFOLIO_API AMonsterSpawner : public AActor
@@ -25,6 +26,7 @@ protected:
 
 public:	
 	void DetectedTarget(TObjectPtr<APawn> Target);
+	TObjectPtr<class USphereComponent> GetCollider() { return mCollider; }
 
 private:
 	UFUNCTION()
@@ -44,6 +46,7 @@ private:
 
 public:
 	FOnDetectTargetDelegate OnDetectTarget;
+	FOnTargetOverlap OnTargetOverlap;
 
 private:
 	UPROPERTY(VisibleAnywhere)
