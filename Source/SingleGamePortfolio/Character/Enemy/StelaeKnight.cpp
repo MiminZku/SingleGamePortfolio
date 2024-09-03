@@ -8,6 +8,8 @@
 #include "Character/Enemy/MonsterSpawner.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/BossMonsterAnimInstance.h"
+#include "Engine/DamageEvents.h"
+#include "Components/WidgetComponent.h"
 
 AStelaeKnight::AStelaeKnight()
 {
@@ -44,6 +46,19 @@ AStelaeKnight::AStelaeKnight()
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	
 	bIsBoss = true;
+
+	mCollisionStartPos = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionStartPos"));
+	mCollisionStartPos->SetupAttachment(mSword);
+
+	mCollisionEndPos = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionEndPos"));
+	mCollisionEndPos->SetupAttachment(mSword);
+
+	mCollisionRadius = CreateDefaultSubobject<USceneComponent>(TEXT("CollisionRadius"));
+	mCollisionRadius->SetupAttachment(mSword);
+
+
+	mHpBarWidget->SetDrawSize(FVector2D(300.f, 15.f));
+	mHpBarWidget->SetRelativeLocation(FVector(0.f, 0.f, 150.f));
 }
 
 void AStelaeKnight::PostInitializeComponents()
@@ -58,11 +73,6 @@ void AStelaeKnight::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//if (IsValid(mSpawner))
-	//{
-	//	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Cyan, TEXT("Bind Delegate"));
-	//	mSpawner->OnTargetOverlap.AddUObject(this, &AStelaeKnight::SetTargetPlayer);
-	//}
 }
 
 void AStelaeKnight::Tick(float DeltaTime)
@@ -82,6 +92,79 @@ float AStelaeKnight::TakeDamage(float DamageAmount, FDamageEvent const& DamageEv
 
 
 	return Damage;
+}
+
+void AStelaeKnight::GetHit_Implementation(const FVector& ImpactPoint)
+{
+	Super::GetHit_Implementation(ImpactPoint);
+
+	FVector ForwardVec = GetActorForwardVector();
+	FVector VecToImpactPoint = ImpactPoint - GetActorLocation();
+
+	// 좌 우 판단
+	FVector CrossRes = FVector::CrossProduct(ForwardVec, VecToImpactPoint);
+
+	Cast<UBossMonsterAnimInstance>(mAnimInstance)->PlayMontage(TEXT("Hit"),
+		(CrossRes.Z > 0) ? TEXT("R") : TEXT("L"));
+}
+
+void AStelaeKnight::AttackCollisionCheck(EAttackType AttackType)
+{
+	Super::AttackCollisionCheck(AttackType);
+
+	// 이전 프레임 검 중앙 위치
+	FVector Start = mPrevCollisionPos;
+	// 현재 프레임 검 중앙 위치
+	FVector End = (GetCollisionStartPos() + GetCollisionEndPos()) * 0.5f;
+
+	if (Start == End) return;
+
+	float Radius = (GetCollisionStartPos() - GetCollisionRadiusPos()).Length();
+	FVector Origin = (Start + End) * 0.5f;
+
+	FCollisionQueryParams Params(NAME_None, false, this);
+	TArray<FHitResult> HitResults;
+	bool Collision = GetWorld()->SweepMultiByChannel(OUT HitResults,
+		Start, End, FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
+		ECollisionChannel::ECC_GameTraceChannel3,
+		FCollisionShape::MakeBox(
+			FVector((GetCollisionEndPos() - GetCollisionStartPos()).Length() * 0.5f,
+				Radius, Radius)), Params);
+
+	if (Collision)
+	{
+		for (const FHitResult& HitResult : HitResults)
+		{
+			IHitInterface* HitInterface = Cast<IHitInterface>(HitResult.GetActor());
+			if (HitInterface)
+			{
+				if (HitInterface->IsDamaged())	continue;
+				HitInterface->SetDamaged(true);
+				mHitInterface = HitInterface;
+
+				FDamageEvent DmgEvent;
+				HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), this);
+
+				HitInterface->Execute_GetHit(HitResult.GetActor(), GetActorLocation());
+			}
+		}
+	}
+
+
+#if ENABLE_DRAW_DEBUG
+	if (bDrawDebug)
+	{
+		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
+
+		DrawDebugBox(GetWorld(), Origin,
+			FVector((GetCollisionEndPos() - GetCollisionStartPos()).Length() * 0.5,
+				Radius, (Origin - Start).Length() + Radius),
+			FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
+			DrawColor, false, 1.f);
+	}
+#endif
+	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
+	mPrevCollisionPos = (GetCollisionStartPos() + GetCollisionEndPos()) * 0.5f;
 }
 
 void AStelaeKnight::Attack()
@@ -117,4 +200,20 @@ void AStelaeKnight::Attack()
 
 	if (GEngine) GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, SectionName.ToString());
 	AnimInstance->PlayMontage(TEXT("Attack"), SectionName);
+}
+
+void AStelaeKnight::Die()
+{
+	Super::Die();
+
+	UBossMonsterAnimInstance* AnimInstance = Cast<UBossMonsterAnimInstance>(mAnimInstance);
+	if (nullptr == AnimInstance)	return;
+	AnimInstance->SetDead(true);
+}
+
+void AStelaeKnight::ResetAttackedCharacters()
+{
+	if (nullptr == mHitInterface)	return;
+	mHitInterface->SetDamaged(false);
+	mHitInterface = nullptr;
 }

@@ -65,7 +65,8 @@ void AItem::OnOverlapBegin(UPrimitiveComponent* OverlappedComponent,
 				GetActorLocation()
 			);
 		}
-		Player->GetStatComponent()->RecoverHp(50.f);
+		if (bIsHpPotion)	Player->GetStatComponent()->RecoverHp(50.f);
+		else				Player->GetStatComponent()->RecoverMp(50.f);
 		Destroy();
 	}
 }

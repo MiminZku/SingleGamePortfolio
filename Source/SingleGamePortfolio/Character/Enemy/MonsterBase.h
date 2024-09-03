@@ -34,6 +34,7 @@ public:
 	virtual void AttackCollisionCheckOnce(EAttackType AttackType, FVector Offset, float Radius, float Coefficient) override;
 
 	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+	virtual void HitEvent_Implementation(const FVector& ImpactPoint, EAttackType AttackType) override;
 
 	virtual void Activate();
 	virtual void Deactivate();

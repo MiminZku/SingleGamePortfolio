@@ -5,6 +5,8 @@
 #include "Character/PlayerCharacter.h"
 #include "Item/PlayerWeapon.h"
 #include "Components/CapsuleComponent.h"
+#include "Interface/AttackInterface.h"
+#include "Character/Enemy/StelaeKnight.h"
 
 void UANS_AttackCollisionCheck::NotifyBegin(USkeletalMeshComponent* MeshComp,
 	UAnimSequenceBase* Animation, float TotalDuration, 
@@ -12,15 +14,21 @@ void UANS_AttackCollisionCheck::NotifyBegin(USkeletalMeshComponent* MeshComp,
 {
 	Super::NotifyBegin(MeshComp, Animation, TotalDuration, EventReference);
 
-	APlayerCharacter* Player = Cast<APlayerCharacter>(MeshComp->GetOwner());
+	mOwningCharacter = Cast<ACharacterBase>(MeshComp->GetOwner());
+	APlayerCharacter* Player = Cast<APlayerCharacter>(mOwningCharacter);
 	if (Player)
 	{
-		mOwningCharacter = Player;
-		APlayerWeapon* PlayerWeapon = mOwningCharacter->GetWeapon();
+		APlayerWeapon* PlayerWeapon = Player->GetWeapon();
 		PlayerWeapon->SetPrevCollisionPos
-		((PlayerWeapon->GetCollisonEndPos() + PlayerWeapon->GetCollisionStartPos()) * 0.5f);
+		((PlayerWeapon->GetCollisionEndPos() + PlayerWeapon->GetCollisionStartPos()) * 0.5f);
 		if(!bMonsterCollisionBlock)
 			mOwningCharacter->GetCapsuleComponent()->SetCollisionProfileName(TEXT("IgnoreOnlyPawn"));
+		return;
+	}
+	AStelaeKnight* Boss = Cast<AStelaeKnight>(mOwningCharacter);
+	if (Boss)
+	{
+		Boss->SetPrevCollisionPos((Boss->GetCollisionEndPos() + Boss->GetCollisionStartPos()) * 0.5f);
 	}
 }
 
@@ -32,7 +40,7 @@ void UANS_AttackCollisionCheck::NotifyTick(USkeletalMeshComponent* MeshComp,
 
 	if (mOwningCharacter)
 	{
-		mOwningCharacter->AttackCollisionCheck(AttackType);
+		Cast<IAttackInterface>(mOwningCharacter)->AttackCollisionCheck(AttackType);
 	}
 }
 
@@ -43,9 +51,19 @@ void UANS_AttackCollisionCheck::NotifyEnd(USkeletalMeshComponent* MeshComp,
 
 	if (mOwningCharacter)
 	{
-		mOwningCharacter->ResetAttackedCharacters();
-		if (!bMonsterCollisionBlock)
-			mOwningCharacter->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
+		APlayerCharacter* Player = Cast<APlayerCharacter>(mOwningCharacter);
+		if (Player)
+		{
+			Player->ResetAttackedCharacters();
+			if (!bMonsterCollisionBlock)
+				mOwningCharacter->GetCapsuleComponent()->SetCollisionProfileName(TEXT("Player"));
+			return;
+		}
+		AStelaeKnight* Boss = Cast<AStelaeKnight>(mOwningCharacter);
+		if (Boss)
+		{
+			Boss->SetPrevCollisionPos((Boss->GetCollisionEndPos() + Boss->GetCollisionStartPos()) * 0.5f);
+		}
 	}
 
 }

@@ -16,7 +16,7 @@ UCharacterStatComponent::UCharacterStatComponent()
 void UCharacterStatComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
-
+	SetStats(mCurLevel);
 }
 
 // Called when the game starts

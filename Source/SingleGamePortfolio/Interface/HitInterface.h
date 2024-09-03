@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintNativeEvent)
 	void GetHit(const FVector& ImpactPoint);
 
+	UFUNCTION(BlueprintNativeEvent)
+	void HitEvent(const FVector& ImpactPoint, EAttackType AttackType);
+
 	void SetDamaged(bool b) { bDamaged = b; }
 
 	bool IsDamaged() { return bDamaged; }

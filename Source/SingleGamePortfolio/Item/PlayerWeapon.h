@@ -35,7 +35,7 @@ public:
 	UStaticMeshComponent* GetMesh() { return mMesh; }
 
 	FVector GetCollisionStartPos() { return mCollisionStartPos->GetComponentLocation(); }
-	FVector GetCollisonEndPos() { return mCollisionEndPos->GetComponentLocation();}
+	FVector GetCollisionEndPos() { return mCollisionEndPos->GetComponentLocation();}
 	FVector GetCollisionRadiusPos()	{ return mCollisionRadius->GetComponentLocation();}
 
 	FVector GetPrevCollisionPos() { return mPrevCollisionPos; }

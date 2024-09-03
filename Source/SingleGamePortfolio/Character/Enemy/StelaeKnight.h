@@ -32,12 +32,39 @@ public:
 		struct FDamageEvent const& DamageEvent, class AController* EventInstigator,
 		AActor* DamageCauser) override;
 
+	virtual void GetHit_Implementation(const FVector& ImpactPoint) override;
+
+	virtual void AttackCollisionCheck(EAttackType AttackType) override;
+
 	virtual void Attack() override;
+
+	virtual void Die() override;
+
+	FORCEINLINE FVector GetCollisionStartPos() { return mCollisionStartPos->GetComponentLocation(); }
+	FORCEINLINE FVector GetCollisionEndPos() { return mCollisionEndPos->GetComponentLocation(); }
+	FORCEINLINE FVector GetCollisionRadiusPos() { return mCollisionRadius->GetComponentLocation(); }
+	FORCEINLINE FVector GetPrevCollisionPos() { return mPrevCollisionPos; }
+	FORCEINLINE void SetPrevCollisionPos(const FVector& Vec) { mPrevCollisionPos = Vec; }
+
+	void ResetAttackedCharacters();
 
 protected:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UStaticMeshComponent> mSword;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* mCollisionStartPos = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* mCollisionEndPos = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USceneComponent* mCollisionRadius = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector mPrevCollisionPos = FVector::ZeroVector;
+
+	class IHitInterface* mHitInterface;
 private:
 
 };

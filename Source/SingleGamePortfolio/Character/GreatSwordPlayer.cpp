@@ -43,7 +43,6 @@ void AGreatSwordPlayer::PostInitializeComponents()
 	{
 		AnimInstance->SetAnimData(TEXT("Hercules"));
 	}
-	mStats->SetStats(1);
 }
 
 void AGreatSwordPlayer::BeginPlay()
@@ -122,7 +121,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 	// 이전 프레임 검 중앙 위치
 	FVector Start = mWeapon->GetPrevCollisionPos();
 	// 현재 프레임 검 중앙 위치
-	FVector End = (mWeapon->GetCollisionStartPos() + mWeapon->GetCollisonEndPos()) * 0.5f;
+	FVector End = (mWeapon->GetCollisionStartPos() + mWeapon->GetCollisionEndPos()) * 0.5f;
 		
 	if (Start == End) return;
 
@@ -135,7 +134,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 		Start, End, FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
 		ECollisionChannel::ECC_GameTraceChannel3,
 		FCollisionShape::MakeBox(
-		FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5f,
+		FVector((mWeapon->GetCollisionEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5f,
 			Radius, Radius)), Params);
 
 	if (Collision)
@@ -155,6 +154,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				HitResult.GetActor()->TakeDamage(mStats->GetAtk(), DmgEvent, GetController(), mWeapon);
 
 				HitInterface->Execute_GetHit(HitResult.GetActor(), GetActorLocation());
+				HitInterface->Execute_HitEvent(HitResult.GetActor(), GetActorLocation(), AttackType);
 
 				AItemBox* ItemBox = Cast<AItemBox>(HitResult.GetActor());
 				if (ItemBox)
@@ -184,7 +184,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 		//	DrawColor, false, 1);
 
 		DrawDebugBox(GetWorld(), Origin,
-			FVector((mWeapon->GetCollisonEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5,
+			FVector((mWeapon->GetCollisionEndPos() - mWeapon->GetCollisionStartPos()).Length() * 0.5,
 				Radius, (Origin - Start).Length() + Radius),
 			FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
 			DrawColor, false, 1.f);
@@ -192,7 +192,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 #endif
 	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
 	mWeapon->SetPrevCollisionPos
-	((mWeapon->GetCollisonEndPos() + mWeapon->GetCollisionStartPos()) * 0.5f);
+	((mWeapon->GetCollisionEndPos() + mWeapon->GetCollisionStartPos()) * 0.5f);
 }
 
 

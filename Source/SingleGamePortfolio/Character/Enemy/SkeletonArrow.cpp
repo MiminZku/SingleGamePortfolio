@@ -49,7 +49,7 @@ void ASkeletonArrow::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 	{
 		if (!HitActor->IsDamaged())
 		{
-			HitActor->GetHit_Implementation(mCollider->GetComponentLocation());
+			HitActor->Execute_GetHit(OtherActor, mCollider->GetComponentLocation());
 
 			FDamageEvent DmgEvent;
 			OtherActor->TakeDamage(mOwner->GetStatComponent()->GetAtk(), DmgEvent, mOwner->GetController(), this);

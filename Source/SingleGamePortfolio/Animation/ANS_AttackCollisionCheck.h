@@ -8,8 +8,6 @@
 #include "ANS_AttackCollisionCheck.generated.h"
 
 
-class APlayerCharacter;
-
 UCLASS()
 class SINGLEGAMEPORTFOLIO_API UANS_AttackCollisionCheck : public UAnimNotifyState
 {
@@ -30,7 +28,7 @@ public:
 	
 public:
 	UPROPERTY()
-	APlayerCharacter* mOwningCharacter = nullptr;
+	TObjectPtr<class ACharacterBase> mOwningCharacter = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	bool bMonsterCollisionBlock = true;

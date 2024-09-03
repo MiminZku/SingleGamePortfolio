@@ -76,6 +76,7 @@ void APlayerCharacter::PostInitializeComponents()
 	mTargetWidget->InitWidget();
 	mTargetWidget->SetHiddenInGame(true);
 
+	//mStats->SetStats(1);
 	mStats->OnLevelUp.AddUObject(this, &APlayerCharacter::LevelUp);
 }
 
@@ -481,24 +482,12 @@ void APlayerCharacter::AttackCollisionCheckOnce(EAttackType AttackType, FVector 
 			if (AttackedActor)
 			{
 				AttackedActor->Execute_GetHit(HitResult.GetActor(), HitResult.ImpactPoint);
+				AttackedActor->Execute_HitEvent(HitResult.GetActor(), HitResult.ImpactPoint, AttackType);
 
 				HitStop(0.1f, 0.01f);
 
 				FDamageEvent DmgEvent;
 				HitResult.GetActor()->TakeDamage(mStats->GetAtk() * Coefficient, DmgEvent, GetController(), this);
-
-				ACharacter* Character = Cast<ACharacter>(HitResult.GetActor());
-				if (Character)
-				{
-					FVector LaunchVec = HitResult.ImpactPoint - GetActorLocation();
-					float Dist = LaunchVec.Length();
-					LaunchVec.Z = 0;
-					LaunchVec.Normalize();
-					LaunchVec += FVector(0.f, 0.f, 100.f);
-					LaunchVec = LaunchVec * 1000.f / Dist;
-
-					Character->LaunchCharacter(LaunchVec, false, false);
-				}
 
 				AItemBox* ItemBox = Cast<AItemBox>(HitResult.GetActor());
 				if (ItemBox)

@@ -52,4 +52,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	UParticleSystem* mPickupParticle;
+
+	UPROPERTY(EditAnywhere)
+	bool bIsHpPotion = true;
 };

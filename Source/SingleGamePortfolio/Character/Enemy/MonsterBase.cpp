@@ -11,6 +11,7 @@
 #include "UI/ProgressBarWidget.h"
 #include "Components/WidgetComponent.h"
 #include "Character/PlayerCharacter.h"
+#include "Animation/BossMonsterAnimInstance.h"
 
 AMonsterBase::AMonsterBase()
 {
@@ -19,14 +20,14 @@ AMonsterBase::AMonsterBase()
 
 	GetCharacterMovement()->MaxWalkSpeed = 200.f;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 360.0f, 0.0f);
-	
+
 	// 몬스터끼리 비켜가게
 	//GetCharacterMovement()->bUseRVOAvoidance = true; 
 	//GetCharacterMovement()->AvoidanceConsiderationRadius = GetCapsuleComponent()->GetScaledCapsuleRadius() * 3.f; 
 
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Monster"));
-	
-	GetMesh()->VisibilityBasedAnimTickOption = 
+
+	GetMesh()->VisibilityBasedAnimTickOption =
 		EVisibilityBasedAnimTickOption::OnlyTickPoseWhenRendered;
 
 	mTarget = nullptr;
@@ -69,7 +70,7 @@ float AMonsterBase::TakeDamage(float DamageAmount, FDamageEvent const& DamageEve
 
 	mHpBarWidget->SetHiddenInGame(false);
 
-	if(IsValid(mSpawner)) DetectedTarget(EventInstigator->GetPawn());
+	if (IsValid(mSpawner)) DetectedTarget(EventInstigator->GetPawn());
 
 	if (mAnimInstance)
 	{
@@ -96,10 +97,54 @@ void AMonsterBase::AttackCollisionCheckOnce(EAttackType AttackType, FVector Offs
 
 void AMonsterBase::GetHit_Implementation(const FVector& ImpactPoint)
 {
+
+}
+
+void AMonsterBase::HitEvent_Implementation(const FVector& ImpactPoint, EAttackType AttackType)
+{
 	FVector LaunchVec = GetActorLocation() - ImpactPoint;
 	float Dist = LaunchVec.Length();
-	Dist = 100 / Dist;
-	LaunchCharacter(LaunchVec * 10.f * Dist, false, false);
+
+	switch (AttackType)
+	{
+	case EAttackType::Default:
+	{
+		if (bIsBoss)	return;
+		Dist = 100 / Dist;
+		this->LaunchCharacter(LaunchVec * 10.f * Dist, false, false);
+	}
+		break;
+
+	case EAttackType::Airborn:
+	{
+		if (bIsBoss)	return;
+		LaunchVec.Z = 0;
+		LaunchVec.Normalize();
+		LaunchVec += FVector(0.f, 0.f, 100.f);
+		LaunchVec = LaunchVec * 500.f / Dist;
+		this->LaunchCharacter(LaunchVec, false, false);
+	}
+		break;
+	case EAttackType::Knockback:
+	{
+	}
+		break;
+
+	case EAttackType::KnockDown:
+	{
+
+	}
+		break;
+
+	case EAttackType::Stun:
+	{
+
+	}
+		break;
+
+	default:
+		break;
+	}
 }
 
 void AMonsterBase::Activate()
@@ -123,7 +168,7 @@ void AMonsterBase::Activate()
 void AMonsterBase::Deactivate()
 {
 	SetActorHiddenInGame(true);
-	if(IsValid(mSpawner)) SetActorLocation(mSpawner->GetActorLocation());
+	if (IsValid(mSpawner)) SetActorLocation(mSpawner->GetActorLocation());
 	SetActorTickEnabled(false);
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GetCharacterMovement()->bUseRVOAvoidance = false;
@@ -138,6 +183,11 @@ void AMonsterBase::Deactivate()
 		if (AnimInstance)
 		{
 			AnimInstance->SetDead(false);
+		}
+		UBossMonsterAnimInstance* BossAnim = Cast<UBossMonsterAnimInstance>(mAnimInstance);
+		if (BossAnim)
+		{
+			BossAnim->SetDead(false);
 		}
 	}
 }
@@ -198,6 +248,7 @@ void AMonsterBase::Die()
 
 	mHpBarWidget->SetHiddenInGame(true);
 
+	SetActorTickEnabled(false);
 	AMonsterController* Ctrl = Cast<AMonsterController>(GetController());
 	if (Ctrl)
 	{
@@ -205,10 +256,10 @@ void AMonsterBase::Die()
 	}
 	if (mAnimInstance)
 	{
+		mAnimInstance->StopAllMontages(0.1f);
 		UMonsterAnimTemplate* AnimInstance = Cast<UMonsterAnimTemplate>(mAnimInstance);
 		if (AnimInstance)
 		{
-			AnimInstance->StopAllMontages(0.1f);
 			AnimInstance->SetDead(true);
 		}
 	}
@@ -239,7 +290,7 @@ void AMonsterBase::BindSpawner(AMonsterSpawner* Spawner)
 	if (bIsBoss)
 	{
 		mSpawner->OnTargetOverlap.AddUObject(this, &AMonsterBase::RegisterTarget);
-	}	
+	}
 }
 
 void AMonsterBase::DetectedTarget(APawn* Target)

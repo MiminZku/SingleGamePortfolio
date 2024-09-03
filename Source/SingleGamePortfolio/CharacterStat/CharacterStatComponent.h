@@ -88,10 +88,10 @@ public:
 	FOnLevelUpDelegate OnLevelUp;
 
 protected:
-	UPROPERTY(VisibleInstanceOnly /* 캐릭터들 마다 다른 값 */, Category = Stat)
-	uint16 mCurLevel;
+	UPROPERTY(EditAnywhere, Category = Stat)
+	uint16 mCurLevel = 1;
 
-	UPROPERTY(VisibleInstanceOnly /* 캐릭터들 마다 다른 값 */, Category = Stat)
+	UPROPERTY(VisibleInstanceOnly, Category = Stat)
 	float mMaxHp;
 
 	UPROPERTY(Transient /* 디스크에 저장할 필요 X */, VisibleInstanceOnly, Category = Stat)
