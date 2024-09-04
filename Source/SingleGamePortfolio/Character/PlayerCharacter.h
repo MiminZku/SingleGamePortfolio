@@ -66,6 +66,9 @@ public:
 	virtual void Die() override;
 	virtual void SetCollisionEnable(bool Enable) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void YouDie();
+
 	void PickWeaponUp(APlayerWeapon* Weapon);
 	void ResetAttackedCharacters();
 	void HitStop(float NewTimeDilation, float Duration);

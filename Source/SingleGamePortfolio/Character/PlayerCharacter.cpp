@@ -559,6 +559,7 @@ void APlayerCharacter::Die()
 	mAnimInstance->StopAllMontages(0.f);
 	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
 	GetMesh()->SetSimulatePhysics(true);
+	YouDie();
 }
 
 void APlayerCharacter::SetCollisionEnable(bool Enable)
