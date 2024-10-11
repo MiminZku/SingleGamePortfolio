@@ -49,7 +49,6 @@ private:
 	UFUNCTION()
 	void MontageEnd(UAnimMontage* Montage, bool bInterrupted);
 
-private:
 	UFUNCTION()
 	void AnimNotify_GrabWeapon();
 
