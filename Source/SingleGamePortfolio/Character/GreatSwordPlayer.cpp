@@ -162,7 +162,7 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 					Weapon->CreateFields(HitResult.ImpactPoint);
 					FTimerHandle TimerHandle;
 					GetWorld()->GetTimerManager().SetTimer(TimerHandle,
-						[Weapon, HitResult]()
+						[&, Weapon, HitResult]()
 						{
 							Weapon->CreateFields(HitResult.ImpactPoint);
 						},
@@ -172,10 +172,14 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 		}
 	}
 
+	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
+	mWeapon->SetPrevCollisionPos
+	((mWeapon->GetCollisionEndPos() + mWeapon->GetCollisionStartPos()) * 0.5f);
 
-#if ENABLE_DRAW_DEBUG
-	if (bDrawDebug)
-	{
+
+//#if ENABLE_DRAW_DEBUG
+//	if (bDrawDebug)
+//	{
 		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
 		//const float CapsuleHalfHeight = (End - Start).Length() * 0.5f + Radius;
 
@@ -188,11 +192,8 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				Radius, (Origin - Start).Length() + Radius),
 			FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
 			DrawColor, false, 1.f);
-	}
-#endif
-	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
-	mWeapon->SetPrevCollisionPos
-	((mWeapon->GetCollisionEndPos() + mWeapon->GetCollisionStartPos()) * 0.5f);
+//	}
+//#endif
 }
 
 

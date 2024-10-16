@@ -63,10 +63,12 @@ void ASkeletonArrow::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 
 	//Destroy();
 	SetActorHiddenInGame(true);
+	mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void ASkeletonArrow::Launch()
 {
+	mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	mArrowMesh->SetSimulatePhysics(true);
 	mArrowMesh->AddImpulse(GetActorForwardVector() * 1500.f, NAME_None, true);
 	//SetLifeSpan(3.f);
@@ -75,5 +77,6 @@ void ASkeletonArrow::Launch()
 		[&]()
 		{
 			SetActorHiddenInGame(true);
+			mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}, 3.f, false);
 }
