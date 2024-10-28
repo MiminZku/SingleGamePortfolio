@@ -68,7 +68,7 @@ void ASkeletonArrow::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 
 void ASkeletonArrow::Launch()
 {
-	mCollider->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	mCollider->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	mArrowMesh->SetSimulatePhysics(true);
 	mArrowMesh->AddImpulse(GetActorForwardVector() * 1500.f, NAME_None, true);
 	//SetLifeSpan(3.f);

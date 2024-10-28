@@ -126,7 +126,6 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 	if (Start == End) return;
 
 	float Radius = (mWeapon->GetCollisionStartPos() - mWeapon->GetCollisionRadiusPos()).Length();
-	FVector Origin = (Start + End) * 0.5f;
 
 	FCollisionQueryParams Params(NAME_None, false, this);
 	TArray<FHitResult> HitResults;
@@ -173,13 +172,13 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 	}
 
 	// 다음 프레임을 위해 현재 프레임 검 중앙 위치 저장
-	mWeapon->SetPrevCollisionPos
-	((mWeapon->GetCollisionEndPos() + mWeapon->GetCollisionStartPos()) * 0.5f);
+	mWeapon->SetPrevCollisionPos(End);
 
 
-//#if ENABLE_DRAW_DEBUG
-//	if (bDrawDebug)
-//	{
+#if ENABLE_DRAW_DEBUG
+	if (bDrawDebug)
+	{
+		FVector Origin = (Start + End) * 0.5f;
 		FColor DrawColor = Collision ? FColor::Green : FColor::Red;
 		//const float CapsuleHalfHeight = (End - Start).Length() * 0.5f + Radius;
 
@@ -192,8 +191,8 @@ void AGreatSwordPlayer::AttackCollisionCheck(EAttackType AttackType)
 				Radius, (Origin - Start).Length() + Radius),
 			FRotationMatrix::MakeFromXZ(GetActorForwardVector(), (End - Start)).ToQuat(),
 			DrawColor, false, 1.f);
-//	}
-//#endif
+	}
+#endif
 }
 
 
